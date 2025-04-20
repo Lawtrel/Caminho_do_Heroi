@@ -3,20 +3,28 @@ package br.lawtrel.hero.screens;
 import br.lawtrel.hero.entities.Player;
 import br.lawtrel.hero.entities.PlayerBuilder;
 import br.lawtrel.hero.Hero;
+import br.lawtrel.hero.utils.MapManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 //Mapa Principal do Game
 public class WorldMapScreen extends ScreenAdapter {
     private Hero game;
+    private MapManager  mapManager ;
     private OrthographicCamera camera;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
@@ -27,8 +35,9 @@ public class WorldMapScreen extends ScreenAdapter {
     private final int MAP_WIDTH = 100 * TILE_SIZE;
     private final int MAP_HEIGHT = 100 * TILE_SIZE;
 
-    public  WorldMapScreen(Hero game) {
+    public  WorldMapScreen(Hero game, MapManager mapManager) {
         this.game = game;
+        this.mapManager  = mapManager ;
     }
 
     @Override
@@ -39,9 +48,12 @@ public class WorldMapScreen extends ScreenAdapter {
         map = new TmxMapLoader().load("maps/word.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
 
+        //Ponto de Spawn
+        Vector2 spawn = findSpawnPoint(map);
+
         //Criar o Player com o builder
         player = new PlayerBuilder()
-            .setPosition(100, 100)
+            .setPosition(spawn.x, spawn.y)
             .loadAnimation("sprites/hero.png")
             .build();
 
@@ -72,28 +84,63 @@ public class WorldMapScreen extends ScreenAdapter {
         //Renderizar o mapa
         mapRenderer.setView(camera);
         mapRenderer.render();
+        checkDoorCollision();
 
         //Renderizar o Hero
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         player.render(batch);
         batch.end();
+
+
     }
 
-    @Override
-    public void resize(int width, int height) {
+    //função que faz a colisão
+    private void checkDoorCollision() {
+        MapLayer door = map.getLayers().get("Portas");
+
+        if (door == null) return;
+
+        float playerX = player.getX();
+        float playerY = player.getY();
+
+        for (MapObject object : door.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                Rectangle doorRect = ((RectangleMapObject) object).getRectangle();
+
+                if (doorRect.contains(playerX, playerY)) {
+                    String target = object.getProperties().get("target", String.class);
+
+                    if (target != null) {
+                        switch (target) {
+                            case "vila":
+                                mapManager.changeMap(MapManager.MapType.SHOP);
+                                return;
+                            case "shop":
+                                mapManager.changeMap(MapManager.MapType.SHOP);
+                                return;
+                            case "world":
+                                mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+                                return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    @Override
-    public void pause() {
-    }
+    private Vector2 findSpawnPoint(TiledMap map) {
+        MapLayer objectLayer = map.getLayers().get("spawn"); //nome da camada
+        if (objectLayer != null) {
+            for (MapObject object : objectLayer.getObjects()) {
+                if ("spawn".equals(object.getName()) && object instanceof RectangleMapObject) {
+                    Rectangle rect = ((RectangleMapObject) object).getRectangle();
+                    return new Vector2(rect.x, rect.y);
+                }
+            }
+        }
+        return new Vector2(100, 100); // valor padrão caso não encontre
 
-    @Override
-    public void resume() {
-    }
-
-    @Override
-    public void hide() {
     }
 
     @Override
