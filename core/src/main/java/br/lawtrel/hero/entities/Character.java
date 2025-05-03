@@ -36,4 +36,10 @@ public class Character {
     public void setStrategy(CharacterStrategy strategy) {
         this.strategy = strategy;
     }
+
+    public int getMaxHp() { return maxHp; }
+    public int getMaxMP() { return maxMP; }
+    public int getMp() { return mp; }
+    public int getAttack() { return attack; }
+    public int getDefense() { return defense; }
 }

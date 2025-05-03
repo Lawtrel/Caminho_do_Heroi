@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.g2d.Animation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player{
     private float x, y;
     private float speed;
@@ -15,13 +18,17 @@ public class Player{
     private float stateTime;
     private Direction currentDirection;
     private enum Direction { UP, DOWN, LEFT, RIGHT}
-
+    private Character character;
+    private List<String> inventory = new ArrayList<>();
+    private String equippedWeapon;
+    private String equippedArmor;
+    private String equippedAccessory;
 
     Player(float x, float y, float speed, Animation<TextureRegion> walkDown,
            Animation<TextureRegion> walkLeft,
            Animation<TextureRegion> walkRight,
            Animation<TextureRegion> walkUp,
-           Texture texture) {
+           Character character) {
         this.x = x;
         this.y = y;
         this.speed = speed;
@@ -29,7 +36,8 @@ public class Player{
         this.walkDown = walkDown;
         this.walkLeft = walkLeft;
         this.walkRight = walkRight;
-        this.texture = texture;
+        this.character = character;
+        //this.texture = texture;
         this.stateTime = 0;
         this.currentDirection = Direction.DOWN;
         this.currentFrame = walkDown.getKeyFrames()[1];
@@ -87,5 +95,34 @@ public class Player{
         if (texture != null) {
             texture.dispose();
         }
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
+
+    public List<String> getInventory() {
+        return inventory;
+    }
+
+    public void addItem(String item) {
+        inventory.add(item);
+    }
+
+    public String getEquippedWeapon() {
+        return equippedWeapon;
+    }
+
+    public String getEquippedArmor() {
+        return equippedArmor;
+    }
+
+    public String getEquippedAccessory() {
+        return equippedAccessory;
+    }
+
+    // Métodos para equipar
+    public void equipWeapon(String weapon) {
+        this.equippedWeapon = weapon;
     }
 }

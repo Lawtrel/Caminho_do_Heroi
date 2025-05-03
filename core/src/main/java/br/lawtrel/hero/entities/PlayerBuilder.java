@@ -12,6 +12,7 @@ public class PlayerBuilder {
     private  float speed = 100;
     private Texture texture;
     private Animation<TextureRegion> walkDown, walkLeft, walkRight, walkUp;
+    private Character character;
 
     public PlayerBuilder setPosition(float x, float y) {
         this.x = x;
@@ -24,6 +25,10 @@ public class PlayerBuilder {
         return this;
     }
 
+    public PlayerBuilder setCharacter(Character character) {
+        this.character = character;
+        return this;
+    }
     public PlayerBuilder loadAnimation(String spritePath) {
         texture = new Texture(spritePath);
         TextureRegion[][] frames = TextureRegion.split(texture, 32, 32);
@@ -42,7 +47,7 @@ public class PlayerBuilder {
     }
 
     public  Player build() {
-        return new Player(x, y, speed, walkDown, walkLeft, walkRight, walkUp, texture);
+        return new Player(x, y, speed, walkDown, walkLeft, walkRight, walkUp, character); //texture
     }
 
     public Texture getTexture() {
