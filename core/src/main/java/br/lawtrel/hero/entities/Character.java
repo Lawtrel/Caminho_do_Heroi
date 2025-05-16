@@ -21,11 +21,19 @@ public class Character {
         strategy.attack(this, target);
     }
 
+    //Metodo para receber dano
     public void receiveDamage(int dmg) {
         hp -= Math.max(0, dmg);
         if (hp < 0) hp = 0;
     }
 
+    //Metodo que  utiliza os pontos de magia
+    public void useMagicPoints(int mana){
+        mp -= Math.max(0, mana);
+        if (mp < 0) mp = 0; //verifica se o valor de mp é menor que zero para iguala-lo a zero
+    }
+
+    //Metodo para retornar se character está vivo ou não
     public boolean isAlive() {
         return hp > 0;
     }
@@ -33,9 +41,6 @@ public class Character {
     public String getName() { return name; }
     public int getHp() { return hp; }
 
-    public void setStrategy(CharacterStrategy strategy) {
-        this.strategy = strategy;
-    }
 
     public int getMaxHp() { return maxHp; }
     public int getMaxMP() { return maxMP; }

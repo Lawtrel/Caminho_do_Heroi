@@ -16,5 +16,6 @@ public class Hero extends Game {
     }
 
     public Player getPlayer() {
+        return null;
     }
 }
