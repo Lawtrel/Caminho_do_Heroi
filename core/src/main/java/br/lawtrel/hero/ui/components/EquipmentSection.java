@@ -2,6 +2,7 @@ package br.lawtrel.hero.ui.components;
 
 import br.lawtrel.hero.Hero;
 import br.lawtrel.hero.entities.Player;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -12,7 +13,7 @@ public class EquipmentSection extends Table {
 
     public EquipmentSection(Hero game) {
         this.game = game;
-        this.skin = new Skin(game.assets.get("skins/uiskin.json"));
+        this.skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
 
         setBackground(skin.newDrawable("white", 0.1f, 0.1f, 0.1f, 0.8f));
         pad(10);

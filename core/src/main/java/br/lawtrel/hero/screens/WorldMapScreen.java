@@ -1,5 +1,7 @@
 package br.lawtrel.hero.screens;
 
+import br.lawtrel.hero.entities.Enemy;
+import br.lawtrel.hero.entities.EnemyFactory;
 import br.lawtrel.hero.entities.Player;
 import br.lawtrel.hero.entities.PlayerBuilder;
 import br.lawtrel.hero.Hero;
@@ -20,6 +22,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 //Mapa Principal do Game
 public class WorldMapScreen extends ScreenAdapter {
@@ -34,6 +37,10 @@ public class WorldMapScreen extends ScreenAdapter {
     private final int TILE_SIZE = 16; // Tamanho das texturas
     private final int MAP_WIDTH = 100 * TILE_SIZE;
     private final int MAP_HEIGHT = 100 * TILE_SIZE;
+
+    private float battleTimer  = 0;
+    private static final float BATTLE_CHECK_INTERVAL = 5f; // Verifica a cada 5 segundos
+    private static final float BATTLE_CHANCE = 0.3f; // 30% de chance
 
     public  WorldMapScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -66,6 +73,13 @@ public class WorldMapScreen extends ScreenAdapter {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Verifica se o jogo deve ser pausado
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            //game.pauseGame();
+            return;
+        }
+
+
         //atualizar o hero
         boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
         boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
@@ -89,8 +103,19 @@ public class WorldMapScreen extends ScreenAdapter {
         //Renderizar o Hero
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch);
+        player.render(batch, player.getX(), player.getY() );
         batch.end();
+
+        if (player.isMoving()) {
+            battleTimer += delta;
+            if (battleTimer >= BATTLE_CHECK_INTERVAL) {
+                battleTimer = 0;
+                if (Math.random() < BATTLE_CHANCE) {
+                    startRandomBattle();
+                }
+            }
+        }
+
 
 
     }
@@ -114,7 +139,7 @@ public class WorldMapScreen extends ScreenAdapter {
                     if (target != null) {
                         switch (target) {
                             case "vila":
-                                mapManager.changeMap(MapManager.MapType.SHOP);
+                                mapManager.changeMap(MapManager.MapType.VILLAGE);
                                 return;
                             case "shop":
                                 mapManager.changeMap(MapManager.MapType.SHOP);
@@ -129,6 +154,7 @@ public class WorldMapScreen extends ScreenAdapter {
         }
     }
 
+
     private Vector2 findSpawnPoint(TiledMap map) {
         MapLayer objectLayer = map.getLayers().get("spawn"); //nome da camada
         if (objectLayer != null) {
@@ -141,6 +167,20 @@ public class WorldMapScreen extends ScreenAdapter {
         }
         return new Vector2(100, 100); // valor padrão caso não encontre
 
+    }
+    private void startRandomBattle() {
+        Array<Enemy> enemies = new Array<>();
+        // Adiciona 1-3 inimigos aleatórios
+        int enemyCount = 1 + (int)(Math.random() * 2);
+
+        for (int i = 0; i < enemyCount; i++) {
+            EnemyFactory.EnemyType randomType = EnemyFactory.EnemyType.values()[
+                (int)(Math.random() * EnemyFactory.EnemyType.values().length)
+                ];
+            enemies.add(EnemyFactory.createEnemy(randomType, 100f, 100f));
+        }
+
+        game.setScreen(new BattleScreen(player, enemies));
     }
 
     @Override

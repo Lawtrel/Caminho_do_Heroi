@@ -82,7 +82,7 @@ public class ShopScreen extends ScreenAdapter {
         //renderizar o hero
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        player.render(batch);
+        player.render(batch, player.getX(), player.getY());
         batch.end();
 
         checkDoorCollision();

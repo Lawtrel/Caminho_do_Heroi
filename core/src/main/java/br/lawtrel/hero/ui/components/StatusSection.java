@@ -2,6 +2,7 @@ package br.lawtrel.hero.ui.components;
 
 import br.lawtrel.hero.Hero;
 import br.lawtrel.hero.entities.Character;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -14,7 +15,7 @@ public class StatusSection extends Table {
     public StatusSection(Hero game) {
         this.game = game;
 
-        this.skin = new Skin(game.assets.get("skins/uiskin.json")); // ajuste o caminho se necessário
+        this.skin = new Skin(Gdx.files.internal("skins/uiskin.json")); // ajuste o caminho se necessário
 
         setBackground(skin.newDrawable("white", 0.1f, 0.1f, 0.1f, 0.8f));
         pad(10);

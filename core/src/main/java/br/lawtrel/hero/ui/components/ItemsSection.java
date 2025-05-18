@@ -2,6 +2,7 @@ package br.lawtrel.hero.ui.components;
 
 import br.lawtrel.hero.Hero;
 import br.lawtrel.hero.entities.Player;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -10,34 +11,39 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import java.util.ArrayList;
 
 public class ItemsSection extends Table {
-    private Hero game;
-    private Skin skin;
+    private final Player player;
+    private final Skin skin;
+    private final List<String> itemList;
 
     public ItemsSection(Hero game) {
-        this.game = game;
-        this.skin = new Skin(game.assets.get("skins/uiskin.json"));
+        this.player = game.getPlayer();
+        this.skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+        this.itemList = new List<>(skin);
+
         setBackground(skin.newDrawable("white", 0.1f, 0.1f, 0.1f, 0.8f));
         pad(10);
         top().left();
+        updateItemsDisplay();
+    }
+    public void updateItemsDisplay() {
+        clear();
 
-        Label title = new Label("Itens", skin);
+        Label title = new Label("Inventário (" + player.getInventory().size() + ")", skin);
         add(title).left().row();
 
-        // Simulação de inventário
-        Player player = game.getPlayer(); // Assumindo que existe esse getter
-        java.util.List<String> items = player.getInventory(); // Deve retornar lista de nomes
-
-        if (items == null) items = new ArrayList<>();
-        if (items.isEmpty()) {
+        if (player.getInventory().isEmpty()) {
             add(new Label("Nenhum item.", skin)).left().row();
         } else {
-            List<String> itemList = new List<>(skin);
-            itemList.setItems(items.toArray(new String[0]));
+            // Converte itens para strings descritivas
+            String[] items = player.getInventory().stream()
+                .map(item -> item.getName() + " (" + item.getType() + ")")
+                .toArray(String[]::new);
+
+            itemList.setItems(items);
             ScrollPane scrollPane = new ScrollPane(itemList, skin);
             scrollPane.setFadeScrollBars(false);
             scrollPane.setScrollingDisabled(true, false);
-            add(scrollPane).height(100).width(200).left().row();
+            add(scrollPane).height(150).width(250).left().row();
         }
-
     }
 }

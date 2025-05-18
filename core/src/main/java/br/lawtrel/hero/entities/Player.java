@@ -18,11 +18,10 @@ public class Player{
     private float stateTime;
     private Direction currentDirection;
     private enum Direction { UP, DOWN, LEFT, RIGHT}
-    private Character character;
-    private List<String> inventory = new ArrayList<>();
-    private String equippedWeapon;
-    private String equippedArmor;
-    private String equippedAccessory;
+    private boolean moving = false;
+    private final Character character;
+    private final List<Item> inventory;
+    private final Equipment equipment;
 
     Player(float x, float y, float speed, Animation<TextureRegion> walkDown,
            Animation<TextureRegion> walkLeft,
@@ -37,14 +36,16 @@ public class Player{
         this.walkLeft = walkLeft;
         this.walkRight = walkRight;
         this.character = character;
-        //this.texture = texture;
         this.stateTime = 0;
         this.currentDirection = Direction.DOWN;
         this.currentFrame = walkDown.getKeyFrames()[1];
+        this.inventory = new ArrayList<>();
+        this.equipment = new Equipment();
     }
+    //Atualizar movimentaçao do jogador
     public void update(float delta, boolean up, boolean down, boolean left, boolean right) {
+        this.moving = (up || down || left || right);
         stateTime += delta;
-        boolean moving = false;
 
         if (up) {
             y += speed * delta;
@@ -71,16 +72,16 @@ public class Player{
         }
     }
 
-    public void render(SpriteBatch batch) {
+    public void render(SpriteBatch batch, float x, float y) {
+        this.x = x;
+        this.y = y;
         batch.draw(currentFrame, x, y);
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 32, 32);
+        return new Rectangle(x, y, currentFrame.getRegionWidth(), currentFrame.getRegionHeight());
     }
 
-    public float getX() { return x; }
-    public float getY() { return y; }
 
     private Animation<TextureRegion> getCurrentAnimation() {
         switch (currentDirection) {
@@ -91,38 +92,62 @@ public class Player{
             default: return walkDown;
         }
     }
-    public void dispose() {
-        if (texture != null) {
-            texture.dispose();
+
+    public boolean isMoving() {
+        return moving;
+    }
+
+    // Métodos para equiparv items
+    public void addItem(Item item) {
+        inventory.add(item);
+    }
+
+
+    public boolean equipItm(Item item) {
+        if (!inventory.contains(item)) return false;
+
+        switch(item.getType()) {
+            case WEAPON:
+                equipment.equipWeapon(item);
+                return true;
+            case ARMOR:
+                equipment.equipArmor(item);
+                return true;
+            case ACCESSORY:
+                equipment.equipAccessory(item);
+                return true;
+            default:
+                return false;
         }
     }
+
+    public Item getEquippedWeapon() {
+        return equipment.getWeapon();
+    }
+
+    public Item getEquippedArmor() {
+        return equipment.getArmor();
+    }
+
+    public Item getEquippedAccessory() {
+        return equipment.getAccessory();
+    }
+
+    public List<Item> getInventory() {
+        return new ArrayList<>(inventory);
+    }
+
+
+    public float getX() { return x; }
+    public float getY() { return y; }
 
     public Character getCharacter() {
         return character;
     }
 
-    public List<String> getInventory() {
-        return inventory;
-    }
-
-    public void addItem(String item) {
-        inventory.add(item);
-    }
-
-    public String getEquippedWeapon() {
-        return equippedWeapon;
-    }
-
-    public String getEquippedArmor() {
-        return equippedArmor;
-    }
-
-    public String getEquippedAccessory() {
-        return equippedAccessory;
-    }
-
-    // Métodos para equipar
-    public void equipWeapon(String weapon) {
-        this.equippedWeapon = weapon;
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+        }
     }
 }
