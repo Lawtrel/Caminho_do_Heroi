@@ -1,12 +1,10 @@
 package br.lawtrel.hero.battle;
 
-import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.EnemyFactory;
 import br.lawtrel.hero.entities.EnemyFactory.EnemyType;
 import br.lawtrel.hero.entities.Player;
 import br.lawtrel.hero.entities.Enemy;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 public class BattleManager {
@@ -22,7 +20,7 @@ public class BattleManager {
     public BattleManager(Player player) {
         this.player = player;
         this.enemies = new Array<>();
-        this.hud = new BattleHUD(battleSystem);
+        this.hud = new BattleHUD(null);
         this.currentState = BattleState.EXPLORATION;
     }
 

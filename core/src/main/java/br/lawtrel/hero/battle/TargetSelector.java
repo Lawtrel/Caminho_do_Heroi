@@ -7,13 +7,11 @@ import br.lawtrel.hero.entities.Enemy;
 public class TargetSelector {
     private int selectedEnemy = 0;
 
-    public void render(SpriteBatch batch, BitmapFont font, Enemy[] enemies) {
+    public void render(SpriteBatch batch, BitmapFont font, Enemy[] enemies, int x, int y ){
         for (int i = 0; i < enemies.length; i++) {
             if (enemies[i].getCharacter().isAlive()) {
                 String prefix = (i == selectedEnemy) ? "[X] " : "[ ] ";
-                font.draw(batch, prefix + enemies[i].getCharacter().getName(),
-                    Gdx.graphics.getWidth() - 200,
-                    100 + (i * 30));
+                font.draw(batch, prefix + enemies[i].getCharacter().getName(), x, y - (i * 30));
             }
         }
     }

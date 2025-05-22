@@ -1,6 +1,9 @@
 package br.lawtrel.hero;
 
+import br.lawtrel.hero.entities.Character;
+import br.lawtrel.hero.entities.CharacterBuilder;
 import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.entities.PlayerBuilder;
 import br.lawtrel.hero.screens.BattleTestScreen;
 import br.lawtrel.hero.ui.menu.PauseMenuScreen;
 import br.lawtrel.hero.utils.MapManager;
@@ -11,24 +14,20 @@ import com.badlogic.gdx.Screen;
 
 public class Hero extends Game {
     public MapManager mapManager;
+    private Player player;
 
     @Override
     public void create() {
-        try {
-            Gdx.app.log("Hero", "Carregando");
-            setScreen(new BattleTestScreen());
-            //mapManager = new MapManager(this);
+            //setScreen(new BattleTestScreen());
+            mapManager = new MapManager(this);
 
-            //mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-            //setScreen(new WorldMapScreen(this, this));
-        } catch (Exception e) {
-            Gdx.app.log("Hero", "Error ao carregar", e);
-            throw e;
-        }
+            mapManager.changeMap(MapManager.MapType.WORLD_MAP);
 
     }
 
     public Player getPlayer() {
-        return null;
+        return player;
     }
+
+
 }

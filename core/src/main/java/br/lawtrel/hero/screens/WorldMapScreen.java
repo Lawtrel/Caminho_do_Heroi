@@ -1,10 +1,8 @@
 package br.lawtrel.hero.screens;
 
-import br.lawtrel.hero.entities.Enemy;
-import br.lawtrel.hero.entities.EnemyFactory;
-import br.lawtrel.hero.entities.Player;
-import br.lawtrel.hero.entities.PlayerBuilder;
+import br.lawtrel.hero.entities.*;
 import br.lawtrel.hero.Hero;
+import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.utils.MapManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -14,7 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
+
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -26,8 +24,8 @@ import com.badlogic.gdx.utils.Array;
 
 //Mapa Principal do Game
 public class WorldMapScreen extends ScreenAdapter {
-    private Hero game;
-    private MapManager  mapManager ;
+    private final Hero game;
+    private final MapManager  mapManager ;
     private OrthographicCamera camera;
     private TiledMap map;
     private OrthogonalTiledMapRenderer mapRenderer;
@@ -40,7 +38,7 @@ public class WorldMapScreen extends ScreenAdapter {
 
     private float battleTimer  = 0;
     private static final float BATTLE_CHECK_INTERVAL = 5f; // Verifica a cada 5 segundos
-    private static final float BATTLE_CHANCE = 0.3f; // 30% de chance
+    private static final float BATTLE_CHANCE = 0.5f; // 50% de chance
 
     public  WorldMapScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -58,9 +56,23 @@ public class WorldMapScreen extends ScreenAdapter {
         //Ponto de Spawn
         Vector2 spawn = findSpawnPoint(map);
 
+        Character playerCharacter = new CharacterBuilder()
+            .setName("Hero")
+            .setMaxHp(100)
+            .setMaxMP(50)
+            .setAttack(10)
+            .setDefense(8)
+            .setMagicAttack(5)
+            .setMagicAttack(5)
+            .setSpeed(10)
+            .setLuck(5)
+            .build();
+
         //Criar o Player com o builder
         player = new PlayerBuilder()
             .setPosition(spawn.x, spawn.y)
+            .setSpeed(100)
+            .setCharacter(playerCharacter)
             .loadAnimation("sprites/hero.png")
             .build();
 
@@ -170,17 +182,27 @@ public class WorldMapScreen extends ScreenAdapter {
     }
     private void startRandomBattle() {
         Array<Enemy> enemies = new Array<>();
-        // Adiciona 1-3 inimigos aleatórios
-        int enemyCount = 1 + (int)(Math.random() * 2);
+        int enemyCount = 1 + (int)(Math.random() * 3); // 1-3 inimigos
+
+        // Obtém a posição Y atual do jogador para alinhar os inimigos
+        float playerYPosition = player.getY();
 
         for (int i = 0; i < enemyCount; i++) {
             EnemyFactory.EnemyType randomType = EnemyFactory.EnemyType.values()[
                 (int)(Math.random() * EnemyFactory.EnemyType.values().length)
                 ];
-            enemies.add(EnemyFactory.createEnemy(randomType, 100f, 100f));
+
+            // Cria o inimigo alinhado na mesma altura (Y) que o jogador
+            Enemy enemy = EnemyFactory.createEnemy(randomType, 0, playerYPosition);
+
+            if (enemy.getCharacter() != null) {
+                enemies.add(enemy);
+            }
         }
 
-        game.setScreen(new BattleScreen(player, enemies));
+        if (enemies.size > 0) {
+            game.setScreen(new BattleScreen(player, enemies));
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ public class Player{
     private Direction currentDirection;
     private enum Direction { UP, DOWN, LEFT, RIGHT}
     private boolean moving = false;
+    private String currentArea;
     private final Character character;
     private final List<Item> inventory;
     private final Equipment equipment;
@@ -42,6 +43,7 @@ public class Player{
         this.inventory = new ArrayList<>();
         this.equipment = new Equipment();
     }
+
     //Atualizar movimentaçao do jogador
     public void update(float delta, boolean up, boolean down, boolean left, boolean right) {
         this.moving = (up || down || left || right);
@@ -140,7 +142,13 @@ public class Player{
 
     public float getX() { return x; }
     public float getY() { return y; }
+    public String getCurrentArea() {
+        return currentArea;
+    }
 
+    public void setCurrentArea(String area) {
+        this.currentArea = area;
+    }
     public Character getCharacter() {
         return character;
     }

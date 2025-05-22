@@ -20,14 +20,14 @@ public class BattleMagicMenu {
         this.selectedMagicIndex = 0;
     }
 
-    public void render(SpriteBatch batch, BitmapFont font) {
-        if  (availableMagics == null) return;
+    public void render(SpriteBatch batch, BitmapFont font, int x, int y) {
+        if (availableMagics == null) return;
 
         for (int i = 0; i < availableMagics.size; i++) {
             Skill magic = availableMagics.get(i);
             String prefix = (i == selectedMagicIndex) ? "> " : "  ";
             String cost = " (" + magic.getMpCost() + " MP)";
-            font.draw(batch, prefix + magic.getName() + cost, 50, 150 - (i * 25));
+            font.draw(batch, prefix + magic.getName() + cost, x, y - (i * 25));
         }
     }
 

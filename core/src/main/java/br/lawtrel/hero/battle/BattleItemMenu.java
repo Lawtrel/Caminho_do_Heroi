@@ -13,13 +13,13 @@ public class BattleItemMenu {
         this.availableItems = items;
     }
 
-    public void render(SpriteBatch batch, BitmapFont font) {
+    public void render(SpriteBatch batch, BitmapFont font,int x, int y) {
         if (availableItems == null) return;
 
         for (int i = 0; i < availableItems.size(); i++) {
             Item item = availableItems.get(i);
             String prefix = (i == selectedItem) ? "> " : "  ";
-            font.draw(batch, prefix + item.getName(), 50, 150 - (i * 25));
+            font.draw(batch, prefix + item.getName(), x, y - (i * 25));
         }
     }
 

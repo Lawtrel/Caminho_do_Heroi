@@ -9,6 +9,10 @@ import com.badlogic.gdx.utils.Queue;
 
 public class BattleSystem {
     public enum BattleState {
+        COMMAND_MENU,
+        TARGET_SELECTION,
+        MAGIC_MENU,
+        ITEM_MENU,
         PLAYER_TURN,
         PLAYER_TARGET_SELECT,
         PLAYER_MAGIC_SELECT,
@@ -17,6 +21,8 @@ public class BattleSystem {
         VICTORY,
         DEFEAT
     }
+
+    private BattleState currentState = BattleState.COMMAND_MENU;
 
     // Configurações de batalha
     private static final float ESCAPE_SUCCESS_RATE = 0.7f;
@@ -43,6 +49,7 @@ public class BattleSystem {
         this.enemies = enemies;
         this.turnOrder = new Queue<>();
         this.hud = new BattleHUD(this);
+        this.battleMessage = "O que deseja fazer?";
         this.targetSelector = new TargetSelector();
         this.magicMenu = new BattleMagicMenu();
         this.itemMenu = new BattleItemMenu();
@@ -70,18 +77,6 @@ public class BattleSystem {
 
     public void render(SpriteBatch batch) {
         hud.render(batch);
-
-        switch (state) {
-            case PLAYER_TARGET_SELECT:
-                targetSelector.render(batch, hud.getFont(), enemies.toArray(Enemy.class));
-                break;
-            case PLAYER_MAGIC_SELECT:
-                magicMenu.render(batch, hud.getFont());
-                break;
-            case PLAYER_ITEM_SELECT:
-                itemMenu.render(batch, hud.getFont());
-                break;
-        }
     }
 
     // Métodos de navegação no menu
@@ -127,7 +122,7 @@ public class BattleSystem {
                 }
                 break;
             case 2:
-                if (player.getInventory().size() > 0) {
+                if (!player.getInventory().isEmpty()) {
                     state = BattleState.PLAYER_ITEM_SELECT;
                 } else {
                     battleMessage = "Nenhum item disponível!";
@@ -283,6 +278,12 @@ public class BattleSystem {
         executeEnemyActions();
     }
 
+    public boolean isSubWindowVisible() {
+        return state == BattleState.PLAYER_TARGET_SELECT ||
+            state == BattleState.PLAYER_MAGIC_SELECT ||
+            state == BattleState.PLAYER_ITEM_SELECT;
+    }
+
     private void updateBattleEnd(boolean victory) {
         battleMessage = victory ? "Vitória!" : "Derrota...";
     }
@@ -295,6 +296,17 @@ public class BattleSystem {
     public Player getPlayer() { return player; }
     public BattleHUD getHud() { return hud; }
     public BitmapFont getFont() { return hud.getFont(); }
+    public TargetSelector getTargetSelector() {
+        return targetSelector;
+    }
+
+    public BattleMagicMenu getMagicMenu() {
+        return magicMenu;
+    }
+
+    public BattleItemMenu getItemMenu() {
+        return itemMenu;
+    }
 
     public void setState(BattleState state) {
         this.state = state;

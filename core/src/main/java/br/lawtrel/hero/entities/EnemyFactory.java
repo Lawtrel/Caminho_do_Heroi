@@ -45,8 +45,16 @@ public class EnemyFactory {
                     .setMaxHp(100).setMaxMP(80)
                     .setAttack(20).setDefense(15)
                     .build();
+                sprite = new Texture("enemies/wizard.png");
+                spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(15).build());
             default:
-                    throw new IllegalArgumentException("Tipo de inimigo desconhecido");
+                character = new CharacterBuilder()
+                    .setName("Goblin")
+                    .setMaxHp(30).setMaxMP(0)
+                    .setAttack(8).setDefense(4)
+                    .build();
+                sprite = new Texture("enemies/goblin.png");
+                break;
         }
         Enemy enemy = new Enemy(character, sprite);
         enemy.setPosition(x,y);
