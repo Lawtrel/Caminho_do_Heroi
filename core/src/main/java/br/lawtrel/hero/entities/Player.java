@@ -1,5 +1,6 @@
 package br.lawtrel.hero.entities;
 
+import br.lawtrel.hero.entities.items.Item;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -23,6 +24,7 @@ public class Player{
     private final Character character;
     private final List<Item> inventory;
     private final Equipment equipment;
+    private int money;
 
     Player(float x, float y, float speed, Animation<TextureRegion> walkDown,
            Animation<TextureRegion> walkLeft,
@@ -42,6 +44,7 @@ public class Player{
         this.currentFrame = walkDown.getKeyFrames()[1];
         this.inventory = new ArrayList<>();
         this.equipment = new Equipment();
+        this.money = 0;
     }
 
     //Atualizar movimentaçao do jogador
@@ -137,6 +140,24 @@ public class Player{
 
     public List<Item> getInventory() {
         return new ArrayList<>(inventory);
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void addMoney(int amount) {
+        if (amount > 0) {
+            this.money += amount;
+        }
+    }
+
+    public boolean spendMoney(int amount) {
+        if (amount > 0 && this.money >= amount) {
+            this.money -= amount;
+            return true;
+        }
+        return false;
     }
 
 

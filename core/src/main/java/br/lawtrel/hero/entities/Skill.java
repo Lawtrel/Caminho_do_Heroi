@@ -12,7 +12,8 @@ public interface Skill {
         PHYSICAL,      // Habilidades físicas (especiais)
         MAGIC,         // Habilidades mágicas
         HEALING,       // Habilidades de cura
-        SUPPORT        // Habilidades de suporte (buff/debuff)
+        SUPPORT,        // Habilidades de suporte (buff/debuff)
+        DOT
     }
 
 }

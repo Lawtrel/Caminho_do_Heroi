@@ -1,7 +1,6 @@
 package br.lawtrel.hero.entities;
 
-import br.lawtrel.hero.battle.MagicStrategy;
-
+import br.lawtrel.hero.entities.items.drops.DropTableEntry;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +15,13 @@ public class CharacterBuilder {
     private int magicDefense = 5;
     private int speed = 10;
     private int luck = 5;
+    private int expYield = 0;
+    private int goldYield = 0;
 
     // Metodo Estrategia e progressao de nivel
     private CharacterStrategy strategy;
     private int startingExp = 0;
+    private List<DropTableEntry> dropTableEntries = new ArrayList<>();
 
     // Sistema de status
     private Character.ElementalAffinity elementalAffinity = Character.ElementalAffinity.NEUTRAL;
@@ -83,6 +85,15 @@ public class CharacterBuilder {
         return this;
     }
 
+    public CharacterBuilder setExpYield(int expYield) {
+        this.expYield = expYield;
+        return this;
+    }
+    public CharacterBuilder setGoldYield(int goldYield) {
+        this.goldYield = goldYield;
+        return this;
+    }
+
     public CharacterBuilder setStrategy(CharacterStrategy strategy) {
         this.strategy = (strategy != null) ? strategy : new PhysicalAttackStrategy();
         return this;
@@ -102,6 +113,10 @@ public class CharacterBuilder {
 
     public CharacterBuilder setStartingExp(int exp) {
         this.startingExp = Math.max(0, exp);
+        return this;
+    }
+    public CharacterBuilder addDrop(String itemId, float chance) {
+        this.dropTableEntries.add(new DropTableEntry(itemId, chance));
         return this;
     }
 
@@ -128,7 +143,7 @@ public class CharacterBuilder {
 
     public Character build() {
         Character character = new Character(name, maxHp, maxMP, attack, defense, magicAttack, magicDefense, speed, luck,
-            strategy);
+            this.expYield,this.goldYield ,strategy);
 
         character.setElementalAffinity(elementalAffinity);
 
@@ -136,10 +151,20 @@ public class CharacterBuilder {
         startingSkills.forEach(character::learnSkill);
 
         //configurar nivel e xp
-        for (int i = 1; i < level; i++) {
-            character.gainExp(character.getExpToNextLevel());
+        if (this.level > 1) {
+            for (int i = 1; i < this.level; i++) {
+            }
         }
+        if (this.startingExp > 0) { // Aplica o XP inicial após setar o nível, se necessário.
+            character.gainExp(this.startingExp); // gainExp já lida com level ups
+        }
+
+
         character.gainExp(startingExp);
+
+        for (DropTableEntry entry : this.dropTableEntries) {
+            character.addDrop(entry.getItemId(), entry.getDropChance());
+        }
 
         return character;
     }

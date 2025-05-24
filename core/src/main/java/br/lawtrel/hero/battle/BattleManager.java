@@ -33,10 +33,7 @@ public class BattleManager {
         startBattleWithEnemy(enemy);
     }
 
-    /**
-     * Inicia uma batalha com inimigos pré-definidos
-     * @param predefinedEnemies Array de inimigos pré-definidos
-     */
+     //Inicia uma batalha com inimigos pré-definidos
     public void startPredefinedBattle(Array<Enemy> predefinedEnemies) {
         if (predefinedEnemies == null || predefinedEnemies.size == 0) {
             throw new IllegalArgumentException("Enemies array cannot be null or empty");
@@ -91,22 +88,33 @@ public class BattleManager {
     private void endBattle(boolean victory) {
         if (victory) {
             grantVictoryRewards();
+            battleSystem.setState(BattleSystem.BattleState.VICTORY); // Ou um novo BATTLE_WON_REWARDS
+            battleSystem.setBattleMessage(player.getCharacter().getName() + " venceu a batalha!");
         }
         this.currentState = BattleState.EXPLORATION;
     }
 
     private void grantVictoryRewards() {
-        int expGained = calculateExperience();
-        player.getCharacter().gainExp(expGained);
-        // Adicionar lógica para itens aqui se necessário
-    }
+        int expGained =  battleSystem.getLastExpGained(); // Pega o EXP do BattleSystem();
+        int goldGained = battleSystem.getLastGoldGained();
+        if (expGained > 0) {
+            player.getCharacter().gainExp(expGained);
 
-    private int calculateExperience() {
-        int totalExp = 0;
-        for (Enemy enemy : enemies) {
-            totalExp += enemy.getCharacter().getLevel() * EXP_PER_LEVEL;
+            if (player.getCharacter().didLevelUpThisGain()) {
+                battleSystem.setBattleMessage(player.getCharacter().getName() + " subiu para o nível " + player.getCharacter().getLevel() + "!");
+                System.out.println(player.getCharacter().getName() + " subiu para o nível " + player.getCharacter().getLevel() + "!");
+            } else {
+                battleSystem.setBattleMessage(player.getCharacter().getName() + " ganhou " + expGained + " EXP.");
+                System.out.println(player.getCharacter().getName() + " ganhou " + expGained + " EXP!");
+            }
+        } else {
+            battleSystem.setBattleMessage("Nenhum EXP Ganho.");
+
         }
-        return totalExp;
+        player.addMoney(goldGained);
+        System.out.println(player.getCharacter().getName() + " ganhou " + goldGained + " de Ouro!");
+
+        // Adicionar lógica para itens aqui se necessário
     }
 
     public enum BattleState {

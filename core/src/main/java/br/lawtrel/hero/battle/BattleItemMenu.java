@@ -2,7 +2,7 @@ package br.lawtrel.hero.battle;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import br.lawtrel.hero.entities.Item;
+import br.lawtrel.hero.entities.items.Item;
 import java.util.List;
 
 public class BattleItemMenu {

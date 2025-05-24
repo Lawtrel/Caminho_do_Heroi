@@ -13,14 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import org.w3c.dom.Text;
 
 public class PauseMenuScreen extends ScreenAdapter {
     private Hero game;
     private Stage stage;
     private Skin skin;
     private Table mainTable;
-    private SpriteBatch batch;
 
     //Seçcoes do menu
     private StatusSection statusSection;
@@ -37,7 +35,6 @@ public class PauseMenuScreen extends ScreenAdapter {
     private int currentTab = 0; // Status , 1 = items, 2 = equipamentos
     public PauseMenuScreen(Hero game) {
         this.game = game;
-        this.batch = new SpriteBatch();
     }
 
     @Override
@@ -45,7 +42,12 @@ public class PauseMenuScreen extends ScreenAdapter {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
-        skin = new Skin(Gdx.files.internal("assets/skins/uiskin.json"));
+        try {
+            skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+        } catch (Exception e) {
+            Gdx.app.error("PauseMenuScreen", "Erro ao carregar skin uiskin.json. Verifique o caminho.", e);
+            skin = new Skin(Gdx.files.internal("assets/skins/uiskin.json"));
+        }
 
         //Configura o layout principal
         mainTable = new Table();
@@ -94,7 +96,7 @@ public class PauseMenuScreen extends ScreenAdapter {
         resumeButton.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                resumeGame();
+                game.resumeGame();
             }
         });
 
@@ -173,28 +175,40 @@ public class PauseMenuScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        // Limpa a tela com uma cor semi-transparente para dar o efeito de pausa
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 0.5f); // Cor escura semi-transparente
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         // Verifica se ESC foi pressionado para continuar o jogo
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.resumeGame(); // Chama o método de Hero.java
+            return; // Retorna para não processar o stage se o jogo foi resumido
+        }
+
         try {
-            Gdx.gl.glClearColor(0, 0, 0, 0.5f);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                resumeGame();
-                return;
-            }
-
             stage.act(delta);
             stage.draw();
         } catch (Exception e) {
-            Gdx.app.error("PauseMenu", "Erro no render", e);
-            resumeGame(); // Fallback seguro
+            Gdx.app.error("PauseMenuScreen", "Erro no render do Stage", e);
+            // Fallback seguro: tenta resumir o jogo para evitar um softlock
+            game.resumeGame();
+        }
+    }
+    @Override
+    public void resize(int width, int height) {
+        if (stage != null) {
+            stage.getViewport().update(width, height, true);
         }
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
-        skin.dispose();
-        batch.dispose();
+        Gdx.app.log("PauseMenuScreen", "Disposing PauseMenuScreen");
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
     }
 }

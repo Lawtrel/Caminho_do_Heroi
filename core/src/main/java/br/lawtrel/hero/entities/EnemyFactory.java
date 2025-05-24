@@ -3,6 +3,8 @@ package br.lawtrel.hero.entities;
 import br.lawtrel.hero.magic.MagicBuilder;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
+import br.lawtrel.hero.entities.items.ItemFactory;
+
 public class EnemyFactory {
     public enum EnemyType {
         GOBLIN, SKELETON, WIZARD, UNDEAD
@@ -10,7 +12,6 @@ public class EnemyFactory {
     public static Enemy createEnemy(EnemyType type, float x, float y) {
         Character character;
         Texture sprite;
-        String name;
         Array<Skill> spells = new Array<>();
 
         switch (type) {
@@ -19,6 +20,12 @@ public class EnemyFactory {
                     .setName("Goblin")
                     .setMaxHp(30).setMaxMP(0)
                     .setAttack(8).setDefense(4)
+                    .setSpeed(8)
+                    .setStrategy(new PhysicalAttackStrategy())
+                    .setExpYield(10)
+                    .setGoldYield(5)
+                    .addDrop("ITM001", 0.50f) // 50% chance dropar porção pequena
+                    .addDrop("ITM002", 0.50f) // 25% chance dropar pele goblim
                     .build();
                 sprite = new Texture("enemies/goblin.png");
                 break;
@@ -27,6 +34,11 @@ public class EnemyFactory {
                     .setName("Esqueleto")
                     .setMaxHp(45).setMaxMP(20)
                     .setAttack(12).setDefense(6)
+                    .setSpeed(6)
+                    .setStrategy(new PhysicalAttackStrategy())
+                    .setExpYield(15)
+                    .setGoldYield(8)
+                    .addDrop("ITM003", 0.10f) // 10% chance de dropar "Espada Curta"
                     .build();
                 sprite = new Texture("enemies/skeleton.png");
                 break;
@@ -34,7 +46,13 @@ public class EnemyFactory {
                 character = new CharacterBuilder()
                     .setName("Mago Negro")
                     .setMaxHp(60).setMaxMP(50)
-                    .setAttack(15).setDefense(8)
+                    .setAttack(5).setDefense(8)
+                    .setMagicAttack(15)
+                    .setSpeed(7)
+                    .setStrategy(new MagicalAttackStrategy())
+                    .setExpYield(20)
+                    .setGoldYield(15)
+                    .addDrop("ITM005", 0.30f) // 30% chance de dropar "Éter Pequeno"
                     .build();
                 sprite = new Texture("enemies/wizard.png");
                 spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(15).build());
@@ -42,16 +60,22 @@ public class EnemyFactory {
             case UNDEAD:
                 character = new CharacterBuilder()
                     .setName("Morto-Vivo")
-                    .setMaxHp(100).setMaxMP(80)
+                    .setMaxHp(100).setMaxMP(0)
                     .setAttack(20).setDefense(15)
+                    .setSpeed(4)
+                    .setExpYield(30)
+                    .setGoldYield(10)
                     .build();
-                sprite = new Texture("enemies/wizard.png");
-                spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(15).build());
+                sprite  = new Texture("enemies/wizard.png");
+                break;
             default:
                 character = new CharacterBuilder()
                     .setName("Goblin")
                     .setMaxHp(30).setMaxMP(0)
                     .setAttack(8).setDefense(4)
+                    .setExpYield(10)
+                    .setGoldYield(5)
+                    .addDrop("ITM001", 0.50f) // 50% chance dropar porção pequena
                     .build();
                 sprite = new Texture("enemies/goblin.png");
                 break;

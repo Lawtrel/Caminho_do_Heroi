@@ -1,5 +1,7 @@
 package br.lawtrel.hero.entities;
 
+import br.lawtrel.hero.entities.items.Item;
+
 public class Equipment {
     private Item weapon;
     private Item armor;

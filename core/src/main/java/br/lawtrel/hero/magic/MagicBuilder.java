@@ -7,6 +7,7 @@ public class MagicBuilder {
     public String magicSTTS;
     public int timeSTTS;
     public String magicType;
+    public float statusPotency;
 
     //Metodo para construir a parte obrigatoria das magias
     public MagicBuilder(String magicName, int costMP, String magicType){
@@ -28,6 +29,10 @@ public class MagicBuilder {
 
     public MagicBuilder setTimeSTTS(int timeSTTS){ //tempo que o efeito da magia dura
         this.timeSTTS = timeSTTS;
+        return this;
+    }
+    public MagicBuilder setStatusPotency(float statusPotency) {
+        this.statusPotency = statusPotency;
         return this;
     }
 

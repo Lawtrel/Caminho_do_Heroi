@@ -3,12 +3,16 @@ package br.lawtrel.hero.screens;
 import br.lawtrel.hero.battle.*;
 import br.lawtrel.hero.entities.Player;
 import br.lawtrel.hero.entities.Enemy;
+import br.lawtrel.hero.entities.items.Item;
 import br.lawtrel.hero.utils.BackgroundManager;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+
+import java.util.List;
 
 public class BattleScreen implements Screen, InputProcessor {
     private final BattleSystem battleSystem;
@@ -166,15 +170,65 @@ public class BattleScreen implements Screen, InputProcessor {
 
     private void handleBattleEndInput(int keycode) {
         if (keycode == Input.Keys.ENTER || keycode == Input.Keys.ESCAPE) {
-            // Retorna para a tela anterior ou mapa do jogo
-            // Exemplo: game.setScreen(new WorldMapScreen(game));
         }
     }
 
     private void handleBattleEnd() {
-        // Lógica para quando a batalha termina (vitória ou derrota)
-        // Pode exibir uma mensagem final e esperar input do jogador
+        renderVictoryOrDefeatSummary();
     }
+
+    private void renderVictoryOrDefeatSummary() {
+        batch.begin();
+        BitmapFont font = battleSystem.getHud().getFont();
+        float centerX = Gdx.graphics.getWidth() / 2f;
+        float startY = Gdx.graphics.getHeight() * 0.8f; // Começar um pouco mais alto
+        float lineSpacing = 25f; // Ajuste conforme necessário
+
+        if (battleSystem.getState() == BattleSystem.BattleState.VICTORY) {
+            font.draw(batch, "VITÓRIA!", centerX - font.getXHeight() * 3, startY);
+            startY -= lineSpacing * 1.5f;
+
+            font.draw(batch, "EXP Ganho: " + battleSystem.getLastExpGained(), centerX - 100, startY);
+            startY -= lineSpacing;
+
+            font.draw(batch, "Ouro Ganho: " + battleSystem.getLastGoldGained(), centerX - 100, startY);
+            startY -= lineSpacing;
+
+            if (battleSystem.didPlayerLevelUpInThisBattle()) {
+                font.draw(batch, player.getCharacter().getName() + " subiu para o Nível " + player.getCharacter().getLevel() + "!", centerX - 150, startY);
+                startY -= lineSpacing;
+            }
+
+            // Exibir Itens Dropados
+            List<Item> itemsDropped = battleSystem.getDroppedItemsThisBattle();
+            if (itemsDropped != null && !itemsDropped.isEmpty()) {
+                startY -= lineSpacing * 0.5f; // Espaço antes da lista de itens
+                font.draw(batch, "Itens Obtidos:", centerX - 100, startY);
+                startY -= lineSpacing;
+                for (Item item : itemsDropped) {
+                    font.draw(batch, "- " + item.getName(), centerX - 90, startY);
+                    startY -= lineSpacing;
+                    if (startY < Gdx.graphics.getHeight() * 0.15f) { // Evita desenhar fora da tela
+                        // TODO: Implementar paginação ou scroll se muitos itens droparem
+                        font.draw(batch, "  (e mais...)", centerX - 90, startY);
+                        break;
+                    }
+                }
+            } else {
+                font.draw(batch, "Nenhum item obtido.", centerX - 100, startY);
+                startY -= lineSpacing;
+            }
+            startY -= lineSpacing * 0.5f; // Espaço após lista de itens
+
+        } else { // DEFEAT
+            font.draw(batch, "DERROTA...", centerX - font.getXHeight() * 4, startY);
+            startY -= lineSpacing * 1.5f;
+        }
+
+        font.draw(batch, "Pressione ENTER para continuar...", centerX - 150, startY);
+        batch.end();
+    }
+
 
     @Override public void show() {}
     @Override public void resize(int width, int height) {}

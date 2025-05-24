@@ -1,5 +1,6 @@
 package br.lawtrel.hero.screens;
 
+import br.lawtrel.hero.Hero;
 import br.lawtrel.hero.entities.*;
 import br.lawtrel.hero.battle.*;
 import br.lawtrel.hero.entities.Character;
@@ -22,11 +23,14 @@ public class BattleTestScreen extends BattleScreen {
     private static Player createTestPlayer() {
         Character playerChar = new CharacterBuilder()
             .setName("Herói")
-            .setMaxHp(500)
-            .setMaxMP(50)
-            .setAttack(50)
+            .setMaxHp(100)
+            .setMaxMP(10)
+            .setAttack(15)
             .setDefense(10)
-            .setSpeed(50)
+            .setSpeed(9)
+            .setExpYield(75)
+            .setGoldYield(0)
+            .setStrategy(new PhysicalAttackStrategy())
             .build();
 
         return new PlayerBuilder()
