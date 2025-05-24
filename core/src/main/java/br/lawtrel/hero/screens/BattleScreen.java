@@ -1,20 +1,27 @@
 package br.lawtrel.hero.screens;
 
-import br.lawtrel.hero.battle.*;
-import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.Hero;
+import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.Enemy;
-import br.lawtrel.hero.entities.items.Item;
+import br.lawtrel.hero.entities.Player;
 import br.lawtrel.hero.utils.BackgroundManager;
-import com.badlogic.gdx.*;
+import br.lawtrel.hero.battle.BattleSystem;
+import br.lawtrel.hero.utils.MapManager;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-
+import br.lawtrel.hero.entities.items.Item;
 import java.util.List;
 
 public class BattleScreen implements Screen, InputProcessor {
+    private final Hero game;
     private final BattleSystem battleSystem;
     private final SpriteBatch batch;
     private final BackgroundManager bgManager;
@@ -22,13 +29,24 @@ public class BattleScreen implements Screen, InputProcessor {
 
     // Posições de renderização
     private static final int PLAYER_X = Gdx.graphics.getWidth() * 3/4;
-    private static final int ENEMIES_X = Gdx.graphics.getWidth() /4;
-    private static final int BASE_Y = Gdx.graphics.getHeight() / 2;
+    private static final int ENEMIES_X = Gdx.graphics.getWidth() / 4; // Eixo X base para formações inimigas
+    private static final int BASE_Y = Gdx.graphics.getHeight() / 2;   // Linha de "chão" de referência para inimigos e jogador
 
-    public BattleScreen(Player player, Array<Enemy> enemies) {
+    private static final float[] X_OFFSETS_FORMATION_1_ENEMY = {0f}; // Centralizado em ENEMIES_X
+    private static final float[] X_OFFSETS_FORMATION_2_ENEMIES = {-60f, 60f}; // Ajuste o espaçamento
+    private static final float[] X_OFFSETS_FORMATION_3_ENEMIES = {-90f, 0f, 90f};
+    private static final float[] X_OFFSETS_FORMATION_4_ENEMIES = {-120f, -40f, 40f, 120f}; // Ou uma formação 2x2 em X e Y
+
+    public BattleScreen(Hero game, Player player, Array<Enemy> enemies) {
+        this.game = game;
         this.player = player;
+        this.player.setInBattleView(true);
         this.bgManager = new BackgroundManager();
-        bgManager.setCurrentArea(player.getCurrentArea()); // Define bg pela área atual
+        if (player.getCurrentArea() != null) {
+            bgManager.setCurrentArea(player.getCurrentArea());
+        } else {
+            bgManager.setCurrentArea("floresta");
+        }
         this.batch = new SpriteBatch();
         this.battleSystem = new BattleSystem(player, enemies);
         Gdx.input.setInputProcessor(this);
@@ -56,27 +74,81 @@ public class BattleScreen implements Screen, InputProcessor {
 
     protected void renderBackground() {
         batch.begin();
-        batch.draw(bgManager.getCurrentBackground(),
-            0, 0,
-            Gdx.graphics.getWidth(),
-            Gdx.graphics.getHeight());
+        Texture bgTexture = bgManager.getCurrentBackground();
+        if (bgTexture != null) {
+            batch.draw(bgTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        }
         batch.end();
     }
 
     private void renderBattleEntities() {
         batch.begin();
         // Renderiza o jogador
+        player.update(Gdx.graphics.getDeltaTime(), false, false, false, false);
+
         battleSystem.getPlayer().render(batch,
             PLAYER_X - battleSystem.getPlayer().getBounds().width/2,
             BASE_Y - battleSystem.getPlayer().getBounds().height/2);
 
         // Renderiza os inimigos
         Array<Enemy> enemies = battleSystem.getEnemies();
-        for (int i = 0; i < enemies.size; i++) {
-            float Y = (enemies.size > 1) ? (i * 80) - ((enemies.size-1) * 40) : 0;
-            enemies.get(i).render(batch,
-                ENEMIES_X - enemies.get(i).getBounds().width/2,
-                (int) (BASE_Y + Y - enemies.get(i).getBounds().height/2));
+        int numberOfEnemiesToDisplay = Math.min(enemies.size, 4);
+
+        if (numberOfEnemiesToDisplay == 0) {
+            batch.end();
+            return;
+        }
+
+        // Caso especial: 1 Inimigo Gigante
+        if (numberOfEnemiesToDisplay == 1 && enemies.get(0).getCharacter().isLargeEnemy()) {
+            Enemy giantEnemy = enemies.get(0);
+            Character giantChar = giantEnemy.getCharacter();
+            Texture giantSprite = giantEnemy.getSpriteTexture(); // Método adicionado em Enemy.java
+
+            if (giantSprite != null && giantChar.isAlive()) {
+                float scale = giantChar.getRenderScale();
+                float spriteWidth = giantSprite.getWidth();
+                float scaledWidth = spriteWidth * scale;
+                float visualAnchorY = giantChar.getVisualAnchorYOffset() * scale;
+
+                // Centraliza o gigante na tela
+                float renderX = (Gdx.graphics.getWidth() / 2.5f) - (scaledWidth / 1.1f);
+                // Alinha pela base (BASE_Y, que é a mesma para todos os inimigos agora)
+                float renderY = BASE_Y + visualAnchorY;
+
+                giantEnemy.render(batch, renderX, (int)renderY, scale); // Passa a escala
+            }
+        } else { // Formação para 1-4 inimigos (não-gigantes ou múltiplos gigantes tratados como normais na formação)
+            float[] currentXOffsets;
+            // Determina qual array de X offsets usar
+            switch (numberOfEnemiesToDisplay) {
+                case 1: currentXOffsets = X_OFFSETS_FORMATION_1_ENEMY; break;
+                case 2: currentXOffsets = X_OFFSETS_FORMATION_2_ENEMIES; break;
+                case 3: currentXOffsets = X_OFFSETS_FORMATION_3_ENEMIES; break;
+                case 4: default: currentXOffsets = X_OFFSETS_FORMATION_4_ENEMIES; break;
+            }
+
+            for (int i = 0; i < numberOfEnemiesToDisplay; i++) {
+                Enemy enemy = enemies.get(i);
+                Character enemyChar = enemy.getCharacter();
+                Texture enemySprite = enemy.getSpriteTexture();
+
+                if (enemySprite == null || !enemyChar.isAlive()) {
+                    continue;
+                }
+
+                float scale = enemyChar.getRenderScale();
+                float spriteWidth = enemySprite.getWidth();
+                float scaledWidth = spriteWidth * scale;
+                float visualAnchorY = enemyChar.getVisualAnchorYOffset() * scale;
+
+                // O X é o ENEMIES_X (eixo de formação) + offset da formação - metade da largura escalada para centralizar
+                float renderX = ENEMIES_X + (currentXOffsets[i] * scale) - (scaledWidth / 2f) ;
+                // O Y é a linha do chão (BASE_Y) + o offset de âncora visual do sprite
+                float renderY = BASE_Y + visualAnchorY;
+
+                enemy.render(batch, renderX, (int)renderY, scale); // Passa a escala
+            }
         }
         batch.end();
     }
@@ -170,6 +242,21 @@ public class BattleScreen implements Screen, InputProcessor {
 
     private void handleBattleEndInput(int keycode) {
         if (keycode == Input.Keys.ENTER || keycode == Input.Keys.ESCAPE) {
+            Gdx.app.log("BattleScreen", "Fim da batalha");
+            battleSystem.resetBattleRewards(); // acabou batalha entao reseta as recompensas
+
+            if (game != null) { // 'game' é a sua instância de Hero.java
+                // Voltar para o mapa do mundo
+                if (game.mapManager != null) {
+                    game.mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+                } else {
+                    Gdx.app.error("BattleScreen", "MapManager é nulo. Não é possível voltar ao mapa.");
+                    Gdx.app.exit(); // Exemplo se for um teste isolado e quiser fechar.
+                }
+            } else {
+                Gdx.app.error("BattleScreen", "Instância 'game' (Hero) é nula. Não é possível mudar de tela.");
+            }
+
         }
     }
 
@@ -230,11 +317,11 @@ public class BattleScreen implements Screen, InputProcessor {
     }
 
 
-    @Override public void show() {}
-    @Override public void resize(int width, int height) {}
+    @Override public void show() {Gdx.input.setInputProcessor(this);}
+    @Override public void resize(int width, int height) {batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {}
+    @Override public void hide() { player.setInBattleView(false);}
 
     @Override
     public void dispose() {

@@ -2,7 +2,6 @@ package br.lawtrel.hero.screens;
 
 import br.lawtrel.hero.entities.*;
 import br.lawtrel.hero.Hero;
-import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.utils.MapManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -33,12 +32,15 @@ public class WorldMapScreen extends ScreenAdapter {
     private Player player;
 
     private final int TILE_SIZE = 16; // Tamanho das texturas
-    private final int MAP_WIDTH = 100 * TILE_SIZE;
-    private final int MAP_HEIGHT = 100 * TILE_SIZE;
+    private final int MAP_WIDTH_TILES = 100;
+    private final int MAP_HEIGHT_TILES = 100;
+    private final int MAP_WIDTH = MAP_WIDTH_TILES * TILE_SIZE;
+    private final int MAP_HEIGHT = MAP_HEIGHT_TILES * TILE_SIZE;
+    private final String MAP_ID = "maps/word.tmx";
 
     private float battleTimer  = 0;
     private static final float BATTLE_CHECK_INTERVAL = 5f; // Verifica a cada 5 segundos
-    private static final float BATTLE_CHANCE = 0.5f; // 50% de chance
+    private static final float BATTLE_CHANCE = 0.8f; // 80% de chance
 
     public  WorldMapScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -50,45 +52,46 @@ public class WorldMapScreen extends ScreenAdapter {
         batch = new SpriteBatch();
 
         //Carrega o mapa
-        map = new TmxMapLoader().load("maps/word.tmx");
+        map = new TmxMapLoader().load(MAP_ID);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
 
         //Ponto de Spawn
-        Vector2 spawn = findSpawnPoint(map);
+        this.player = game.getPlayer();
+        player.setInBattleView(false);
+        Vector2 lastPosition = null;
 
-        Character playerCharacter = new CharacterBuilder()
-            .setName("Hero")
-            .setMaxHp(100)
-            .setMaxMP(50)
-            .setAttack(10)
-            .setDefense(8)
-            .setMagicAttack(5)
-            .setMagicAttack(5)
-            .setSpeed(10)
-            .setLuck(5)
-            .build();
+        lastPosition = game.getPlayerLastWorldMapPosition(MAP_ID);
 
-        //Criar o Player com o builder
-        player = new PlayerBuilder()
-            .setPosition(spawn.x, spawn.y)
-            .setSpeed(100)
-            .setCharacter(playerCharacter)
-            .loadAnimation("sprites/hero.png")
-            .build();
+        if (lastPosition != null) {
+            player.setPosition(lastPosition.x, lastPosition.y);
+            Gdx.app.log("WorldMapScreen_show", "Jogador restaurado para a posição salva: " + lastPosition.x + "," + lastPosition.y);
+            game.clearPlayerLastWorldMapPosition(); // Limpa a posição para que não seja usada novamente por engano
+        } else {
+            // Se não houver posição salva (ex: primeira vez no mapa, ou após transição de outro tipo de tela), usa o spawn point
+            Vector2 spawnPoint = findSpawnPoint(map);
+            player.setPosition(spawnPoint.x, spawnPoint.y);
+            Gdx.app.log("WorldMapScreen_show", "Nenhuma posição salva encontrada para " + MAP_ID + ". Usando spawn point: " + spawnPoint.x + "," + spawnPoint.y);
+        }
 
         //Cria a camera do jogo
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.position.set(player.getX(), player.getY(), 0);
+        camera.update();
     }
 
     @Override
     public void render(float delta) {
+        Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Verifica se o jogo deve ser pausado
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            //game.pauseGame();
-            return;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            if (game != null) { // Boa prática verificar se 'game' não é nulo
+                game.pauseGame(); // Chama o método de Hero.java para abrir o PauseMenuScreen
+            }
+            return; // Retorna imediatamente para não processar o resto do frame da WorldMapScreen,
+            // pois a tela está mudando para o PauseMenuScreen.
         }
 
 
@@ -99,7 +102,11 @@ public class WorldMapScreen extends ScreenAdapter {
         boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         player.update(delta, up, down, left, right);
-        //player.render(batch);
+
+        //Colisao com bordas do mapa
+        float clampedX = MathUtils.clamp(player.getX(), 0, MAP_WIDTH - player.getBounds().width);
+        float clampedY = MathUtils.clamp(player.getY(), 0, MAP_HEIGHT - player.getBounds().height);
+        player.setPosition(clampedX, clampedY);
 
         //atualiza a camera para seguir hero
         float camX = MathUtils.clamp(player.getX(), camera.viewportWidth / 2, MAP_WIDTH - camera.viewportWidth / 2);
@@ -127,9 +134,6 @@ public class WorldMapScreen extends ScreenAdapter {
                 }
             }
         }
-
-
-
     }
 
     //função que faz a colisão
@@ -138,27 +142,30 @@ public class WorldMapScreen extends ScreenAdapter {
 
         if (door == null) return;
 
-        float playerX = player.getX();
-        float playerY = player.getY();
+        float playerCenterX  = player.getX() + player.getBounds().width / 2;
+        float playerCenterY  = player.getY() + player.getBounds().height / 2;
 
         for (MapObject object : door.getObjects()) {
             if (object instanceof RectangleMapObject) {
                 Rectangle doorRect = ((RectangleMapObject) object).getRectangle();
 
-                if (doorRect.contains(playerX, playerY)) {
-                    String target = object.getProperties().get("target", String.class);
+                if (player.getBounds().overlaps(doorRect)) {
+                    if (doorRect.contains(playerCenterX, playerCenterY)) {
+                        String target = object.getProperties().get("target", String.class);
+                        String targetSpawn = object.getProperties().get("target_spawn", String.class); // Ponto de spawn no novo mapa
 
-                    if (target != null) {
-                        switch (target) {
-                            case "vila":
-                                mapManager.changeMap(MapManager.MapType.VILLAGE);
-                                return;
-                            case "shop":
-                                mapManager.changeMap(MapManager.MapType.SHOP);
-                                return;
-                            case "world":
-                                mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-                                return;
+                        if (target != null) {
+                            switch (target.toLowerCase()) {
+                                case "vila":
+                                    mapManager.changeMap(MapManager.MapType.VILLAGE);
+                                    return;
+                                case "shop":
+                                    mapManager.changeMap(MapManager.MapType.SHOP);
+                                    return;
+                                case "world":
+                                    mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+                                    return;
+                            }
                         }
                     }
                 }
@@ -184,16 +191,13 @@ public class WorldMapScreen extends ScreenAdapter {
         Array<Enemy> enemies = new Array<>();
         int enemyCount = 1 + (int)(Math.random() * 3); // 1-3 inimigos
 
-        // Obtém a posição Y atual do jogador para alinhar os inimigos
-        float playerYPosition = player.getY();
-
         for (int i = 0; i < enemyCount; i++) {
             EnemyFactory.EnemyType randomType = EnemyFactory.EnemyType.values()[
                 (int)(Math.random() * EnemyFactory.EnemyType.values().length)
                 ];
 
             // Cria o inimigo alinhado na mesma altura (Y) que o jogador
-            Enemy enemy = EnemyFactory.createEnemy(randomType, 0, playerYPosition);
+            Enemy enemy = EnemyFactory.createEnemy(randomType, 0, 0);
 
             if (enemy.getCharacter() != null) {
                 enemies.add(enemy);
@@ -201,15 +205,16 @@ public class WorldMapScreen extends ScreenAdapter {
         }
 
         if (enemies.size > 0) {
-            game.setScreen(new BattleScreen(player, enemies));
+            game.setPlayerLastWorldMapPosition(player.getX(), player.getY(), MAP_ID);
+            player.setCurrentArea("floresta");
+            game.setScreen(new BattleScreen(game, player, enemies));
         }
     }
 
     @Override
     public void dispose() {
+        batch.dispose();
         map.dispose();
         mapRenderer.dispose();
-        batch.dispose();
-        player.dispose();
     }
 }

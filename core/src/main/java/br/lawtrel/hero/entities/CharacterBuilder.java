@@ -23,6 +23,10 @@ public class CharacterBuilder {
     private int startingExp = 0;
     private List<DropTableEntry> dropTableEntries = new ArrayList<>();
 
+    private boolean isLargeEnemy = false;
+    private float renderScale = 1.0f;
+    private float visualAnchorYOffset = 0f;
+
     // Sistema de status
     private Character.ElementalAffinity elementalAffinity = Character.ElementalAffinity.NEUTRAL;
 
@@ -120,6 +124,21 @@ public class CharacterBuilder {
         return this;
     }
 
+    public CharacterBuilder setIsLargeEnemy(boolean isLarge) {
+        this.isLargeEnemy = isLarge;
+        return this;
+    }
+
+    public CharacterBuilder setRenderScale(float scale) {
+        this.renderScale = scale;
+        return this;
+    }
+
+    public CharacterBuilder setVisualAnchorYOffset(float offset) {
+        this.visualAnchorYOffset = offset;
+        return this;
+    }
+
     // --- Métodos de construção rápida para classes ---
     public CharacterBuilder Warrior() {
         return this.setMaxHp(120)
@@ -143,7 +162,7 @@ public class CharacterBuilder {
 
     public Character build() {
         Character character = new Character(name, maxHp, maxMP, attack, defense, magicAttack, magicDefense, speed, luck,
-            this.expYield,this.goldYield ,strategy);
+            this.expYield,this.goldYield ,strategy, this.isLargeEnemy, this.renderScale, this.visualAnchorYOffset);
 
         character.setElementalAffinity(elementalAffinity);
 

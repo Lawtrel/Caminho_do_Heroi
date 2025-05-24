@@ -12,79 +12,148 @@ import java.util.List;
 
 public class Player{
     private float x, y;
-    private float speed;
-    private Animation<TextureRegion> walkDown, walkLeft, walkRight, walkUp;
+    private final float speed;
+    private final Animation<TextureRegion> walkDown;
+    private final Animation<TextureRegion> walkLeft;
+    private final Animation<TextureRegion> walkRight;
+    private final Animation<TextureRegion> walkUp;
+    private final Animation<TextureRegion> animIdleBattle;
     private TextureRegion currentFrame;
-    private Texture texture;
+    private Texture textureSheet;
     private float stateTime;
     private Direction currentDirection;
     private enum Direction { UP, DOWN, LEFT, RIGHT}
-    private boolean moving = false;
-    private String currentArea;
+    private boolean moving;
     private final Character character;
     private final List<Item> inventory;
     private final Equipment equipment;
     private int money;
+    private boolean isInBattleView;
+    private String currentArea;
 
-    Player(float x, float y, float speed, Animation<TextureRegion> walkDown,
-           Animation<TextureRegion> walkLeft,
-           Animation<TextureRegion> walkRight,
-           Animation<TextureRegion> walkUp,
-           Character character) {
+    Player(float x, float y, float speed,
+           Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft,
+           Animation<TextureRegion> walkRight, Animation<TextureRegion> walkUp,
+           Animation<TextureRegion> animIdleBattle,
+           Character character, Texture textureSheet) {
         this.x = x;
         this.y = y;
         this.speed = speed;
-        this.walkUp = walkUp;
         this.walkDown = walkDown;
         this.walkLeft = walkLeft;
         this.walkRight = walkRight;
+        this.walkUp = walkUp;
+        this.animIdleBattle = animIdleBattle;
         this.character = character;
-        this.stateTime = 0;
+        this.textureSheet = textureSheet;
+        this.stateTime = 0f;
         this.currentDirection = Direction.DOWN;
-        this.currentFrame = walkDown.getKeyFrames()[1];
+        this.moving = false;
+        this.isInBattleView = false;
         this.inventory = new ArrayList<>();
         this.equipment = new Equipment();
         this.money = 0;
+        this.currentFrame = walkDown.getKeyFrames()[1];
     }
+
+    public void setPosition(float newX, float newY) {
+        this.x = newX;
+        this.y = newY;
+    }
+
+    public void setInBattleView(boolean isInBattleView) {
+        this.isInBattleView = isInBattleView;
+        this.stateTime = 0f;
+    }
+
 
     //Atualizar movimentaçao do jogador
     public void update(float delta, boolean up, boolean down, boolean left, boolean right) {
-        this.moving = (up || down || left || right);
         stateTime += delta;
+
+        if (isInBattleView) {
+            // Em batalha, o jogador não se move pelos inputs do mapa.
+            // A animação de idle de batalha é selecionada.
+            moving = false; // Garante que não está no estado de "moving" do mapa
+            if (animIdleBattle != null && animIdleBattle.getKeyFrames().length > 0) {
+                currentFrame = animIdleBattle.getKeyFrame(stateTime, true);
+            } else if (walkDown != null && walkDown.getKeyFrames().length > 1) { // Fallback
+                currentFrame = walkDown.getKeyFrames()[1];
+            }
+            return;
+        }
+
+        // Lógica original de movimento e animação para o mapa
+        this.moving = false; // Começa como não se movendo neste frame
 
         if (up) {
             y += speed * delta;
             currentDirection = Direction.UP;
-            moving = true;
+            this.moving = true;
         } else if (down) {
             y -= speed * delta;
             currentDirection = Direction.DOWN;
-            moving = true;
+            this.moving = true;
         } else if (left) {
             x -= speed * delta;
             currentDirection = Direction.LEFT;
-            moving = true;
+            this.moving = true;
         } else if (right) {
             x += speed * delta;
             currentDirection = Direction.RIGHT;
-            moving = true;
+            this.moving = true;
         }
 
-        if (moving) {
-            currentFrame = getCurrentAnimation().getKeyFrame(stateTime, true);
-        } else {
-            currentFrame = getCurrentAnimation().getKeyFrames()[1]; // frame parado
+        Animation<TextureRegion> currentMapAnimation = getCurrentMapAnimation();
+        if (currentMapAnimation != null && currentMapAnimation.getKeyFrames().length > 0) {
+            if (this.moving) {
+                currentFrame = currentMapAnimation.getKeyFrame(stateTime, true);
+            } else {
+                // Pega o frame parado (ex: segundo frame) da animação da direção atual
+                if (currentMapAnimation.getKeyFrames().length > 1) {
+                    currentFrame = currentMapAnimation.getKeyFrames()[1];
+                } else {
+                    currentFrame = currentMapAnimation.getKeyFrame(0); // Fallback para o primeiro frame
+                }
+            }
+        } else if (this.currentFrame == null && walkDown != null && walkDown.getKeyFrames().length > 1) {
+            currentFrame = walkDown.getKeyFrames()[1];
         }
     }
 
     public void render(SpriteBatch batch, float x, float y) {
-        this.x = x;
-        this.y = y;
         batch.draw(currentFrame, x, y);
     }
 
+    public void renderAt(SpriteBatch batch, float screenX, float screenY) {
+        batch.draw(currentFrame, screenX, screenY);
+    }
+
+
+
+
     public Rectangle getBounds() {
+        if (currentFrame == null && walkDown != null && walkDown.getKeyFrames().length > 0) {
+            TextureRegion fallbackFrame = walkDown.getKeyFrame(0);
+            return new Rectangle(x, y, fallbackFrame.getRegionWidth(), fallbackFrame.getRegionHeight());
+        } else if (currentFrame == null) {
+            return new Rectangle(x, y, 32, 32); // Tamanho padrão se tudo falhar
+        }
         return new Rectangle(x, y, currentFrame.getRegionWidth(), currentFrame.getRegionHeight());
+    }
+
+    private Animation<TextureRegion> getCurrentMapAnimation() {
+        switch (currentDirection) {
+            case UP:
+                return walkUp;
+            case LEFT:
+                return walkLeft;
+            case RIGHT:
+                return walkRight;
+            case DOWN:
+            default:
+                return walkDown;
+        }
     }
 
 
@@ -108,22 +177,30 @@ public class Player{
     }
 
 
-    public boolean equipItm(Item item) {
+    public boolean equipItem(Item item) {
         if (!inventory.contains(item)) return false;
-
-        switch(item.getType()) {
+        boolean equipped = false;
+        switch (item.getType()) {
             case WEAPON:
                 equipment.equipWeapon(item);
-                return true;
+                equipped = true;
+                break;
             case ARMOR:
                 equipment.equipArmor(item);
-                return true;
+                equipped = true;
+                break;
             case ACCESSORY:
                 equipment.equipAccessory(item);
-                return true;
+                equipped = true;
+                break;
             default:
-                return false;
+                break;
         }
+        if (equipped) {
+            // Atualizar stats do personagem se necessário (Character precisaria de um método updateStatsFromEquipment())
+            // character.updateStatsFromEquipment(equipment);
+        }
+        return equipped;
     }
 
     public Item getEquippedWeapon() {
@@ -175,8 +252,5 @@ public class Player{
     }
 
     public void dispose() {
-        if (texture != null) {
-            texture.dispose();
-        }
     }
 }

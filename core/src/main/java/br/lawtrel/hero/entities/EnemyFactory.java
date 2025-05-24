@@ -7,7 +7,7 @@ import br.lawtrel.hero.entities.items.ItemFactory;
 
 public class EnemyFactory {
     public enum EnemyType {
-        GOBLIN, SKELETON, WIZARD, UNDEAD
+        GOBLIN, SKELETON, WIZARD, UNDEAD, CHAOS, GIGANT
     }
     public static Enemy createEnemy(EnemyType type, float x, float y) {
         Character character;
@@ -26,6 +26,9 @@ public class EnemyFactory {
                     .setGoldYield(5)
                     .addDrop("ITM001", 0.50f) // 50% chance dropar porção pequena
                     .addDrop("ITM002", 0.50f) // 25% chance dropar pele goblim
+                    .setIsLargeEnemy(false) // Goblin não é grande
+                    .setRenderScale(1.0f)   // Escala normal
+                    .setVisualAnchorYOffset(0f) // Assume que o pé do goblin está na base da imagem
                     .build();
                 sprite = new Texture("enemies/goblin.png");
                 break;
@@ -39,6 +42,9 @@ public class EnemyFactory {
                     .setExpYield(15)
                     .setGoldYield(8)
                     .addDrop("ITM003", 0.10f) // 10% chance de dropar "Espada Curta"
+                    .setIsLargeEnemy(false)
+                    .setRenderScale(1.0f)
+                    .setVisualAnchorYOffset(0f)
                     .build();
                 sprite = new Texture("enemies/skeleton.png");
                 break;
@@ -53,20 +59,28 @@ public class EnemyFactory {
                     .setExpYield(20)
                     .setGoldYield(15)
                     .addDrop("ITM005", 0.30f) // 30% chance de dropar "Éter Pequeno"
+                    .setIsLargeEnemy(false)
+                    .setRenderScale(1.0f)
+                    .setVisualAnchorYOffset(0f)
                     .build();
                 sprite = new Texture("enemies/wizard.png");
                 spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(15).build());
                 break;
             case UNDEAD:
                 character = new CharacterBuilder()
-                    .setName("Morto-Vivo")
-                    .setMaxHp(100).setMaxMP(0)
-                    .setAttack(20).setDefense(15)
-                    .setSpeed(4)
-                    .setExpYield(30)
-                    .setGoldYield(10)
+                    .setName("Dragão Vermelho")
+                    .setMaxHp(500).setMaxMP(100)
+                    .setAttack(50).setDefense(30)
+                    .setSpeed(12)
+                    .setStrategy(new PhysicalAttackStrategy())
+                    .setExpYield(200)
+                    .setGoldYield(100)
+                    //.addDrop("ITM_DRAGON_SCALE", 1.0f)
+                    .setIsLargeEnemy(true)
+                    .setRenderScale(3f)
+                    .setVisualAnchorYOffset(-10f)// Ex: Se os "pés" do dragão estiverem 10 pixels acima da borda inferior da imagem.
                     .build();
-                sprite  = new Texture("enemies/wizard.png");
+                sprite  = new Texture("enemies/undead.png");
                 break;
             default:
                 character = new CharacterBuilder()

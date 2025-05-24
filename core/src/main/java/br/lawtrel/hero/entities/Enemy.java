@@ -34,11 +34,24 @@ public class Enemy {
         this.y = y;
     }
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 64, 64);
+        if (sprite == null) {
+            return new Rectangle(x, y, 0, 0); // Retorna um retângulo vazio se não houver sprite
+        }
+        // Retorna as dimensões originais da textura. A escala será aplicada ao desenhar.
+        return new Rectangle(x, y, sprite.getWidth(), sprite.getHeight());
+    }
+    public Texture getSpriteTexture() { // caso se BattleScreen precisar das dimensões originais
+        return sprite;
     }
 
-    public void render(SpriteBatch batch, float v, int i) {
-        batch.draw(sprite, x, y);
+    public void render(SpriteBatch batch, float screenX, float screenY, float scale) {
+        if (sprite != null && character.isAlive()) {
+            float scaledWidth = sprite.getWidth() * scale;
+            float scaledHeight = sprite.getHeight() * scale;
+            // screenX e screenY agora representam o canto inferior esquerdo ONDE o sprite (escalado) deve ser desenhado.
+            // O alinhamento pela base já foi feito ao calcular screenY em BattleScreen.
+            batch.draw(sprite, screenX, screenY, scaledWidth, scaledHeight);
+        }
     }
 
     public void performAttack(Character target) {

@@ -60,10 +60,14 @@ public class Character implements Disposable {
     private CharacterStrategy strategy;
     private Grimoire grimoire;
 
+    private boolean isLargeEnemy = false; // caso for inimigo gigante
+    private float renderScale = 1.0f;
+    private float visualAnchorYOffset = 0f;
+
     //construção do status do Hero
     public Character(String name, int maxHp, int maxMP, int attack, int defense,
                      int magicAttack, int magicDefense, int speed, int luck, int expYield, int goldYield,
-                     CharacterStrategy strategy) {
+                     CharacterStrategy strategy, boolean isLargeEnemy, float renderScale, float visualAnchorYOffset) {
         this.name = name;
         this.level = 1;
         this.maxHp = maxHp;
@@ -92,8 +96,13 @@ public class Character implements Disposable {
         this.learnedSkills.add(PhysicalAttackStrategy.BASIC_ATTACK);
         this.grimoire = new Grimoire();
 
+        this.isLargeEnemy = isLargeEnemy;
+        this.renderScale = renderScale;
+        this.visualAnchorYOffset = visualAnchorYOffset;
+
 
     }
+
 
     // --- Sistema de Níveis e Progressão ---
     public void gainExp(int amount) {
@@ -364,6 +373,18 @@ public class Character implements Disposable {
             this.dropTable = new ArrayList<>();
         }
         this.dropTable.add(new DropTableEntry(itemId, chance));
+    }
+
+    public boolean isLargeEnemy() {
+        return isLargeEnemy;
+    }
+
+    public float getRenderScale() {
+        return renderScale;
+    }
+
+    public float getVisualAnchorYOffset() {
+        return visualAnchorYOffset;
     }
 
     // --- Enums internos ---
