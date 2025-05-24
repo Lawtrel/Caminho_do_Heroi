@@ -194,12 +194,6 @@ public class BattleSystem {
         }
     }
 
-    public void playerUseItem(int itemIndex) {
-        // Implementação básica - pode ser expandida
-        battleMessage = "Item usado!";
-        advanceTurn();
-    }
-
     private void executeEnemyAction(Enemy enemy) {
         boolean shouldCastSpell = Math.random() < ENEMY_SPELL_CHANCE &&
             enemy.getCharacter().getMp() > MIN_MP_FOR_SPELL &&
@@ -338,25 +332,6 @@ public class BattleSystem {
         return index >= 0 && index < enemies.size;
     }
 
-    // Métodos de atualização de estado
-    private void updatePlayerTurn() {
-        battleMessage = "Seu turno - Escolha uma ação";
-    }
-
-    private void updateTargetSelection() {
-        battleMessage = "Selecione um alvo";
-    }
-
-    private void updateMagicSelection() {
-        magicMenu.setMagics(player.getCharacter().getGrimoire().getAvailableSpells());
-        battleMessage = "Selecione uma magia";
-    }
-
-    private void updateItemSelection() {
-        itemMenu.setItems(player.getInventory());
-        battleMessage = "Selecione um item";
-    }
-
     private void updateEnemyTurn(float delta) {
         if (currentActor == null || currentActor == player.getCharacter() || !currentActor.isAlive()) {
             // Se o ator atual não é um inimigo válido, algo está errado, tenta avançar.
@@ -406,7 +381,6 @@ public class BattleSystem {
             rewardsProcessed = true; // foi processado recompensas
         } else {
             this.battleMessage = "DERROTA";
-            rewardsProcessed = false;
         }
     }
     private void prepareNextTurn() {
