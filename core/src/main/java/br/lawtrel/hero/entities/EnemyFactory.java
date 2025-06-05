@@ -22,6 +22,7 @@ public class EnemyFactory {
                     .setAttack(8).setDefense(4)
                     .setSpeed(8)
                     .setStrategy(new PhysicalAttackStrategy())
+                    //.setStrategy(new MagicalAttackStrategy())
                     .setExpYield(10)
                     .setGoldYield(5)
                     .addDrop("ITM001", 0.50f) // 50% chance dropar porção pequena

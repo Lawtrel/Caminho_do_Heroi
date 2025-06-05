@@ -20,6 +20,7 @@ public class CharacterBuilder {
 
     // Metodo Estrategia e progressao de nivel
     private CharacterStrategy strategy;
+    private CharacterStrategy magicStrategy;
     private int startingExp = 0;
     private List<DropTableEntry> dropTableEntries = new ArrayList<>();
 
@@ -37,7 +38,6 @@ public class CharacterBuilder {
         // Habilidade básica para todos os personagens
         startingSkills.add(PhysicalAttackStrategy.BASIC_ATTACK);
     }
-
 
     public CharacterBuilder setName(String name) {
         this.name = name;
@@ -100,6 +100,12 @@ public class CharacterBuilder {
 
     public CharacterBuilder setStrategy(CharacterStrategy strategy) {
         this.strategy = (strategy != null) ? strategy : new PhysicalAttackStrategy();
+        //this.magicStrategy = (magicStrategy != null) ? magicStrategy : new MagicalAttackStrategy();
+        return this;
+    }
+
+    public CharacterBuilder setMagicStrategy(CharacterStrategy magicStrategy){
+        this.magicStrategy = (magicStrategy != null) ? magicStrategy : new MagicalAttackStrategy();
         return this;
     }
 
@@ -147,7 +153,8 @@ public class CharacterBuilder {
             .setDefense(12)
             .setMagicAttack(2)
             .setMagicDefense(4)
-            .setStrategy(new PhysicalAttackStrategy());
+            .setStrategy(new PhysicalAttackStrategy())
+            .setMagicStrategy(new MagicalAttackStrategy());
     }
 
     public CharacterBuilder Mage() {
@@ -157,12 +164,13 @@ public class CharacterBuilder {
             .setDefense(6)
             .setMagicAttack(15)
             .setMagicDefense(12)
-            .setStrategy(new PhysicalAttackStrategy());
+            .setStrategy(new PhysicalAttackStrategy())
+            .setMagicStrategy(new MagicalAttackStrategy());
     }
 
     public Character build() {
         Character character = new Character(name, maxHp, maxMP, attack, defense, magicAttack, magicDefense, speed, luck,
-            this.expYield,this.goldYield ,strategy, this.isLargeEnemy, this.renderScale, this.visualAnchorYOffset);
+            this.expYield,this.goldYield ,strategy,magicStrategy, this.isLargeEnemy, this.renderScale, this.visualAnchorYOffset);
 
         character.setElementalAffinity(elementalAffinity);
 

@@ -115,36 +115,36 @@ public class Hero extends Game {
 
 
     @Override
-        public void setScreen(Screen screen) {
-            Gdx.app.log("Hero_setScreen", "Trocando para tela: " + (screen != null ? screen.getClass().getSimpleName() : "null"));
-            super.setScreen(screen);
-        }
+    public void setScreen(Screen screen) {
+        Gdx.app.log("Hero_setScreen", "Trocando para tela: " + (screen != null ? screen.getClass().getSimpleName() : "null"));
+        super.setScreen(screen);
+    }
 
-        public void setPlayerLastWorldMapPosition(float x, float y, String mapId) {
-            if (this.playerLastWorldMapPosition == null) {
-                this.playerLastWorldMapPosition = new Vector2();
-             }
-            this.playerLastWorldMapPosition.set(x, y);
-            this.lastWorldMapId = mapId; // Armazena o ID/nome do mapa
-            Gdx.app.log("Hero", "Posição do jogador salva: " + x + "," + y + " no mapa: " + mapId);
+    public void setPlayerLastWorldMapPosition(float x, float y, String mapId) {
+        if (this.playerLastWorldMapPosition == null) {
+            this.playerLastWorldMapPosition = new Vector2();
         }
+        this.playerLastWorldMapPosition.set(x, y);
+        this.lastWorldMapId = mapId; // Armazena o ID/nome do mapa
+        Gdx.app.log("Hero", "Posição do jogador salva: " + x + "," + y + " no mapa: " + mapId);
+    }
 
-        public Vector2 getPlayerLastWorldMapPosition(String mapId) {
+    public Vector2 getPlayerLastWorldMapPosition(String mapId) {
         // Retorna a posição apenas se o mapId corresponder, para evitar usar
         // a posição de um mapa diferente se o sistema for expandido.
-            if (mapId != null && mapId.equals(this.lastWorldMapId) && this.playerLastWorldMapPosition != null) {
-                return new Vector2(this.playerLastWorldMapPosition); // Retorna uma nova instância para evitar modificação externa
-             }
-            return null;
+        if (mapId != null && mapId.equals(this.lastWorldMapId) && this.playerLastWorldMapPosition != null) {
+            return new Vector2(this.playerLastWorldMapPosition); // Retorna uma nova instância para evitar modificação externa
         }
+        return null;
+    }
 
-        public void clearPlayerLastWorldMapPosition() {
+    public void clearPlayerLastWorldMapPosition() {
         // Chame isso depois que a posição for usada, para que na próxima vez
         // que entrar no mapa sem uma batalha anterior, ele use o spawn padrão.
-            this.playerLastWorldMapPosition = null;
-            this.lastWorldMapId = null;
-            Gdx.app.log("Hero", "Posição salva do jogador limpa.");
-        }
+        this.playerLastWorldMapPosition = null;
+        this.lastWorldMapId = null;
+        Gdx.app.log("Hero", "Posição salva do jogador limpa.");
+    }
 
 
 }

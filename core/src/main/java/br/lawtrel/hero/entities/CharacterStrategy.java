@@ -1,5 +1,9 @@
 package br.lawtrel.hero.entities;
 
-public interface CharacterStrategy {
+import br.lawtrel.hero.battle.BattleStrategy;
+
+public interface CharacterStrategy extends BattleStrategy {
     void attack(Character self, Character target);
+
+    Skill.SkillType getType();
 }

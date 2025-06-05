@@ -27,4 +27,9 @@ public class PhysicalAttackStrategy implements CharacterStrategy, Skill {
     }
 
     public static final Skill BASIC_ATTACK = new PhysicalAttackStrategy();
+
+    @Override
+    public void executeBattle(Character actor, Character target) {
+
+    }
 }

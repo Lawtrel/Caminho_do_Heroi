@@ -3,6 +3,8 @@ package br.lawtrel.hero.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.lawtrel.hero.battle.AttackStrategy;
+import br.lawtrel.hero.battle.BattleStrategy;
 import br.lawtrel.hero.entities.items.Item;
 import br.lawtrel.hero.entities.items.drops.DropTableEntry;
 import br.lawtrel.hero.magic.Grimoire;
@@ -58,6 +60,7 @@ public class Character implements Disposable {
 
     //Estrategia
     private CharacterStrategy strategy;
+    private CharacterStrategy magicStrategy;
     private Grimoire grimoire;
 
     private boolean isLargeEnemy = false; // caso for inimigo gigante
@@ -67,7 +70,7 @@ public class Character implements Disposable {
     //construção do status do Hero
     public Character(String name, int maxHp, int maxMP, int attack, int defense,
                      int magicAttack, int magicDefense, int speed, int luck, int expYield, int goldYield,
-                     CharacterStrategy strategy, boolean isLargeEnemy, float renderScale, float visualAnchorYOffset) {
+                     CharacterStrategy strategy, CharacterStrategy magicStrategy, boolean isLargeEnemy, float renderScale, float visualAnchorYOffset) {
         this.name = name;
         this.level = 1;
         this.maxHp = maxHp;
@@ -86,6 +89,7 @@ public class Character implements Disposable {
         this.hasLeveledUpThisGain = false;
         this.goldYieldOnDefeat = goldYield;
         this.strategy = strategy != null ? strategy : new PhysicalAttackStrategy();
+        this.magicStrategy = magicStrategy != null ? strategy : new MagicalAttackStrategy();
         this.equipment = new Equipment();
         this.learnedSkills = new ArrayList<>();
         this.activeStatusEffects = new ArrayList<>();

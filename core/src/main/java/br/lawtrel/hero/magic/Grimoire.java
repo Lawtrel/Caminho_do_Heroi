@@ -42,6 +42,7 @@ public class Grimoire {
         addSpell(iceImpact);
     }
 
+    //Adiciona Magia ao grimorio
     public boolean addSpell(Skill spell) {
         if (spell == null || spells.containsKey(spell.getName().toLowerCase())) {
             return false;

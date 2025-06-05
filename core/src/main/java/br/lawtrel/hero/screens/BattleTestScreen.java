@@ -48,14 +48,14 @@ public class BattleTestScreen extends BattleScreen {
         // --- CENÁRIO 1: Um Inimigo Gigante (Exemplo: UNDEAD como gigante) ---
         // Certifique-se que no EnemyFactory, UNDEAD está configurado com setIsLargeEnemy(true)
         // e com uma renderScale e visualAnchorYOffset apropriados.
-         enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.UNDEAD, 0, 0));
+        //enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.UNDEAD, 0, 0));
 
         // --- CENÁRIO 2: Um Inimigo Normal ---
         // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
 
         // --- CENÁRIO 3: Dois Inimigos Normais ---
-        //enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
-        //enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.SKELETON, 0, 0));
+        enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
+        enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.SKELETON, 0, 0));
 
         // --- CENÁRIO 4: Três Inimigos Normais ---
         // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
