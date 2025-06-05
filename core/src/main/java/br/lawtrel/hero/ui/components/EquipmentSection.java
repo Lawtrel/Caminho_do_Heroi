@@ -2,29 +2,38 @@ package br.lawtrel.hero.ui.components;
 
 import br.lawtrel.hero.Hero;
 import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.entities.items.Item;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 public class EquipmentSection extends Table {
-    private Hero game;
-    private Skin skin;
 
-    public EquipmentSection(Hero game) {
-        this.game = game;
-        this.skin = new Skin(game.assets.get("skins/uiskin.json"));
+    public EquipmentSection(Hero game, Skin nesSkin) {
+        super(nesSkin);
 
-        setBackground(skin.newDrawable("white", 0.1f, 0.1f, 0.1f, 0.8f));
         pad(10);
         top().left();
 
-        Label title = new Label("Equipamentos", skin);
-        add(title).left().row();
-
+        Label title = new Label("Equipamentos", nesSkin);
+        add(title).left().colspan(2).padBottom(10).row();
         Player player = game.getPlayer();
+        if (player == null) {
+            add(new Label("Jogador não encontrado.", nesSkin)).left().colspan(2).row();
+            return;
+        }
+        Item weapon = player.getEquippedWeapon();
+        Item armor = player.getEquippedArmor();
+        Item accessory = player.getEquippedAccessory();
 
-        add(new Label("Arma: " + (player.getEquippedWeapon() != null ? player.getEquippedWeapon() : "Nenhuma"), skin)).left().row();
-        add(new Label("Armadura: " + (player.getEquippedArmor() != null ? player.getEquippedArmor() : "Nenhuma"), skin)).left().row();
-        add(new Label("Acessório: " + (player.getEquippedAccessory() != null ? player.getEquippedAccessory() : "Nenhum"), skin)).left().row();
+        add(new Label("Arma:", nesSkin)).left().padRight(5);
+        add(new Label(weapon != null ? weapon.getName() : "Nenhuma", nesSkin)).left().row();
+
+        add(new Label("Armadura:", nesSkin)).left().padRight(5);
+        add(new Label(armor != null ? armor.getName() : "Nenhuma", nesSkin)).left().row();
+
+        add(new Label("Acessório:", nesSkin)).left().padRight(5);
+        add(new Label(accessory != null ? accessory.getName() : "Nenhum", nesSkin)).left().row();
+
     }
 }

@@ -2,42 +2,56 @@ package br.lawtrel.hero.ui.components;
 
 import br.lawtrel.hero.Hero;
 import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.entities.items.Item;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.Array;
 
 public class ItemsSection extends Table {
-    private Hero game;
-    private Skin skin;
+    private final Player player;
+    private final Skin nesSkin; // Armazena o skin recebido
+    private final List<String> itemListWidget;
+    private final ScrollPane scrollPane;
 
-    public ItemsSection(Hero game) {
-        this.game = game;
-        this.skin = new Skin(game.assets.get("skins/uiskin.json"));
-        setBackground(skin.newDrawable("white", 0.1f, 0.1f, 0.1f, 0.8f));
+    public ItemsSection(Hero game, Skin nesSkin) {
+        super(nesSkin);
+        this.player = game.getPlayer();
+        this.nesSkin = nesSkin;
+
         pad(10);
         top().left();
-
-        Label title = new Label("Itens", skin);
-        add(title).left().row();
-
-        // Simulação de inventário
-        Player player = game.getPlayer(); // Assumindo que existe esse getter
-        java.util.List<String> items = player.getInventory(); // Deve retornar lista de nomes
-
-        if (items == null) items = new ArrayList<>();
-        if (items.isEmpty()) {
-            add(new Label("Nenhum item.", skin)).left().row();
-        } else {
-            List<String> itemList = new List<>(skin);
-            itemList.setItems(items.toArray(new String[0]));
-            ScrollPane scrollPane = new ScrollPane(itemList, skin);
-            scrollPane.setFadeScrollBars(false);
-            scrollPane.setScrollingDisabled(true, false);
-            add(scrollPane).height(100).width(200).left().row();
+        this.itemListWidget = new List<>(nesSkin); // Usa o nesSkin para o ListStyle
+        this.scrollPane = new ScrollPane(itemListWidget, nesSkin); // Usa o nesSkin para o ScrollPaneStyle
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollingDisabled(true, false);
+    }
+    public void updateItemsDisplay() {
+        clearChildren();
+        if (player == null) {
+            add(new Label("Jogador não encontrado.", nesSkin)).left().row();
+            return;
         }
 
+        Label title = new Label("Inventário (" + player.getInventory().size() + " itens)", nesSkin);
+        add(title).left().padBottom(5).row();
+
+        java.util.List<Item> playerItems = player.getInventory();
+
+        if (playerItems == null || playerItems.isEmpty()) {
+            add(new Label("Nenhum item no inventário.", nesSkin)).left().row();
+        } else {
+            // Converte List<Item> para Array<String> para o widget List
+            Array<String> itemNames = new Array<>();
+            for (Item item : playerItems) {
+                itemNames.add(item.getName() + " (Tipo: " + item.getType() + ")"); // Ou apenas item.getName()
+            }
+            itemListWidget.setItems(itemNames); // Define os itens no widget List
+
+            // Adiciona o ScrollPane (que contém a itemListWidget) à ItemsSection (que é uma Table)
+            add(scrollPane).height(150).width(250).left().expandY().fillY(); // expandY e fillY para o scroll
+        }
     }
 }

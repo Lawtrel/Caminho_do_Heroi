@@ -10,6 +10,8 @@ import br.lawtrel.hero.magic.Grimoire;
 import br.lawtrel.hero.magic.Magics;
 
 public class MagicMenu {
+}
+/*
     Array<Magics> magicList = new Array<>();
 
     //Metodo que pega os valores do grimorio
@@ -60,4 +62,4 @@ public class MagicMenu {
         return null;
     }
 }
-
+*/
