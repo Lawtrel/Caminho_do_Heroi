@@ -1,0 +1,24 @@
+{
+"name": "Heroi",
+"level": 1,
+"exp": 20,
+"maxHp": 114,
+"hp": 30,
+"maxMp": 55,
+"mp": 55,
+"attack": 12,
+"defense": 9,
+"magicAttack": 7,
+"magicDefense": 6,
+"speed": 13,
+"luck": 7,
+"money": 40,
+"inventoryItemIds": [
+	"ITM001",
+	"ITM003",
+	"ITM005"
+],
+"lastMapId": "word.tmx",
+"playerX": 185.667,
+"playerY": 631.333
+}

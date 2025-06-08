@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="55" height="55" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="18">
+ <tileset firstgid="1" name="Roguelike" tilewidth="16" tileheight="16" spacing="1" tilecount="1767" columns="57">
+  <image source="../tileset/roguelikeSheet_transparent.png" width="968" height="526"/>
+ </tileset>
+ <tileset firstgid="1768" name="10546" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="../tileset/10546.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="2024" name="10564" tilewidth="16" tileheight="16" tilecount="1519" columns="49">
+  <image source="../tileset/10564.png" width="784" height="496"/>
+ </tileset>
+ <layer id="8" name="blocks" width="55" height="55">
+  <data encoding="base64" compression="zlib">
+   eJztz7ENgDAMAEFXZCVgAmACwv5NtsBDRIpkXXH9/9giBgBQ2t4ijnS29S2zXfl0p6fg25tPPX0F3wAAAAAAAAAAAFb5AdxaAy4=
+  </data>
+ </layer>
+ <objectgroup id="7" name="Portas">
+  <object id="15" name="vila" x="203" y="142.5" width="56.75" height="50.25" visible="0"/>
+  <object id="16" name="vila" x="207.5" y="143.5" width="52.5" height="50">
+   <properties>
+    <property name="target" value="vila"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="9" name="spawn">
+  <object id="17" name="spawn" x="185.667" y="248.667">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

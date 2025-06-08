@@ -8,10 +8,16 @@ import br.lawtrel.hero.entities.PhysicalAttackStrategy;
 import br.lawtrel.hero.screens.BattleTestScreen;
 import br.lawtrel.hero.ui.menu.PauseMenuScreen;
 import br.lawtrel.hero.utils.MapManager;
+import br.lawtrel.hero.screens.MainMenuScreen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
+import br.lawtrel.hero.entities.items.Item;
+import br.lawtrel.hero.entities.items.ItemFactory;
+import br.lawtrel.hero.utils.PlayerState;
+import br.lawtrel.hero.utils.SaveManager;
+import com.badlogic.gdx.utils.Array;
 
 public class Hero extends Game {
     public MapManager mapManager;
@@ -25,10 +31,10 @@ public class Hero extends Game {
 
     @Override
     public void create() {
-        initializePlayer();
         //setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
-        mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+        setScreen(new MainMenuScreen(this));
+       // mapManager.changeMap(MapManager.MapType.WORLD_MAP);
 
     }
     private void initializePlayer() {
@@ -112,6 +118,132 @@ public class Hero extends Game {
         }
         return false;
     }
+
+    public void saveGame() {
+        if (player == null || player.getCharacter() == null) {
+            Gdx.app.error("Hero_saveGame", "Não é possível salvar, jogador é nulo.");
+            return;
+        }
+
+        PlayerState state = new PlayerState();
+        Character character = player.getCharacter();
+
+        // Popula o estado com os dados do personagem
+        state.name = character.getName();
+        state.level = character.getLevel();
+        state.exp = character.getExp();
+        state.maxHp = character.getMaxHp();
+        state.hp = character.getHp();
+        state.maxMp = character.getMaxMP();
+        state.mp = character.getMp();
+        state.attack = character.getAttack();
+        state.defense = character.getDefense();
+        state.magicAttack = character.getMagicAttack();
+        state.magicDefense = character.getMagicDefense();
+        state.speed = character.getSpeed();
+        state.luck = character.getLuck();
+
+        // Popula com dados do jogador (dinheiro, itens)
+        state.money = player.getMoney();
+
+        // Salva os IDs dos itens do inventário
+        state.inventoryItemIds = new Array<>();
+        for (Item item : player.getInventory()) {
+            state.inventoryItemIds.add(item.getId());
+        }
+
+        // Salva os IDs dos itens equipados
+        if (player.getEquippedWeapon() != null) state.equippedWeaponId = player.getEquippedWeapon().getId();
+        if (player.getEquippedArmor() != null) state.equippedArmorId = player.getEquippedArmor().getId();
+        if (player.getEquippedAccessory() != null) state.equippedAccessoryId = player.getEquippedAccessory().getId();
+
+        // Salva a posição (assumindo que o salvamento ocorre no mapa mundial)
+        // Idealmente, você saberia em qual mapa o jogador está.
+        state.lastMapId = "word.tmx"; // ID do seu mapa principal
+        state.playerX = player.getX();
+        state.playerY = player.getY();
+
+        SaveManager.saveGame(state);
+    }
+
+    public void startNewGame() {
+        Gdx.app.log("Hero", "Inicializando um novo jogo....");
+        initializePlayer();
+        continueGame();
+    }
+
+    public boolean loadGame() {
+        PlayerState state = SaveManager.loadGame();
+        if (state == null) {
+            return false; // Nenhum save encontrado
+        }
+
+        try {
+            // Recria o Character com os dados salvos
+            Character loadedCharacter = new CharacterBuilder()
+                .setName(state.name)
+                .setLevel(state.level)
+                .setStartingExp(state.exp)
+                .setMaxHp(state.maxHp)
+                .setMaxMP(state.maxMp)
+                .setAttack(state.attack)
+                .setDefense(state.defense)
+                .setMagicAttack(state.magicAttack)
+                .setMagicDefense(state.magicDefense)
+                .setSpeed(state.speed)
+                .setLuck(state.luck)
+                .setStrategy(new PhysicalAttackStrategy()) // Estratégia padrão
+                .build();
+            // Ajusta HP e MP atuais
+            loadedCharacter.heal(state.hp); // Usa heal para definir o HP atual sem exceder o máximo
+            loadedCharacter.restoreMp(state.mp);
+
+            // Recria o Player com o personagem carregado
+            this.player = new PlayerBuilder()
+                .setPosition(state.playerX, state.playerY)
+                .setCharacter(loadedCharacter)
+                .loadAnimation("sprites/hero.png")
+                .build();
+
+            // Adiciona dinheiro
+            this.player.addMoney(state.money);
+
+            // Recria e adiciona os itens do inventário a partir dos IDs
+            if (state.inventoryItemIds != null) {
+                for (String itemId : state.inventoryItemIds) {
+                    this.player.addItem(ItemFactory.createItem(itemId));
+                }
+            }
+
+            // Recria e equipa os itens
+            if (state.equippedWeaponId != null) this.player.equipItem(ItemFactory.createItem(state.equippedWeaponId));
+            if (state.equippedArmorId != null) this.player.equipItem(ItemFactory.createItem(state.equippedArmorId));
+            if (state.equippedAccessoryId != null) this.player.equipItem(ItemFactory.createItem(state.equippedAccessoryId));
+
+            // Salva a posição carregada para ser usada pela WorldMapScreen
+            setPlayerLastWorldMapPosition(state.playerX, state.playerY, state.lastMapId);
+
+            Gdx.app.log("Hero_loadGame", "Progresso carregado para o jogador " + state.name);
+            return true;
+        } catch (Exception e) {
+            Gdx.app.error("Hero_loadGame", "Falha ao aplicar o estado do jogo carregado.", e);
+            // Se houver um erro ao aplicar o save (ex: save corrompido), retorne false
+            // para que um novo jogo seja iniciado.
+            this.player = null; // Garante que o jogador parcialmente carregado seja descartado
+            return false;
+        }
+    }
+    public void continueGame() {
+        if (player == null) {
+            Gdx.app.error("Hero", "Tentou continuar para o jogo, mas o jogador é nulo.");
+            // Volta para o menu principal como segurança
+            setScreen(new MainMenuScreen(this));
+            return;
+        }
+        Gdx.app.log("Hero", "Transicionando para o mapa mundial...");
+        mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+    }
+
 
 
     @Override
