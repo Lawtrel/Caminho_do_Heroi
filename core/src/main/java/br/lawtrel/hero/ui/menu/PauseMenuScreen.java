@@ -75,6 +75,7 @@ public class PauseMenuScreen extends ScreenAdapter {
         statusSection = new StatusSection(game, skin);
         itemsSection = new ItemsSection(game, skin);
         equipmentSection = new EquipmentSection(game, skin);
+        itemsSection.setSiblingSections(statusSection, equipmentSection);
 
         statusTab = new TextButton("Status", skin, "nes-tab");
         itemsTab = new TextButton("Itens", skin, "nes-tab");

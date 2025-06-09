@@ -9,19 +9,19 @@ public class Equipment {
 
     // Métodos para equipar
     public void equipWeapon(Item weapon) {
-        if(weapon == null || weapon.getType() != Item.Type.WEAPON) {
+        if(weapon == null || weapon.getType() == Item.Type.WEAPON) {
             this.weapon = weapon;
         }
     }
 
     public void equipArmor(Item armor) {
-        if(armor == null || armor.getType() != Item.Type.ARMOR) {
+        if(armor == null || armor.getType() == Item.Type.ARMOR) {
             this.armor = armor;
         }
     }
 
     public void equipAccessory(Item acessory) {
-        if(acessory == null || acessory.getType() != Item.Type.ACCESSORY) {
+        if(acessory == null || acessory.getType() == Item.Type.ACCESSORY) {
             this.accessory = acessory;
         }
     }

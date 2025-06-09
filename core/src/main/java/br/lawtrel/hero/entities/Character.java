@@ -9,6 +9,7 @@ import br.lawtrel.hero.entities.items.Item;
 import br.lawtrel.hero.entities.items.drops.DropTableEntry;
 import br.lawtrel.hero.magic.Grimoire;
 import br.lawtrel.hero.magic.Magics;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +32,16 @@ public class Character implements Disposable {
     private int luck;
 
     // Modificadores de equipamentos
-    private int attackModifier;
-    private int defenseModifier;
-    private int magicAttackModifier;
-    private int magicDefenseModifier;
-    private int speedModifier;
-    private int luckModifier;
+    private int attackModifier = 0;
+    private int defenseModifier = 0;
+    private int magicAttackModifier = 0;
+    private int magicDefenseModifier = 0;
+    private int speedModifier = 0;
+    private int luckModifier = 0;
+
+    // Modificadores temporários de stats (para buffs/debuffs)
+    private int temporaryAttackModifier = 0;
+    private int temporaryDefenseModifier  = 0;
 
     // Progressão
     private int exp;
@@ -48,9 +53,7 @@ public class Character implements Disposable {
 
     //Status e efeitos
     private List<StatusEffect> activeStatusEffects = new ArrayList<>();
-    // Modificadores temporários de stats (para buffs/debuffs)
-    private int temporaryAttackModifier = 0;
-    private int temporaryDefenseModifier = 0;
+
 // ... adicione outros conforme necessário (magicAttack, speed, etc.)
     private ElementalAffinity elementalAffinity;
 
@@ -105,6 +108,19 @@ public class Character implements Disposable {
         this.visualAnchorYOffset = visualAnchorYOffset;
 
 
+    }
+
+    public void updateStatsFromEquipment() {
+        if (this.equipment == null) this.equipment = new Equipment();
+
+        this.attackModifier = equipment.getTotalAttackBonus();
+        this.defenseModifier = equipment.getTotalDefenseBonus();
+        magicAttackModifier = 0;
+        magicDefenseModifier = 0;
+        speedModifier = 0;
+        luckModifier = 0;
+
+        Gdx.app.log("Character", name + " stats updated. ATK Bonus: " + attackModifier + ", DEF Bonus: " + defenseModifier);
     }
 
 
@@ -235,9 +251,7 @@ public class Character implements Disposable {
         if (mp < 0) mp = 0; //verifica se o valor de mp é menor que zero para iguala-lo a zero
     }
 
-    public void restoreMp(int amount) {
-        this.mp = Math.min(this.maxMP, this.mp + amount);
-    }
+
 
     //Metodo para retornar se character está vivo ou não
     public boolean isAlive() {
@@ -245,8 +259,14 @@ public class Character implements Disposable {
     }
 
     public void heal(int amount) {
+        if (amount < 0) return;
         this.hp = Math.min(this.maxHp, this.hp + amount);
     }
+    public void restoreMp(int amount) {
+        if (amount < 0 ) return;
+        this.mp = Math.min(this.maxMP, this.mp + amount);
+    }
+
 
     // --- Sistema de Status ---
     public void applyStatusEffect(StatusEffect effectInstance, Character caster) {

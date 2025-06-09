@@ -1,6 +1,7 @@
 package br.lawtrel.hero.entities;
 
 import br.lawtrel.hero.entities.items.Item;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,7 +27,6 @@ public class Player{
     private boolean moving;
     private final Character character;
     private final List<Item> inventory;
-    private final Equipment equipment;
     private int money;
     private boolean isInBattleView;
     private String currentArea;
@@ -51,7 +51,6 @@ public class Player{
         this.moving = false;
         this.isInBattleView = false;
         this.inventory = new ArrayList<>();
-        this.equipment = new Equipment();
         this.money = 0;
         this.currentFrame = walkDown.getKeyFrames()[1];
     }
@@ -129,9 +128,6 @@ public class Player{
         batch.draw(currentFrame, screenX, screenY);
     }
 
-
-
-
     public Rectangle getBounds() {
         if (currentFrame == null && walkDown != null && walkDown.getKeyFrames().length > 0) {
             TextureRegion fallbackFrame = walkDown.getKeyFrame(0);
@@ -176,43 +172,60 @@ public class Player{
         inventory.add(item);
     }
 
+    public boolean useItem(Item item) {
+        if (item == null || item.getType() != Item.Type.CONSUMABLE || !inventory.contains(item)) return false;
+        character.heal(item.getHpRecovery());
+        character.restoreMp(item.getMpRecovery());
+        inventory.remove(item);
+        Gdx.app.log("Player", "Usou o item: " + item.getName());
+        return true;
+    }
 
-    public boolean equipItem(Item item) {
-        if (!inventory.contains(item)) return false;
-        boolean equipped = false;
+
+
+    public void equip(Item item) {
+        if (item == null || !inventory.contains(item)) return;
+        Equipment equipment = character.getEquipment();
+        if (equipment == null ) return;
+        Item previouslyEquippedItem = null;
+
         switch (item.getType()) {
             case WEAPON:
+                previouslyEquippedItem = equipment.getWeapon();
                 equipment.equipWeapon(item);
-                equipped = true;
                 break;
             case ARMOR:
+                previouslyEquippedItem = equipment.getArmor();
                 equipment.equipArmor(item);
-                equipped = true;
                 break;
             case ACCESSORY:
+                previouslyEquippedItem = equipment.getAccessory();
                 equipment.equipAccessory(item);
-                equipped = true;
                 break;
             default:
+                Gdx.app.log("Player", "Tentativa de equipar item nao equipavel: " + item.getName());
                 break;
         }
-        if (equipped) {
-            // Atualizar stats do personagem se necessário (Character precisaria de um método updateStatsFromEquipment())
-            // character.updateStatsFromEquipment(equipment);
+        inventory.remove(item);
+        //Se havia um item equipado antes, ele é devolvido ao inventário
+        if (previouslyEquippedItem != null) {
+            inventory.add(previouslyEquippedItem);
         }
-        return equipped;
+        //Avisa o Character para recalcular os bônus de status!
+            character.updateStatsFromEquipment();
+        Gdx.app.log("Player", "Equipou: " + item.getName());
     }
 
     public Item getEquippedWeapon() {
-        return equipment.getWeapon();
+        return character.getEquipment().getWeapon();
     }
 
     public Item getEquippedArmor() {
-        return equipment.getArmor();
+        return character.getEquipment().getArmor();
     }
 
     public Item getEquippedAccessory() {
-        return equipment.getAccessory();
+        return character.getEquipment().getAccessory();
     }
 
     public List<Item> getInventory() {

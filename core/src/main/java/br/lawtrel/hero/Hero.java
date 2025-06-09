@@ -216,9 +216,9 @@ public class Hero extends Game {
             }
 
             // Recria e equipa os itens
-            if (state.equippedWeaponId != null) this.player.equipItem(ItemFactory.createItem(state.equippedWeaponId));
-            if (state.equippedArmorId != null) this.player.equipItem(ItemFactory.createItem(state.equippedArmorId));
-            if (state.equippedAccessoryId != null) this.player.equipItem(ItemFactory.createItem(state.equippedAccessoryId));
+            if (state.equippedWeaponId != null) this.player.equip(ItemFactory.createItem(state.equippedWeaponId));
+            if (state.equippedArmorId != null) this.player.equip(ItemFactory.createItem(state.equippedArmorId));
+            if (state.equippedAccessoryId != null) this.player.equip(ItemFactory.createItem(state.equippedAccessoryId));
 
             // Salva a posição carregada para ser usada pela WorldMapScreen
             setPlayerLastWorldMapPosition(state.playerX, state.playerY, state.lastMapId);
