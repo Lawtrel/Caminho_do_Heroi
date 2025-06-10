@@ -1,6 +1,5 @@
 package br.lawtrel.hero.entities;
 
-import br.lawtrel.hero.magic.Grimoire;
 import br.lawtrel.hero.magic.MagicBuilder;
 
 public class MagicalAttackStrategy  implements CharacterStrategy, Skill{
@@ -21,6 +20,7 @@ public class MagicalAttackStrategy  implements CharacterStrategy, Skill{
         return 0;
     }
 
+    @Override
     public MagicBuilder getMpCost(MagicBuilder mP){
         return mP;
     }

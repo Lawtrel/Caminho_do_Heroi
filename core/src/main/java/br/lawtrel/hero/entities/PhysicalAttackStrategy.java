@@ -1,5 +1,7 @@
 package br.lawtrel.hero.entities;
 
+import br.lawtrel.hero.magic.MagicBuilder;
+
 public class PhysicalAttackStrategy implements CharacterStrategy, Skill {
     @Override
     public void attack(Character self, Character target) {
@@ -14,6 +16,11 @@ public class PhysicalAttackStrategy implements CharacterStrategy, Skill {
     @Override
     public int getMpCost() {
         return 0; // Ataque físico não custa MP
+    }
+
+    @Override
+    public MagicBuilder getMpCost(MagicBuilder mP) {
+        return null;
     }
 
     @Override

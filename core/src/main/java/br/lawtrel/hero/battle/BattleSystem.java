@@ -135,17 +135,26 @@ public class BattleSystem {
         }
     }
 
+    //Seleciona um tipo de ação a ser feita, difere do estado da ação
+    public enum ActionType{
+        NONE, ATTACK, MAGIC, ITEM, RUN
+    }
+    private ActionType currentAction = ActionType.NONE;//Torna padrão a opção NONE
+
+
     public void playerSelectAction(int actionIndex) {
         if (state != BattleState.PLAYER_TURN) return; // Só permite selecionar ação no turno do jogador
 
         this.selectedOption = actionIndex;
         if (actionIndex == 0) { // ATACAR
+            currentAction = ActionType.ATTACK;//Define a ação de ataque
             setState(BattleState.PLAYER_TARGET_SELECT);
             battleMessage = "Selecione um alvo para ATACAR.";
         } else if (actionIndex == 1) { // MAGIA
             if (player.getCharacter().getGrimoire() != null &&
                 player.getCharacter().getGrimoire().getSpellCount() > 0) {
                 magicMenu.setMagics(player.getCharacter().getGrimoire().getAvailableSpells());
+                currentAction = ActionType.MAGIC;//Define a ação de magia
                 setState(BattleState.PLAYER_MAGIC_SELECT);
                 battleMessage = "Selecione uma MAGIA.";
             } else {
@@ -155,12 +164,14 @@ public class BattleSystem {
         } else if (actionIndex == 2) { // ITENS
             if (!player.getInventory().isEmpty()) {
                 itemMenu.setItems(player.getInventory());
+                currentAction = ActionType.ITEM; //Seleciona a ação de item
                 setState(BattleState.PLAYER_ITEM_SELECT);
                 battleMessage = "Selecione um ITEM.";
             } else {
                 battleMessage = "Nenhum item disponível!";
             }
         } else if (actionIndex == 3) { // FUGIR
+            currentAction = ActionType.RUN; //Define a ação de fugir
             attemptEscape();
         }
     }
@@ -306,6 +317,9 @@ public class BattleSystem {
         } else {
             checkBattleEnd(); // Força uma checagem de fim de batalha.
         }
+
+        //Reseta a ação para NONE
+        currentAction = ActionType.NONE;
     }
 
     private void checkBattleEnd() {
@@ -403,6 +417,7 @@ public class BattleSystem {
             setState(BattleState.PLAYER_TURN);
             battleMessage = player.getCharacter().getName() + " - Escolha uma ação";
             selectedOption = 0; // Reseta a seleção do menu
+            currentAction = ActionType.NONE; //Limpa a ação pendente
         } else {
             setState(BattleState.ENEMY_TURN);
             // battleMessage será definido em updateEnemyTurn
@@ -420,6 +435,7 @@ public class BattleSystem {
     public TargetSelector getTargetSelector() {
         return targetSelector;
     }
+    public ActionType getCurrentAction(){return currentAction;}
 
     public BattleMagicMenu getMagicMenu() {
         return magicMenu;

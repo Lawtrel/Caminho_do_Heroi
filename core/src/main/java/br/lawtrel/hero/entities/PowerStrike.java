@@ -1,5 +1,7 @@
 package br.lawtrel.hero.entities;
 
+import br.lawtrel.hero.magic.MagicBuilder;
+
 public class PowerStrike implements Skill {
     @Override
     public void use(Character user, Character target) {
@@ -10,6 +12,11 @@ public class PowerStrike implements Skill {
     @Override
     public int getMpCost() {
         return 5;
+    }
+
+    @Override
+    public MagicBuilder getMpCost(MagicBuilder mP) {
+        return null;
     }
 
     @Override

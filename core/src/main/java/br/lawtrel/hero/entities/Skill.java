@@ -1,8 +1,13 @@
 package br.lawtrel.hero.entities;
 
+import br.lawtrel.hero.magic.MagicBuilder;
+
 public interface Skill {
     void use(Character user, Character target);
     int getMpCost();
+
+    MagicBuilder getMpCost(MagicBuilder mP);
+
     String getName();
     SkillType getType();
 

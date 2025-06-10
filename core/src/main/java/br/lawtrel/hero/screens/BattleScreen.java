@@ -201,7 +201,7 @@ public class BattleScreen implements Screen, InputProcessor {
             battleSystem.getTargetSelector().previousTarget(battleSystem.getEnemies().toArray(Enemy.class));
         } else if (keycode == Input.Keys.ENTER) {
             if (battleSystem.getState() == BattleSystem.BattleState.PLAYER_TARGET_SELECT) {
-                if (battleSystem.getState() == BattleSystem.BattleState.PLAYER_MAGIC_SELECT) {
+                if (battleSystem.getCurrentAction() == BattleSystem.ActionType.MAGIC) {
                     battleSystem.playerCastSpell(
                         battleSystem.getTargetSelector().getSelectedTarget(),
                         battleSystem.getMagicMenu().getSelectedMagic()

@@ -67,6 +67,11 @@ public class Magics implements Skill {
     }
 
     @Override
+    public MagicBuilder getMpCost(MagicBuilder mP) {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return magicName;
     }
