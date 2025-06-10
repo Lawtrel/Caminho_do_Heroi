@@ -18,6 +18,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class ShopScreen extends ScreenAdapter {
     private Hero game;
@@ -27,6 +29,9 @@ public class ShopScreen extends ScreenAdapter {
     private OrthogonalTiledMapRenderer mapRenderer;
     private SpriteBatch batch;
     private Player player;
+    private Viewport viewport;
+    private static final float WORLD_WIDTH = 400;
+    private static final float WORLD_HEIGHT = 240;
 
 
     public ShopScreen(Hero game, MapManager mapManager) {
@@ -37,23 +42,16 @@ public class ShopScreen extends ScreenAdapter {
     @Override
     public void show() {
         batch = new SpriteBatch();
-
         //Carrega o mapa
         map = new TmxMapLoader().load("maps/shop.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
-
+        player = game.getPlayer();
         //Ponto de Spawn
         Vector2 spawn = findSpawnPoint(map);
 
-        //Criar o Player com o builder
-        player = new PlayerBuilder()
-            .setPosition(spawn.x, spawn.y)
-            .loadAnimation("sprites/hero.png")
-            .build();
-
         //Cria a camera do jogo
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 250, 250); // ajuste baseado tamanho do map
+        viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         camera.position.set(player.getX(), player.getY(), 0); // centraliza no player
         camera.update();
     }
@@ -127,6 +125,11 @@ public class ShopScreen extends ScreenAdapter {
         return new Vector2(100, 100); // valor padrão caso não encontre
 
     }
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true); // true para centralizar a câmera
+    }
+
     @Override
     public void dispose() {
         batch.dispose();

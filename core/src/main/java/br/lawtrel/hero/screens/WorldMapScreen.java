@@ -20,6 +20,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 //Mapa Principal do Game
 public class WorldMapScreen extends ScreenAdapter {
@@ -30,6 +32,7 @@ public class WorldMapScreen extends ScreenAdapter {
     private OrthogonalTiledMapRenderer mapRenderer;
     private SpriteBatch batch;
     private Player player;
+    private Viewport viewport;
 
     private final int TILE_SIZE = 16; // Tamanho das texturas
     private final int MAP_WIDTH_TILES = 100;
@@ -37,6 +40,9 @@ public class WorldMapScreen extends ScreenAdapter {
     private final int MAP_WIDTH = MAP_WIDTH_TILES * TILE_SIZE;
     private final int MAP_HEIGHT = MAP_HEIGHT_TILES * TILE_SIZE;
     private final String MAP_ID = "maps/word.tmx";
+
+    private static final float WORLD_WIDTH = 800;
+    private static final float WORLD_HEIGHT = 480;
 
     private float battleTimer  = 0;
     private static final float BATTLE_CHECK_INTERVAL = 5f; // Verifica a cada 5 segundos
@@ -75,9 +81,11 @@ public class WorldMapScreen extends ScreenAdapter {
 
         //Cria a camera do jogo
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         camera.position.set(player.getX(), player.getY(), 0);
-        camera.update();
+        //camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //camera.position.set(player.getX(), player.getY(), 0);
+        //camera.update();
     }
 
     @Override
@@ -109,10 +117,14 @@ public class WorldMapScreen extends ScreenAdapter {
         player.setPosition(clampedX, clampedY);
 
         //atualiza a camera para seguir hero
-        float camX = MathUtils.clamp(player.getX(), camera.viewportWidth / 2, MAP_WIDTH - camera.viewportWidth / 2);
-        float camY = MathUtils.clamp(player.getY(), camera.viewportHeight / 2, MAP_HEIGHT - camera.viewportHeight / 2);
+        float camX = MathUtils.clamp(player.getX(), viewport.getWorldWidth() / 2f, MAP_WIDTH - viewport.getWorldWidth() / 2f);
+        float camY = MathUtils.clamp(player.getY(), viewport.getWorldHeight() / 2f, MAP_HEIGHT - viewport.getWorldHeight() / 2f);
         camera.position.set(camX, camY, 0);
         camera.update();
+
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        viewport.apply();
 
         //Renderizar o mapa
         mapRenderer.setView(camera);
@@ -212,6 +224,10 @@ public class WorldMapScreen extends ScreenAdapter {
     }
 
     @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true); // true para centralizar a câmera
+    }
+
     public void dispose() {
         batch.dispose();
         map.dispose();
