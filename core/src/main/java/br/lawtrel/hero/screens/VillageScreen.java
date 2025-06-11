@@ -31,8 +31,8 @@ public class VillageScreen extends ScreenAdapter {
     private final String MAP_ID = "maps/vila.tmx";
 
     // Adicione estas constantes com as dimensões REAIS do seu mapa vila.tmx
-    private final int MAP_WIDTH_PIXELS = 100 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
-    private final int MAP_HEIGHT_PIXELS = 100 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
+    private final int MAP_WIDTH_PIXELS = 100 * 32 ; // Exemplo: 100 tiles * 16 pixels/tile
+    private final int MAP_HEIGHT_PIXELS = 100 * 32 ; // Exemplo: 100 tiles * 16 pixels/tile
 
     public VillageScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -80,6 +80,10 @@ public class VillageScreen extends ScreenAdapter {
             // pois a tela está mudando para o PauseMenuScreen.
         }
 
+        //Salva a posição anterior do jogador antes de atualizar
+        float oldPLayerX = player.getX();
+        float oldPlayerY = player.getY();
+
         //atualizar o hero
         boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
         boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
@@ -101,6 +105,9 @@ public class VillageScreen extends ScreenAdapter {
         camera.update();
         */
 
+        //Analisa a colisão dos objetos
+        checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
+
 
         //Camera
         camera = new OrthographicCamera();
@@ -112,7 +119,7 @@ public class VillageScreen extends ScreenAdapter {
         //Renderizar o mapa
         mapRenderer.setView(camera);
         mapRenderer.render();
-        checkDoorCollision();
+        //checkDoorCollision();
 
         //Renderizar o Hero
         batch.setProjectionMatrix(camera.combined);
@@ -122,6 +129,90 @@ public class VillageScreen extends ScreenAdapter {
 
     }
 
+    private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY){
+        //Camada de Entradas
+        MapLayer entranceLayer = map.getLayers().get("Entradas");
+        if(entranceLayer != null){
+            handleTransitionCollisions(entranceLayer); //Reutiliza função de transição
+        } else{
+            Gdx.app.log("VillageScreen", "Camada 'Entradas' não  encontrada");
+        }
+
+        //Camada de Colisões
+        MapLayer collisionLayer = map.getLayers().get("Colisoes");
+        if (collisionLayer != null){
+            handleSolidObjectCollisions(collisionLayer, oldPlayerX, oldPlayerY);
+        } else{
+            Gdx.app.log("VillageScreen", "Camada 'Colisoes' não encontrada");
+        }
+
+        //Camada de Ávores
+        MapLayer treesLayer = map.getLayers().get("Arvores");
+        if(treesLayer != null){
+            handleSolidObjectCollisions(treesLayer, oldPlayerX, oldPlayerY);
+        } else{
+            Gdx.app.log("VillageScreen", "Camada 'Arvores' não encontrada");
+        }
+    }
+
+    //Metodo generico para lidar com colisões que resultam em transições
+    private void handleTransitionCollisions(MapLayer layer){
+        Rectangle playerBounds = player.getBounds();
+
+        for (MapObject object : layer.getObjects()){
+            if(object instanceof RectangleMapObject){
+                Rectangle transitionRect = ((RectangleMapObject) object).getRectangle();
+
+                if(playerBounds.overlaps(transitionRect)){
+                    String targetMap = object.getProperties().get("target", String.class);
+                    String targetSpawn = object.getProperties().get("target_spawn", String.class);
+
+                    if(targetMap != null && targetSpawn != null){
+                        try{
+                            float spawnX = Float.parseFloat(targetSpawn.split(",")[0]);
+                            float spawnY = Float.parseFloat(targetSpawn.split(",")[1]);
+                            String mapFileName;
+
+                            //Lógica para determinar o nome do destino
+                            switch (targetMap.toLowerCase()){
+                                case "shop":
+                                    mapFileName = "maps/shop.tmx";
+                                    break;
+
+                                case "world":
+                                    mapFileName = "maps/word.tmx";
+                                    break;
+
+                                default:
+                                    return; //Já logado acima, apenas dá o retornr
+                            }
+                            return; //Retorna após a transição ter sucesso
+                        } catch (NumberFormatException e){
+                            Gdx.app.error("VillageScreen","Erro ao parsear target_spawn: " + targetSpawn, e);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void handleSolidObjectCollisions(MapLayer layer, float oldPlayerX, float oldPlayerY){
+        Rectangle playerBounds = player.getBounds();
+
+        for (MapObject object : layer.getObjects()){
+            if (object instanceof RectangleMapObject){
+                Rectangle objectRect = ((RectangleMapObject) object).getRectangle();
+
+                if(playerBounds.overlaps(objectRect)){
+                    player.setPosition(oldPlayerX, oldPlayerY);
+                    return;//Retorna após primeira colisão, para evitar bugs de textura, como o persoangem grudar
+                }
+            }
+        }
+    }
+
+    /*
     private void checkDoorCollision() {
         MapLayer mapLayer = map.getLayers().get("Colisoes");
 
@@ -140,6 +231,7 @@ public class VillageScreen extends ScreenAdapter {
                     String targetMap = object.getProperties().get("target", String.class);
                     String targetSpaw = object.getProperties().get("target_spaw", String.class);
 
+
                    if (targetMap != null){
                        //Salvar posição do jogador antes de trocar de mapa
                        game.setPlayerLastWorldMapPosition(
@@ -157,7 +249,7 @@ public class VillageScreen extends ScreenAdapter {
                 }
             }
         }
-    }
+    }*/
 
     @Override
     public void dispose() {
@@ -167,7 +259,7 @@ public class VillageScreen extends ScreenAdapter {
     }
 
     private Vector2 spawnPoint(TiledMap map){
-        MapLayer objectLayer = map.getLayers().get("SpawnPoint");
+        MapLayer objectLayer = map.getLayers().get("Spawn");
         if(objectLayer != null){
             for (MapObject object : objectLayer.getObjects()){
                 if("spawnPoint".equals(object.getName()) && object instanceof RectangleMapObject){
@@ -176,6 +268,7 @@ public class VillageScreen extends ScreenAdapter {
                 }
             }
         }
+        Gdx.app.log("VillageScreen", "Objeto 'spawnPoint' não encontrado na camada 'Spawn'. Usando valor padrão.");
         return new Vector2(100, 100); // valor padrão caso não encontre
     }
 }
