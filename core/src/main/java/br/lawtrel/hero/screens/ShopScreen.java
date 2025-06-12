@@ -106,6 +106,10 @@ public class ShopScreen extends ScreenAdapter {
                             case "world":
                                 mapManager.changeMap(MapManager.MapType.WORLD_MAP);
                                 return;
+
+                            case "vila":
+                                mapManager.changeMap(MapManager.MapType.VILLAGE);
+                                return;
                         }
                     }
                 }

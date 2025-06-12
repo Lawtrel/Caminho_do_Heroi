@@ -131,11 +131,11 @@ public class VillageScreen extends ScreenAdapter {
 
     private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY){
         //Camada de Entradas
-        MapLayer entranceLayer = map.getLayers().get("Entradas");
-        if(entranceLayer != null){
-            handleTransitionCollisions(entranceLayer); //Reutiliza função de transição
+        MapLayer doorLayer = map.getLayers().get("Portas");
+        if(doorLayer != null){
+            handleTransitionCollisions(doorLayer); //Reutiliza função de transição
         } else{
-            Gdx.app.log("VillageScreen", "Camada 'Entradas' não  encontrada");
+            Gdx.app.log("VillageScreen", "Camada 'Portas' não  encontrada");
         }
 
         //Camada de Colisões
@@ -167,31 +167,36 @@ public class VillageScreen extends ScreenAdapter {
                     String targetMap = object.getProperties().get("target", String.class);
                     String targetSpawn = object.getProperties().get("target_spawn", String.class);
 
-                    if(targetMap != null && targetSpawn != null){
+                    if(targetMap != null  && targetSpawn != null){
                         try{
                             float spawnX = Float.parseFloat(targetSpawn.split(",")[0]);
                             float spawnY = Float.parseFloat(targetSpawn.split(",")[1]);
                             String mapFileName;
 
+                            //float spawnX = Float.parseFloat(targetMap.split(",")[0]);
+                            //float spawnY = Float.parseFloat(targetMap.split(",")[1]);
+
                             //Lógica para determinar o nome do destino
                             switch (targetMap.toLowerCase()){
                                 case "shop":
-                                    mapFileName = "maps/shop.tmx";
+                                    //mapFileName = "maps/shop.tmx";
+                                    mapManager.changeMap(MapManager.MapType.SHOP);
                                     break;
 
                                 case "world":
-                                    mapFileName = "maps/word.tmx";
+                                    //mapFileName = "maps/word.tmx";
+                                    mapManager.changeMap(MapManager.MapType.WORLD_MAP);
                                     break;
 
                                 default:
-                                    return; //Já logado acima, apenas dá o retornr
+                                    return; //Já logado acima, apenas dá o retorn
                             }
                             return; //Retorna após a transição ter sucesso
                         } catch (NumberFormatException e){
                             Gdx.app.error("VillageScreen","Erro ao parsear target_spawn: " + targetSpawn, e);
+                            //Gdx.app.error("VillageScreen","Erro ao parsear target: " + targetMap, e);
                         }
                     }
-
                 }
             }
         }

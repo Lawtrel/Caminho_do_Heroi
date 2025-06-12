@@ -38,6 +38,5 @@
     <property name="target" value="world"/>
    </properties>
   </object>
-  <object id="11" x="209" y="113.667" height="0.333333"/>
  </objectgroup>
 </map>
