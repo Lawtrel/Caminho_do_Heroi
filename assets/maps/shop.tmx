@@ -18,8 +18,8 @@
 0,0,2860,2861,2862,2863,0,0,0
 </data>
  </layer>
- <objectgroup id="5" name="spawn">
-  <object id="13" name="spawn" x="68.9091" y="98.3636">
+ <objectgroup id="5" name="Spawn">
+  <object id="13" name="spawn_from_vila" x="64.1321" y="108.541">
    <point/>
   </object>
  </objectgroup>
@@ -30,12 +30,11 @@
   <object id="5" x="0.25" y="0.25" width="128.75" height="49.75"/>
   <object id="6" x="0.5" y="50.25" width="14.5" height="91.5"/>
   <object id="7" x="15.5" y="98.75" width="31" height="31.5"/>
-  <object id="8" x="32.25" y="50.25" width="77.75" height="30.5"/>
  </objectgroup>
  <objectgroup id="4" name="Portas">
   <object id="10" x="47.1818" y="122.455" width="48.0909" height="10.0909">
    <properties>
-    <property name="target" value="world"/>
+    <property name="target" value="vila"/>
    </properties>
   </object>
  </objectgroup>

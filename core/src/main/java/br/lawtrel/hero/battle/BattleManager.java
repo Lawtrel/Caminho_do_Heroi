@@ -12,7 +12,6 @@ public class BattleManager {
     private Array<Enemy> enemies;
     private BattleSystem battleSystem;
     private BattleState currentState;
-    private final BattleHUD hud;
 
     // Constante para cálculo de experiência
     private static final int EXP_PER_LEVEL = 10;
@@ -20,7 +19,6 @@ public class BattleManager {
     public BattleManager(Player player) {
         this.player = player;
         this.enemies = new Array<>();
-        this.hud = new BattleHUD(null);
         this.currentState = BattleState.EXPLORATION;
     }
 

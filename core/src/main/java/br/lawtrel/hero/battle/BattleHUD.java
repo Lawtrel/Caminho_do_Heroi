@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 
@@ -38,17 +39,17 @@ public class BattleHUD {
 
     private static Texture whitePixel;
 
-    public BattleHUD(BattleSystem battleSystem) {
+    public BattleHUD(BattleSystem battleSystem, Skin skin) {
         this.battleSystem = battleSystem;
+        this.font = skin.getFont("font"); // Pega a fonte do uiskin.json
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 16;
-        this.font = generator.generateFont(parameter);
-        generator.dispose();
-
-
-        whitePixel = createWhitePixel();
+        if (whitePixel == null) {
+            Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+            pixmap.setColor(Color.WHITE);
+            pixmap.fill();
+            whitePixel = new Texture(pixmap);
+            pixmap.dispose();
+        }
     }
 
     public void render(SpriteBatch batch) {
@@ -189,6 +190,7 @@ public class BattleHUD {
     private void drawItemSelection(SpriteBatch batch, int x, int y) {
         font.setColor(NES_YELLOW);
         font.draw(batch, "SELECIONE O ITEM", x, y + 25);
+        battleSystem.getItemMenu().render(batch, font, x, y);
     }
 
     private void drawWindowBoxWithShadow(SpriteBatch batch, int x, int y, int width, int height) {
@@ -223,7 +225,6 @@ public class BattleHUD {
     }
 
     public void dispose() {
-        font.dispose();
         whitePixel.dispose();
     }
 

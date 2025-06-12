@@ -30,6 +30,7 @@ public class Player{
     private int money;
     private boolean isInBattleView;
     private String currentArea;
+    private float scale = 1.0f;
 
     Player(float x, float y, float speed,
            Animation<TextureRegion> walkDown, Animation<TextureRegion> walkLeft,
@@ -53,6 +54,10 @@ public class Player{
         this.inventory = new ArrayList<>();
         this.money = 0;
         this.currentFrame = walkDown.getKeyFrames()[1];
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 
     public void setPosition(float newX, float newY) {
@@ -121,21 +126,24 @@ public class Player{
     }
 
     public void render(SpriteBatch batch, float x, float y) {
-        batch.draw(currentFrame, x, y);
+        batch.draw(currentFrame, x, y, getWidth(), getHeight());
     }
 
     public void renderAt(SpriteBatch batch, float screenX, float screenY) {
-        batch.draw(currentFrame, screenX, screenY);
+        batch.draw(currentFrame, screenX, screenY, getWidth(), getHeight());
     }
 
     public Rectangle getBounds() {
-        if (currentFrame == null && walkDown != null && walkDown.getKeyFrames().length > 0) {
-            TextureRegion fallbackFrame = walkDown.getKeyFrame(0);
-            return new Rectangle(x, y, fallbackFrame.getRegionWidth(), fallbackFrame.getRegionHeight());
-        } else if (currentFrame == null) {
-            return new Rectangle(x, y, 32, 32); // Tamanho padrão se tudo falhar
-        }
-        return new Rectangle(x, y, currentFrame.getRegionWidth(), currentFrame.getRegionHeight());
+        return new Rectangle(x, y, getWidth(), getHeight());
+    }
+    public float getWidth() {
+        if (currentFrame == null) return 0;
+        return currentFrame.getRegionWidth() * scale;
+    }
+
+    public float getHeight() {
+        if (currentFrame == null) return 0;
+        return currentFrame.getRegionHeight() * scale;
     }
 
     private Animation<TextureRegion> getCurrentMapAnimation() {

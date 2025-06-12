@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="171">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="173">
  <tileset firstgid="1" name="10546" tilewidth="16" tileheight="16" tilecount="256" columns="16">
   <image source="../tileset/10546.png" width="256" height="256"/>
  </tileset>
@@ -93,22 +93,7 @@
   <object id="120" x="527.5" y="176.5" width="16" height="79.5"/>
  </objectgroup>
  <objectgroup id="2" name="Portas" offsetx="-2.125" offsety="54">
-  <object id="1" name="entrada" x="289.818" y="329.443" width="15.8182" height="16.3636">
-   <properties>
-    <property name="target" value="vila"/>
-   </properties>
-  </object>
-  <object id="11" name="saida" x="290" y="307.75" width="15.875" height="16.75">
-   <properties>
-    <property name="target" value="word"/>
-   </properties>
-  </object>
-  <object id="19" name="entrada_loja" x="178.75" y="122.25" width="62.25" height="15.375">
-   <properties>
-    <property name="target" value="shop"/>
-   </properties>
-  </object>
-  <object id="131" name="entrada_loja_armadura" x="97.125" y="121.5" width="65.5" height="16.5">
+  <object id="19" name="shop" x="178.083" y="121.583" width="62.25" height="15.375">
    <properties>
     <property name="target" value="shop"/>
    </properties>
@@ -117,15 +102,19 @@
   <object id="133" name="entrada_loja_magia2" x="82.625" y="25" width="14.5" height="19.5"/>
   <object id="134" name="entrada_loja2" x="417.625" y="25" width="15.5" height="19"/>
   <object id="135" name="entrada_loja3" x="467.125" y="121" width="14" height="19"/>
-  <object id="150" name="saida2" x="290.125" y="-39" width="16" height="15">
+  <object id="150" name="saida" x="290.458" y="-37.6667" width="16" height="15">
    <properties>
-    <property name="target" value="word"/>
+    <property name="target" value="world"/>
    </properties>
   </object>
-  <object id="165" name="entrada_taberna" x="178.125" y="250" width="81" height="16.5"/>
+  <object id="172" name="saida" x="290.125" y="347.167" width="16" height="15">
+   <properties>
+    <property name="target" value="world"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="5" name="Spawn" offsetx="-0.5" offsety="-2.5">
-  <object id="137" name="spawnPoint" x="298" y="202">
+  <object id="137" name="spawnPoint" x="295.667" y="310">
    <properties>
     <property name="target_spawn" value="vila"/>
    </properties>

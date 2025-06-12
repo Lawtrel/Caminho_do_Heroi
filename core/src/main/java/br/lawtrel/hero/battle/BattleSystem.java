@@ -5,15 +5,18 @@ import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.items.Item;
 import br.lawtrel.hero.entities.items.ItemFactory;
 import br.lawtrel.hero.entities.items.drops.DropTableEntry;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BattleSystem {
+public class BattleSystem implements Disposable {
     public void setBattleMessage(String battleMessage) {
         this.battleMessage = battleMessage;
     }
@@ -24,6 +27,7 @@ public class BattleSystem {
         PLAYER_TARGET_SELECT,
         PLAYER_MAGIC_SELECT,
         PLAYER_ITEM_SELECT,
+        ACTION_COMPLETE,
         ENEMY_TURN,
         VICTORY,
         DEFEAT
@@ -46,6 +50,7 @@ public class BattleSystem {
     private final Array<Enemy> enemies;
     private Queue<Character> turnOrder;
     private final BattleHUD hud;
+    private final Skin skin;
     private final TargetSelector targetSelector;
     private final BattleMagicMenu magicMenu;
     private final BattleItemMenu itemMenu;
@@ -60,7 +65,8 @@ public class BattleSystem {
         this.player = player;
         this.enemies = enemies;
         this.turnOrder = new Queue<>();
-        this.hud = new BattleHUD(this);
+        this.skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+        this.hud = new BattleHUD(this, this.skin);
         this.battleMessage = "O que deseja fazer?";
         this.targetSelector = new TargetSelector();
         this.magicMenu = new BattleMagicMenu();
@@ -184,7 +190,7 @@ public class BattleSystem {
             battleMessage = player.getCharacter().getName() + " atacou " + target.getName();
             handleEnemyDefeated(target); // mudar o estado para VICTORY
             if (state != BattleState.VICTORY) { // Só avança o turno se a batalha não acabou
-                advanceTurn();
+                setState(BattleState.ACTION_COMPLETE);
             }
         }
     }
@@ -197,13 +203,25 @@ public class BattleSystem {
             battleMessage = player.getCharacter().getName() + " usou " + spell.getName() + " em " + target.getName();
             handleEnemyDefeated(target);
             if (state != BattleState.VICTORY) {
-                advanceTurn();
+                setState(BattleState.ACTION_COMPLETE);
             }
         } else {
             battleMessage = "Alvo ou magia inválida.";
             setState(BattleState.PLAYER_TURN); // Volta para seleção de ação principal
         }
     }
+    public void playerUseItem(Item item) {
+        boolean wasUsed = player.useItem(item);
+        if (wasUsed) {
+            battleMessage = player.getCharacter().getName() + " usou " + item.getName() + ".";
+            setState(BattleState.ACTION_COMPLETE);
+        } else {
+            battleMessage = "Nao e possivel usar este item.";
+            // Volta para a seleção de itens se o uso falhar
+            setState(BattleState.PLAYER_ITEM_SELECT);
+        }
+    }
+
 
     private void executeEnemyAction(Enemy enemy) {
         boolean shouldCastSpell = Math.random() < ENEMY_SPELL_CHANCE &&
@@ -288,7 +306,7 @@ public class BattleSystem {
         }
     }
 
-    private void advanceTurn() {
+    public void advanceTurn() {
         if (state == BattleState.VICTORY || state == BattleState.DEFEAT) {
             return; // Batalha já terminou
         }
@@ -452,4 +470,14 @@ public class BattleSystem {
     public void setSelectedMagic(Skill spell) {
         this.magicMenu.setSelectedMagic(spell);
     }
+    @Override
+    public void dispose() {
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (hud != null) {
+            hud.dispose();
+        }
+    }
+
 }

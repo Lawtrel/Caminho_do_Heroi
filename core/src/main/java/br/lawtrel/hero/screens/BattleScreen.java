@@ -1,6 +1,7 @@
 package br.lawtrel.hero.screens;
 
 import br.lawtrel.hero.Hero;
+import br.lawtrel.hero.battle.BattleEventCallback;
 import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.Enemy;
 import br.lawtrel.hero.entities.Player;
@@ -15,17 +16,20 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
+import br.lawtrel.hero.battle.VFX;
+import br.lawtrel.hero.battle.VisualEffect;
 import com.badlogic.gdx.utils.Array;
 import br.lawtrel.hero.entities.items.Item;
 import java.util.List;
 
-public class BattleScreen implements Screen, InputProcessor {
+public class BattleScreen implements Screen, InputProcessor, BattleEventCallback {
     private final Hero game;
     private final BattleSystem battleSystem;
     private final SpriteBatch batch;
     private final BackgroundManager bgManager;
     protected final Player player;
+    private final VFX vfx;
+    private final Array<VisualEffect> activeEffects;
 
     // Posições de renderização
     private static final int PLAYER_X = Gdx.graphics.getWidth() * 3/4;
@@ -48,8 +52,27 @@ public class BattleScreen implements Screen, InputProcessor {
             bgManager.setCurrentArea("floresta");
         }
         this.batch = new SpriteBatch();
+        this.vfx = new VFX();
+        this.activeEffects = new Array<>();
         this.battleSystem = new BattleSystem(player, enemies);
         Gdx.input.setInputProcessor(this);
+    }
+    @Override
+    public void onAttackVFX(Character target) {
+        float effectX, effectY;
+
+        // Verifica se o alvo é o jogador para definir a posição correta
+        if (target == player.getCharacter()) {
+            effectX = PLAYER_X;
+            effectY = BASE_Y + (player.getHeight() / 2f);
+        } else {
+            // Se for um inimigo, define a posição na área dos inimigos.
+            // (Esta parte pode ser melhorada para encontrar a posição exata de cada inimigo)
+            effectX = ENEMIES_X;
+            effectY = BASE_Y + 50;
+        }
+
+        activeEffects.add(new VisualEffect(vfx.slashEffect, effectX, effectY));
     }
 
     @Override
@@ -174,6 +197,13 @@ public class BattleScreen implements Screen, InputProcessor {
             case PLAYER_ITEM_SELECT:
                 handleItemSelectInput(keycode);
                 break;
+
+            case ACTION_COMPLETE:
+                if (keycode == Input.Keys.ENTER) {
+                    // Ao pressionar ENTER, avança para o próximo turno
+                    battleSystem.advanceTurn();
+                }
+                break;
             case VICTORY:
             case DEFEAT:
                 handleBattleEndInput(keycode);
@@ -234,9 +264,13 @@ public class BattleScreen implements Screen, InputProcessor {
         } else if (keycode == Input.Keys.UP) {
             battleSystem.getItemMenu().previousItem();
         } else if (keycode == Input.Keys.ENTER) {
-            //battleSystem.playerUseItem(battleSystem.getSelectedItem());
+            Item selectedItem = battleSystem.getItemMenu().getSelectedItem();
+            if (selectedItem != null) {
+                battleSystem.playerUseItem(selectedItem);
+            }
         } else if (keycode == Input.Keys.ESCAPE) {
             battleSystem.setState(BattleSystem.BattleState.PLAYER_TURN);
+            battleSystem.setBattleMessage("O que deseja fazer?");
         }
     }
 
@@ -327,7 +361,8 @@ public class BattleScreen implements Screen, InputProcessor {
     public void dispose() {
         batch.dispose();
         bgManager.dispose();
-        battleSystem.getHud().dispose();
+        battleSystem.dispose();
+        vfx.dispose();
     }
 
     // Métodos não utilizados da interface InputProcessor
