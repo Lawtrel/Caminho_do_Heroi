@@ -1,23 +1,18 @@
 # Nome que aparecerá na aba "Actions" do seu repositório no GitHub
-name: Build do Jogo
+name: Build e Deploy do Jogo
 
 # Define quando esta ação deve ser executada
 on:
-  # Executa sempre que houver um 'push' para a branch 'main' ou 'master'
   push:
-    branches: [ "main", "master" ]
-  # Também executa quando um Pull Request é aberto para essas branches
-  pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master" ] # Executa sempre que houver um 'push'
 
-# Define os "trabalhos" (jobs) a serem executados
+# Define os "trabalhos" a serem executados
 jobs:
-  build:
-    # A ação rodará em uma máquina virtual com Ubuntu (Linux)
+  build-and-deploy: # Renomeado o job para clareza
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Baixa o seu código do repositório para a máquina virtual
+      # 1. Baixa o seu código do repositório
       - name: Checkout do Repositorio
         uses: actions/checkout@v4
 
@@ -26,41 +21,22 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin' # Uma distribuição popular e confiável do OpenJDK
+          distribution: 'temurin'
 
-      # 3. Faz o cache do Gradle para acelerar builds futuros
-      - name: Cache do Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      # 4. Dá permissão de execução ao script do Gradle (necessário em Linux/Mac)
+      # 3. Dá permissão de execução ao script do Gradle
       - name: Tornar gradlew executavel
         run: chmod +x ./gradlew
 
-      # 5. Compila a versão Desktop (gera o .jar)
-      - name: Build Desktop (JAR)
-        run: ./gradlew lwjgl3:jar
-
-      # 6. Compila a versão Web (gera a pasta 'dist')
+      # 4. Compila a versão Web (gera a pasta 'dist')
       - name: Build Web (Dist)
         run: ./gradlew html:dist
 
-      # 7. Faz o upload do resultado da versão Desktop como um "artefato"
-      - name: Upload do Artefato Desktop
-        uses: actions/upload-artifact@v4
+      # <<< 5. NOVO PASSO: Publica o conteúdo da pasta de build na branch 'gh-pages' >>>
+      - name: Deploy no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: CaminhoDoHeroi-Desktop-JAR
-          path: lwjgl3/build/libs/
-
-      # 8. Faz o upload do resultado da versão Web como um "artefato"
-      - name: Upload do Artefato Web
-        uses: actions/upload-artifact@v4
-        with:
-          name: CaminhoDoHeroi-Web
-          path: html/build/dist/
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # A pasta que contém o site a ser publicado
+          publish_dir: ./html/build/dist
+          # O nome da branch para onde os arquivos serão enviados
+          publish_branch: gh-pages
