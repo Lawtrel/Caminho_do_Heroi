@@ -11,6 +11,9 @@ jobs:
   build-and-deploy: # Renomeado o job para clareza
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       # 1. Baixa o seu código do repositório
       - name: Checkout do Repositorio
