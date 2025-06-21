@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="20">
+ <tileset firstgid="1" name="SNES - Chrono Trigger - Tyrano Lair" tilewidth="16" tileheight="16" tilecount="14060" columns="148">
+  <image source="../tileset/SNES - Chrono Trigger - Tyrano Lair.png" width="2374" height="1534"/>
+ </tileset>
+ <tileset firstgid="14061" name="10546" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="../tileset/10546.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="14317" name="roguelikeSheet_transparent" tilewidth="16" tileheight="16" tilecount="1920" columns="60">
+  <image source="../tileset/roguelikeSheet_transparent.png" width="968" height="526"/>
+ </tileset>
+ <layer id="3" name="background" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJy1lrtOVFEUhlcizA2YIQo+gIglFwsmGWCoUaHkVqqoWKpQKphYgIBCqWKp4gPIpSIKlio+gIKlgEylggL+JzHZm8VZsMiaKb78l/zh7LMzM+H6CaIboA/cBNvgj6d/wQ7YVeQdQyd5vhsvInpU5PQxmACTijxh6CTPd2eKiaqKnZ4F1eCcIlcbOsnz3Rsw4+ksmAPzijxn6CTPdxciRBcjTi+BNtCuyG2GTvJ89wV89XQFrIJvirxq6CTPd7eiRLejTu+AfjCgyP2GTvJ8F4kRRWNOYyAOEoocN3SS57sn4Kmnz8AUeK7IU4ZO8nxXEyeqjTutA/XgvCLXGzrJ891b8M7TRbAE3ivykqGTPN91JIg6E067QDfoUeRuQyd5vvsO1jxdBxvghyJvGDrJ893dEqJ7JU4HwRC4r8hDhk7yfHeylOhUqdMKUAlOK3KloZM8370ALz19BabBa0WeNnSS57tMGVFjmdMm0Ayyitxs6CTPdx/AR08/gWXwWZGXDZ3k+e5ykuhK0ulV0AuuKXKvoZM83/0Evzz9DbbAtiJvGTrJ891IiuhhyukoGAPjijxm6CTPd2HnyjU4ytPYZIiGM/nX3QYa3MQzfPxnt2bxfyp27Zn9mmM7SofvLLr3/28fdr4H2fD34ucLyPf95RTnk96Pn628APcXdj5q2f9c6f38cxXicxdoKn3w7vj5jiKf98U17LsRnC84t+Zs+fzeJtO0wM8SRlNL4e7jOPckEdxfoT5P2t+3o873DxuV+xo=
+  </data>
+ </layer>
+ <layer id="1" name="blocks" width="40" height="30">
+  <data encoding="base64" compression="zlib">
+   eJzt1mVolWEYh/F7J3e2sx0bjKXdXTPAWNrdHWAs7c6ps8BY2h1gLO3uDjCWdncHGJfIYN+GqO/jB2/4fX3/F8+n18VOxBVucIcHPFEcJVASpVAaZaD1xbOZgEQkIRkp2IGd2IXd2IO9Cvq8dSI+8IUf/BGAZmiOFmiJVmit074vlc00pCMDmcjCDdzELdzGHdxV0BeoFwlCMEIQijAMw3CMwEiMwmi99n12BhEd9DDACBPMsIcFDnCE1aB9XySbUYhGDGIRhyVYimVYjhVYqaCvrFGkHMqjAiqiEiqjCqqiGqqjhlH7vn1s7scBHMQhHMYRHMUxHMcJnFTQ18Yk0hbt0B4d0BGd0Bld0BXd0N2kfd89Nu/jAR7iER7jCZ7iGZ7jBV4q6BtjFhmLcRiPCZiISZiMKZiKaZhu1r7PyV7EGTbkQV7kQ34UQEEUste+K/tWsb0aa7AW67AeG7ARm7BZYV9Ni0gt1EYd1IUX6qE+GqChRV3fKbZP4wzO4hzO4wIu4hIuK+zr4SDSE73QG33QF/3QHwMw0EFd3yu2X+MN3uId3uMDPuITPivsC3cUmYGZmIUIzMYczMU8zHdU11fYKlIERVEMLnCFG9zhAU+rur4tbG/FNmxHPBKQiCQkI0VhXyMnkcZogqbwhg984Qd/BDip67vC9lVcw3WkIg3pyEAmshT2DXIWGYwhGIpABCEYIQhFmLO6vi9sf8W3Hw02/vehgx4GGGGy5f6dCK+f/vQtYHshFmExIhGFaMQgFnG59P2ttt+97K7/bb92OZv+tb6cb6bF+30HPPeefg==
+  </data>
+ </layer>
+ <objectgroup id="5" name="Spawn">
+  <object id="12" name="spawnPoint" x="99" y="269">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="4" name="Portas">
+  <object id="16" name="entrada" x="55" y="8" width="79" height="126">
+   <properties>
+    <property name="target" value="castleIn"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="Colisoes">
+  <object id="1" x="151" y="329" width="483" height="9"/>
+  <object id="2" x="-1" y="348" width="42" height="6"/>
+  <object id="3" x="35" y="143" width="12" height="207"/>
+  <object id="4" x="147" y="144" width="20" height="193"/>
+  <object id="6" x="3" y="0" width="42" height="142"/>
+  <object id="9" x="147" y="-2" width="45" height="145"/>
+  <object id="19" x="44" y="-1" width="102" height="10"/>
+ </objectgroup>
+</map>

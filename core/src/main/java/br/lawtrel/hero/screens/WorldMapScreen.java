@@ -177,6 +177,9 @@ public class WorldMapScreen extends ScreenAdapter {
                                 case "world":
                                     mapManager.changeMap(MapManager.MapType.WORLD_MAP);
                                     return;
+                                case "caverna":
+                                    mapManager.changeMap(MapManager.MapType.CAVE);
+                                    return;
                             }
                         }
                     }
