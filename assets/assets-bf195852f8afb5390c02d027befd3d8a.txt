@@ -18,6 +18,10 @@ fonts/GEO_AI__.TTF
 fonts/G_ari_bd.TTF
 fonts/G_ari_i.TTF
 fonts/arial.ttf
+maps/bossFight.tmx
+maps/castle.tmx
+maps/castleIn.tmx
+maps/cave.tmx
 maps/shop.tmx
 maps/vila.tmx
 maps/word.tmx
@@ -43,5 +47,7 @@ sprites/hero.png
 tileset/10546.png
 tileset/10564.png
 tileset/5216.png
+tileset/SNES - Chrono Trigger - Caves.png
+tileset/SNES - Chrono Trigger - Tyrano Lair.png
 tileset/roguelikeSheet_transparent.png
 ui/nes_window.png

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="173">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="174">
  <tileset firstgid="1" name="10546" tilewidth="16" tileheight="16" tilecount="256" columns="16">
   <image source="../tileset/10546.png" width="256" height="256"/>
  </tileset>
@@ -43,7 +43,7 @@
   <object id="2" x="268.545" y="368.909" width="15.6364" height="31.6364"/>
   <object id="3" x="307.273" y="367.818" width="14.5455" height="31.8182"/>
   <object id="4" x="320.364" y="384.182" width="16" height="15.2727"/>
-  <object id="8" x="175.909" y="144.091" width="63.5455" height="30"/>
+  <object id="8" x="175.088" y="145.201" width="63.5455" height="32.6424" rotation="358.956"/>
   <object id="96" x="64" y="48.5" width="47" height="30.5"/>
   <object id="99" x="128.5" y="49.5" width="45.5" height="30"/>
   <object id="102" x="95.5" y="144" width="64" height="32"/>
@@ -88,26 +88,22 @@
   <object id="84" x="385" y="352" width="13.5" height="31.5"/>
   <object id="85" x="368" y="367.5" width="17" height="16.5"/>
   <object id="87" x="257" y="385.5" width="13.5" height="13.5"/>
-  <object id="88" x="46.5" y="31.5" width="16.5" height="30"/>
+  <object id="88" x="51.7849" y="31.5" width="6.9872" height="23.1296"/>
   <object id="89" x="65.5" y="31" width="31.5" height="15.5"/>
   <object id="120" x="527.5" y="176.5" width="16" height="79.5"/>
  </objectgroup>
- <objectgroup id="2" name="Portas" offsetx="-2.125" offsety="54">
-  <object id="19" name="shop" x="178.083" y="121.583" width="62.25" height="15.375">
+ <objectgroup id="2" name="Portas" offsetx="2.10291" offsety="0.622626">
+  <object id="19" name="shop" x="206.621" y="177.603" width="13.1005" height="15.375">
    <properties>
     <property name="target" value="shop"/>
    </properties>
   </object>
-  <object id="132" name="entrada_loja_magia1" x="147.125" y="25.5" width="13.5" height="18"/>
-  <object id="133" name="entrada_loja_magia2" x="82.625" y="25" width="14.5" height="19.5"/>
-  <object id="134" name="entrada_loja2" x="417.625" y="25" width="15.5" height="19"/>
-  <object id="135" name="entrada_loja3" x="467.125" y="121" width="14" height="19"/>
-  <object id="150" name="saida" x="290.458" y="-37.6667" width="16" height="15">
+  <object id="150" name="saida" x="286.759" y="14.6537" width="16" height="15">
    <properties>
     <property name="target" value="world"/>
    </properties>
   </object>
-  <object id="172" name="saida" x="290.125" y="347.167" width="16" height="15">
+  <object id="172" name="saida" x="285.369" y="383.633" width="16" height="15">
    <properties>
     <property name="target" value="world"/>
    </properties>

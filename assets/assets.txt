@@ -1,15 +1,19 @@
 d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
-b:maps/shop.tmx:maps/shop-ee5334361204e71219b3f70aa456b9d1.tmx:1804:application/unknown:1
-b:maps/vila.tmx:maps/vila-11cc182cf1ee42a257bde091f300224c.tmx:8851:application/unknown:1
-b:maps/word.tmx:maps/word-455e0653241e8054b430166c6ec14f1a.tmx:16520:application/unknown:1
+b:maps/shop.tmx:maps/shop-2df7a3e86f661ca807a981ccfcf7151f.tmx:2033:application/unknown:1
+b:maps/vila.tmx:maps/vila-ff5ef59b1f1c2a5b82166839dcf5f9eb.tmx:8535:application/unknown:1
+b:maps/bossFight.tmx:maps/bossFight-7d9e4b454e450017a518f189ff2bb1c2.tmx:2920:application/unknown:1
+b:maps/word.tmx:maps/word-f0538cacce034a945ee8afdf16d32239.tmx:16731:application/unknown:1
+b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
+b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
+b:maps/cave.tmx:maps/cave-660b86452c7b5eecf412f50e16de9a91.tmx:3957:application/unknown:1
 d:com:com:0:application/unknown:1
 d:com/badlogic:com/badlogic:0:application/unknown:1
 d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-84547d5471af372f040d0fbdfc82bb04.txt:922:text/plain:1
+t:assets.txt:assets-bf195852f8afb5390c02d027befd3d8a.txt:1079:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1
@@ -26,6 +30,8 @@ i:tileset/10546.png:tileset/10546-6c60560a40576a8e3d491043fba24fc1.png:16369:ima
 i:tileset/5216.png:tileset/5216-c51784bf4f58d4ccfac9921900d3c183.png:91720:image/png:1
 i:tileset/10564.png:tileset/10564-211f3eb6a378858af03d1fe4840c6d1b.png:37781:image/png:1
 i:tileset/roguelikeSheet_transparent.png:tileset/roguelikeSheet_transparent-fb458f04870ebd7fd1bb0f2e6e2ccf5e.png:94579:image/png:1
+i:tileset/SNES - Chrono Trigger - Tyrano Lair.png:tileset/SNES - Chrono Trigger - Tyrano Lair-2d2fdc5a03fc856ff970cc07d1802035.png:898075:image/png:1
+i:tileset/SNES - Chrono Trigger - Caves.png:tileset/SNES - Chrono Trigger - Caves-634dd2b167e585788e21ffafa169bf2e.png:280219:image/png:1
 d:bg:bg:0:application/unknown:1
 i:bg/bg_01.png:bg/bg_01-02029af8372914563ede0b74ce552946.png:4199:image/png:1
 i:bg/bg_00.png:bg/bg_00-d3d790da1a285a95eeddea2bdc2a8c4d.png:10107:image/png:1
