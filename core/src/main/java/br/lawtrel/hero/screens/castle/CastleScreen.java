@@ -155,7 +155,7 @@ public class CastleScreen extends ScreenAdapter{
                         game.setPlayerLastWorldMapPosition(player.getX(), player.getY(), MAP_ID);
 
                         switch (targetMap.toLowerCase()) {
-                            case "castleIn":
+                            case "castlein":
                                 mapManager.changeMap(MapManager.MapType.CASTLE_IN);
                                 return;
                         }

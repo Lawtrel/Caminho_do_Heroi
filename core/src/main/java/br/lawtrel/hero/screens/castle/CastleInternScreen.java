@@ -36,8 +36,8 @@ public class CastleInternScreen extends ScreenAdapter{
     private final int MAP_WIDTH_PIXELS = 40 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
     private final int MAP_HEIGHT_PIXELS = 30 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
 
-    private static final float WORLD_WIDTH = 640;
-    private static final float WORLD_HEIGHT = 480;
+    private static final float WORLD_WIDTH = 400;
+    private static final float WORLD_HEIGHT = 300;
 
     public CastleInternScreen(Hero game, MapManager mapManager){
         this.game = game;
@@ -154,7 +154,7 @@ public class CastleInternScreen extends ScreenAdapter{
                         game.setPlayerLastWorldMapPosition(player.getX(), player.getY(), MAP_ID);
 
                         switch (targetMap.toLowerCase()) {
-                            case "bossFight":
+                            case "bossfight":
                                 mapManager.changeMap(MapManager.MapType.BOSSFIGHT);
                                 return;
                             case "castle":

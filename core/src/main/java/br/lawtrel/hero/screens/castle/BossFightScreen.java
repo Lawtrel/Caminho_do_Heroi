@@ -36,8 +36,8 @@ public class BossFightScreen extends ScreenAdapter{
     private final int MAP_WIDTH_PIXELS = 40 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
     private final int MAP_HEIGHT_PIXELS = 30 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
 
-    private static final float WORLD_WIDTH = 640;
-    private static final float WORLD_HEIGHT = 480;
+    private static final float WORLD_WIDTH = 500;
+    private static final float WORLD_HEIGHT = 400;
 
     public BossFightScreen(Hero game, MapManager mapManager){
         this.game = game;
