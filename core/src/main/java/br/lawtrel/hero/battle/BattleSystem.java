@@ -184,14 +184,15 @@ public class BattleSystem implements Disposable {
 
     public void playerAttack(int enemyIndex) {
         if (state != BattleState.PLAYER_TARGET_SELECT) return;
+
         if (isValidEnemyIndex(enemyIndex)) {
+            Character attacker = player.getCharacter();
             Character target = enemies.get(enemyIndex).getCharacter();
-            player.getCharacter().performAttack(target);
-            battleMessage = player.getCharacter().getName() + " atacou " + target.getName();
-            handleEnemyDefeated(target); // mudar o estado para VICTORY
-            if (state != BattleState.VICTORY) { // Só avança o turno se a batalha não acabou
-                setState(BattleState.ACTION_COMPLETE);
-            }
+
+            //Prepara o personagem para a animação de ataque
+            attacker.setBattleState(Character.BattleAnimationState.MOVING_FORWARD);
+            attacker.setAnimationTimer(0f); // resetar o time
+            setState(BattleState.ACTION_COMPLETE);
         }
     }
 
@@ -249,7 +250,7 @@ public class BattleSystem implements Disposable {
     }
 
     // Métodos auxiliares
-    private void handleEnemyDefeated(Character target) {
+    public void handleEnemyDefeated(Character target) {
         Enemy defeatedEnemy = findEnemyByCharacter(target);
         if (defeatedEnemy != null && !target.isAlive()) {
             totalExpGainedInBattle += defeatedEnemy.getCharacter().getExpYieldOnDefeat(); // Acumula EXP

@@ -5,6 +5,7 @@ import br.lawtrel.hero.battle.BattleEventCallback;
 import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.Enemy;
 import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.entities.Skill;
 import br.lawtrel.hero.utils.BackgroundManager;
 import br.lawtrel.hero.battle.BattleSystem;
 import br.lawtrel.hero.utils.MapManager;
@@ -40,6 +41,14 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
     private static final float[] X_OFFSETS_FORMATION_2_ENEMIES = {-60f, 60f}; // Ajuste o espaçamento
     private static final float[] X_OFFSETS_FORMATION_3_ENEMIES = {-90f, 0f, 90f};
     private static final float[] X_OFFSETS_FORMATION_4_ENEMIES = {-120f, -40f, 40f, 120f}; // Ou uma formação 2x2 em X e Y
+
+    private boolean isPlayerAttacking = false;
+    private Character attackingCharacter = null;
+    private Character attackTarget = null;
+    private Skill spellToCast = null;
+
+    // Distância que o personagem se moverá para atacar
+    private static final float ATTACK_MOVE_DISTANCE = 50f;
 
     public BattleScreen(Hero game, Player player, Array<Enemy> enemies) {
         this.game = game;
@@ -106,12 +115,32 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
 
     private void renderBattleEntities() {
         batch.begin();
-        // Renderiza o jogador
-        player.update(Gdx.graphics.getDeltaTime(), false, false, false, false);
 
-        battleSystem.getPlayer().render(batch,
+        //logica da animaçao
+        if (attackingCharacter != null && attackingCharacter.getBattleState() != Character.BattleAnimationState.IDLE) {
+            updateAttackerAnimation(Gdx.graphics.getDeltaTime());
+        }
+
+        // Renderiza o jogador
+        float playerRenderX = PLAYER_X - player.getWidth() / 2;
+        float playerRenderY = BASE_Y - player.getHeight() / 2;
+
+        if (attackingCharacter == player.getCharacter()) {
+            playerRenderX = player.getCharacter().getOriginalBattleX(); //Usa a posição controlada pela animação
+        } else {
+            //Guarda a possicao inicial
+            if (player.getCharacter().getBattleState() == Character.BattleAnimationState.IDLE && player.getCharacter().getOriginalBattleX() == 0) {
+                player.getCharacter().setOriginalBattleX(playerRenderX);
+                player.getCharacter().setOriginalBattleY(playerRenderY);
+            }
+        }
+
+        player.update(Gdx.graphics.getDeltaTime(), false, false, false, false);
+        player.render(batch, playerRenderX, playerRenderY);
+
+        /*battleSystem.getPlayer().render(batch,
             PLAYER_X - battleSystem.getPlayer().getBounds().width/2,
-            BASE_Y - battleSystem.getPlayer().getBounds().height/2);
+            BASE_Y - battleSystem.getPlayer().getBounds().height/2);*/
 
         // Renderiza os inimigos
         Array<Enemy> enemies = battleSystem.getEnemies();
@@ -141,7 +170,7 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
 
                 giantEnemy.render(batch, renderX, (int)renderY, scale); // Passa a escala
             }
-        } else { // Formação para 1-4 inimigos (não-gigantes ou múltiplos gigantes tratados como normais na formação)
+        } else { // Formação para 1-4 inimigos (não gigantes ou múltiplos gigantes tratados como normais na formação)
             float[] currentXOffsets;
             // Determina qual array de X offsets usar
             switch (numberOfEnemiesToDisplay) {
@@ -170,10 +199,138 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                 // O Y é a linha do chão (BASE_Y) + o offset de âncora visual do sprite
                 float renderY = BASE_Y + visualAnchorY;
 
+                //Salva a possicao original do inimigo
+                if (enemyChar.getBattleState() == Character.BattleAnimationState.IDLE && enemyChar.getOriginalBattleX() == 0) {
+                    enemyChar.setOriginalBattleX(renderX);
+                    enemyChar.setOriginalBattleY(renderY);
+                }
+
+                // Se o inimigo está atacando, usa a posição da animação
+                if (attackingCharacter == enemyChar) {
+                    renderX = enemyChar.getOriginalBattleX();
+                }
+
                 enemy.render(batch, renderX, (int)renderY, scale); // Passa a escala
             }
         }
+
+        //Renderizar efeitos visuais
+        for (int i = activeEffects.size - 1; i >= 0; i--) {
+            VisualEffect effect = activeEffects.get(i);
+            effect.update(Gdx.graphics.getDeltaTime());
+            if (effect.isFinished()) {
+                activeEffects.removeIndex(i);
+            } else {
+                effect.render(batch);
+            }
+        }
+
         batch.end();
+    }
+
+    private void startAttackAnimation(Character attacker, Character target, Skill skill) {
+        this.attackingCharacter = attacker;
+        this.attackTarget = target;
+        this.spellToCast = skill; // Pode ser nulo para ataques físicos
+
+        // Define as posições de início e fim da animação
+        float startX = (attacker == player.getCharacter()) ? PLAYER_X - player.getWidth() / 2 : attackingCharacter.getOriginalBattleX();
+        float targetX;
+
+        if (attacker == player.getCharacter()) {
+            // Jogador se move para a esquerda
+            targetX = startX - ATTACK_MOVE_DISTANCE;
+        } else {
+            // Inimigo se move para a direita
+            targetX = startX + ATTACK_MOVE_DISTANCE;
+        }
+
+        attacker.setOriginalBattleX(startX);
+        attacker.setTargetBattleX(targetX);
+        attacker.setAnimationTimer(0);
+        attacker.setBattleState(Character.BattleAnimationState.MOVING_FORWARD);
+    }
+
+    private void updateAttackerAnimation(float delta) {
+        if (attackingCharacter == null) return;
+
+        attackingCharacter.setAnimationTimer(attackingCharacter.getAnimationTimer() + delta);
+        float progress = Math.min(1f, attackingCharacter.getAnimationTimer() / Character.getAnimationDuration());
+
+        switch (attackingCharacter.getBattleState()) {
+            case MOVING_FORWARD:
+                // Interpola a posição para frente
+                float currentX = attackingCharacter.getOriginalBattleX() + (attackingCharacter.getTargetBattleX() - attackingCharacter.getOriginalBattleX()) * progress;
+                attackingCharacter.setOriginalBattleX(currentX); // Usando originalX para guardar a posição atual da animação
+
+                if (progress >= 1f) {
+                    attackingCharacter.setBattleState(Character.BattleAnimationState.ATTACKING);
+                    attackingCharacter.setAnimationTimer(0); // Reseta para a próxima fase
+
+                    // --- EXECUTA A AÇÃO NO PICO DA ANIMAÇÃO ---
+                    if (spellToCast != null) { // É uma magia
+                        //player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
+                        battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
+                        // TODO: Adicionar efeito visual da magia aqui
+                    } else { // É um ataque físico
+                        onAttackVFX(attackTarget); // Efeito de corte
+                        attackingCharacter.performAttack(attackTarget);
+                        battleSystem.setBattleMessage(attackingCharacter.getName() + " atacou " + attackTarget.getName() + "!");
+                    }
+                    battleSystem.handleEnemyDefeated(attackTarget); // Verifica se o alvo morreu
+                }
+                break;
+
+            case ATTACKING:
+                // Espera um pouco para o efeito visual ser visto
+                if (attackingCharacter.getAnimationTimer() > 0.4f) { // 0.4s de pausa
+                    attackingCharacter.setBattleState(Character.BattleAnimationState.MOVING_BACK);
+                    attackingCharacter.setAnimationTimer(0);
+                }
+
+                if (spellToCast != null) { // É uma magia
+                    battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
+
+                    // --- LÓGICA DO EFEITO DA MAGIA ---
+                    float effectX = attackTarget.isLargeEnemy() ? Gdx.graphics.getWidth() / 2.5f : ENEMIES_X;
+                    float effectY = BASE_Y + 50; // Ajuste conforme necessário
+
+                    // Escolhe o efeito com base no nome ou tipo da magia
+                    if (spellToCast.getName().toLowerCase().contains("fire")) {
+                        activeEffects.add(new VisualEffect(vfx.fireEffect, effectX, effectY));
+                    } else {
+                        // Efeito padrão para outras magias
+                        activeEffects.add(new VisualEffect(vfx.slashEffect, effectX, effectY));
+                    }
+
+                    player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
+
+                } else { // É um ataque físico
+                    onAttackVFX(attackTarget);
+                    attackingCharacter.performAttack(attackTarget);
+                    battleSystem.setBattleMessage(attackingCharacter.getName() + " atacou " + attackTarget.getName() + "!");
+                }
+                break;
+
+            case MOVING_BACK:
+                // Interpola a posição de volta
+                float returnX = attackingCharacter.getTargetBattleX() + (player.getCharacter().getOriginalBattleX() - attackingCharacter.getTargetBattleX()) * progress;
+                attackingCharacter.setOriginalBattleX(returnX);
+
+                if (progress >= 1f) {
+                    attackingCharacter.setOriginalBattleX(player.getCharacter().getOriginalBattleX()); // Garante a posição final exata
+                    attackingCharacter.setBattleState(Character.BattleAnimationState.IDLE);
+                    attackingCharacter = null;
+                    attackTarget = null;
+                    spellToCast = null;
+
+                    // Ação finalizada, avança para o próximo turno
+                    if (battleSystem.getState() != BattleSystem.BattleState.VICTORY && battleSystem.getState() != BattleSystem.BattleState.DEFEAT) {
+                        battleSystem.advanceTurn();
+                    }
+                }
+                break;
+        }
     }
 
     private void renderHUD() {
@@ -231,21 +388,24 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
             battleSystem.getTargetSelector().previousTarget(battleSystem.getEnemies().toArray(Enemy.class));
         } else if (keycode == Input.Keys.ENTER) {
             if (battleSystem.getState() == BattleSystem.BattleState.PLAYER_TARGET_SELECT) {
+                Enemy selectedEnemy = battleSystem.getEnemies().get(battleSystem.getTargetSelector().getSelectedTarget());
+
                 if (battleSystem.getCurrentAction() == BattleSystem.ActionType.MAGIC) {
-                    battleSystem.playerCastSpell(
-                        battleSystem.getTargetSelector().getSelectedTarget(),
-                        battleSystem.getMagicMenu().getSelectedMagic()
-                    );
+                    // Inicia animação de magia
+                    startAttackAnimation(player.getCharacter(), selectedEnemy.getCharacter(), battleSystem.getMagicMenu().getSelectedMagic());
                 } else {
-                    battleSystem.playerAttack(battleSystem.getTargetSelector().getSelectedTarget());
+                    // Inicia animação de ataque físico
+                    startAttackAnimation(player.getCharacter(), selectedEnemy.getCharacter(), null);
                 }
+                // Muda o estado para esperar a animação terminar
+                battleSystem.setState(BattleSystem.BattleState.ACTION_COMPLETE);
             }
         } else if (keycode == Input.Keys.ESCAPE) {
             battleSystem.setState(BattleSystem.BattleState.PLAYER_TURN);
         }
     }
 
-    private void handleMagicSelectInput(int keycode) {
+    public void handleMagicSelectInput(int keycode) {
         if (keycode == Input.Keys.DOWN) {
             battleSystem.getMagicMenu().nextMagic();
         } else if (keycode == Input.Keys.UP) {

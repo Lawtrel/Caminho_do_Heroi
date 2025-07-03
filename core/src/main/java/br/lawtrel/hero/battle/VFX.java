@@ -11,11 +11,14 @@ import com.badlogic.gdx.utils.Disposable;
 public class VFX implements Disposable {
 
     public final Animation<TextureRegion> slashEffect;
+    public final Animation<TextureRegion> fireEffect;
+
     private final Array<Texture> texturesToDispose = new Array<>();
 
     public VFX() {
         // Cria uma animação de corte simples
         slashEffect = createSlashAnimation();
+        fireEffect = createFireAnimation();
     }
 
     private Animation<TextureRegion> createSlashAnimation() {
@@ -36,6 +39,24 @@ public class VFX implements Disposable {
         // A animação dura 0.2 segundos no total
         return new Animation<>(0.07f, frames, Animation.PlayMode.NORMAL);
     }
+    private Animation<TextureRegion> createFireAnimation() {
+        // Aqui você carregaria uma spritesheet de fogo (ex: 'effects/fire.png')
+        // e criaria a animação, similar ao createSlashAnimation.
+        // Como não tenho o asset, vou retornar uma animação de flash vermelha.
+
+        Array<TextureRegion> frames = new Array<>();
+        for (int i = 0; i < 4; i++) {
+            Pixmap pixmap = new Pixmap(48, 48, Pixmap.Format.RGBA8888);
+            pixmap.setColor(new Color(1, 0.2f * i, 0, 0.8f));
+            pixmap.fillCircle(24, 24, 20 - (i * 4));
+            Texture texture = new Texture(pixmap);
+            texturesToDispose.add(texture);
+            frames.add(new TextureRegion(texture));
+            pixmap.dispose();
+        }
+        return new Animation<>(0.1f, frames, Animation.PlayMode.NORMAL);
+    }
+
 
     @Override
     public void dispose() {

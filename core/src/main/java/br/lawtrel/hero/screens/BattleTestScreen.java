@@ -19,7 +19,7 @@ public class BattleTestScreen extends BattleScreen {
 
     private static Player createTestPlayer(Hero game) {
         Character playerChar = new CharacterBuilder()
-            .setName("Herói")
+            .setName("Heroi")
             .setMaxHp(500)
             .setMaxMP(50)
             .setAttack(50)
@@ -54,13 +54,13 @@ public class BattleTestScreen extends BattleScreen {
         // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
 
         // --- CENÁRIO 3: Dois Inimigos Normais ---
-        enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
-        enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.SKELETON, 0, 0));
+        //enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
+        //enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.SKELETON, 0, 0));
 
         // --- CENÁRIO 4: Três Inimigos Normais ---
-        // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
-        // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.SKELETON, 0, 0));
-        // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.WIZARD, 0, 0)); // Assegure que WIZARD está configurado
+         enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));
+         enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.SKELETON, 0, 0));
+         enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.WIZARD, 0, 0)); // Assegure que WIZARD está configurado
 
         // --- CENÁRIO 5: Quatro Inimigos Normais ---
         // enemies.add(EnemyFactory.createEnemy(EnemyFactory.EnemyType.GOBLIN, 0, 0));

@@ -15,6 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Character implements Disposable {
+
+    // Estados de animação para a batalha
+    public enum BattleAnimationState {
+        IDLE,          // Parado
+        MOVING_FORWARD, // Movendo para frente para atacar
+        ATTACKING,     // No ponto máximo, executando o ataque
+        MOVING_BACK    // Movendo de volta para a posição inicial
+    }
+
     // Informações básicas
     private final String name;
     private int level;
@@ -69,6 +78,13 @@ public class Character implements Disposable {
     private boolean isLargeEnemy = false; // caso for inimigo gigante
     private float renderScale = 1.0f;
     private float visualAnchorYOffset = 0f;
+
+    // Campos para Animação de Batalha
+    private BattleAnimationState battleState = BattleAnimationState.IDLE;
+    private float originalBattleX, originalBattleY;
+    private float targetBattleX, targetBattleY;
+    private float animationTimer = 0f;
+    private static final float ANIMATION_DURATION = 0.3f; // Duração do movimento (em segundos)
 
     //construção do status do Hero
     public Character(String name, int maxHp, int maxMP, int attack, int defense,
@@ -415,6 +431,20 @@ public class Character implements Disposable {
     public enum ElementalAffinity {
         FIRE, ICE, LIGHTNING, EARTH, WIND, WATER, LIGHT, DARK, NEUTRAL
     }
+
+    public BattleAnimationState getBattleState() { return battleState; }
+    public void setBattleState(BattleAnimationState battleState) { this.battleState = battleState; }
+    public float getOriginalBattleX() { return originalBattleX; }
+    public void setOriginalBattleX(float originalBattleX) { this.originalBattleX = originalBattleX; }
+    public float getOriginalBattleY() { return originalBattleY; }
+    public void setOriginalBattleY(float originalBattleY) { this.originalBattleY = originalBattleY; }
+    public float getTargetBattleX() { return targetBattleX; }
+    public void setTargetBattleX(float targetBattleX) { this.targetBattleX = targetBattleX; }
+    public float getTargetBattleY() { return targetBattleY; }
+    public void setTargetBattleY(float targetBattleY) { this.targetBattleY = targetBattleY; }
+    public float getAnimationTimer() { return animationTimer; }
+    public void setAnimationTimer(float animationTimer) { this.animationTimer = animationTimer; }
+    public static float getAnimationDuration() { return ANIMATION_DURATION; }
 
     @Override
     public void dispose() {
