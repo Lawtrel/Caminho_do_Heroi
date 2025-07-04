@@ -8,6 +8,7 @@ b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:appl
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
 b:maps/cave.tmx:maps/cave-660b86452c7b5eecf412f50e16de9a91.tmx:3957:application/unknown:1
 d:effects:effects:0:application/unknown:1
+i:effects/weapon_effects.png:effects/weapon_effects-38ea9b941bfbe253b680719518525cfe.png:53079:image/png:1
 i:effects/attack_effects.png:effects/attack_effects-38ea9b941bfbe253b680719518525cfe.png:53079:image/png:1
 i:effects/magic_effects.png:effects/magic_effects-a5962524c51fc4571b3cadf710c4a4b5.png:120602:image/png:1
 d:com:com:0:application/unknown:1
@@ -16,7 +17,7 @@ d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-0005153e57a0cfa0d5079010d64cd6eb.txt:1132:text/plain:1
+t:assets.txt:assets-80933c91c11f3ca883e30110e7544f82.txt:1159:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1

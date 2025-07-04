@@ -5,6 +5,7 @@ com/badlogic/gdx/utils/lsans-15.fnt
 com/badlogic/gdx/utils/lsans-15.png
 effects/attack_effects.png
 effects/magic_effects.png
+effects/weapon_effects.png
 enemies/54613.png
 enemies/56180.png
 enemies/Chaos.png
