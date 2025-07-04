@@ -8,9 +8,9 @@ b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:appl
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
 b:maps/cave.tmx:maps/cave-660b86452c7b5eecf412f50e16de9a91.tmx:3957:application/unknown:1
 d:effects:effects:0:application/unknown:1
-i:effects/weapon_effects.png:effects/weapon_effects-38ea9b941bfbe253b680719518525cfe.png:53079:image/png:1
-i:effects/attack_effects.png:effects/attack_effects-38ea9b941bfbe253b680719518525cfe.png:53079:image/png:1
-i:effects/magic_effects.png:effects/magic_effects-a5962524c51fc4571b3cadf710c4a4b5.png:120602:image/png:1
+i:effects/weapon_effects.png:effects/weapon_effects-ac9d4080eb0b9ca139daeaf05c6ed9ef.png:87488:image/png:1
+i:effects/attack_effects.png:effects/attack_effects-d5b5a675a5f15a27e35e1a36e6eaf4eb.png:95193:image/png:1
+i:effects/magic_effects.png:effects/magic_effects-7fbbbdf23f153a43f76e5d748e292cc7.png:139951:image/png:1
 d:com:com:0:application/unknown:1
 d:com/badlogic:com/badlogic:0:application/unknown:1
 d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
