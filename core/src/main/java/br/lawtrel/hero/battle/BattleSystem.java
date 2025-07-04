@@ -54,6 +54,7 @@ public class BattleSystem implements Disposable {
     private final TargetSelector targetSelector;
     private final BattleMagicMenu magicMenu;
     private final BattleItemMenu itemMenu;
+    private final Array<Enemy> enemiesToRemove = new Array<>();
 
     // Estado atual
     private BattleState state;
@@ -271,10 +272,11 @@ public class BattleSystem implements Disposable {
                     }
                 }
             }
-            enemies.removeValue(defeatedEnemy, true);
-            removeFromTurnOrder(defeatedEnemy.getCharacter());
+            if (!enemiesToRemove.contains(defeatedEnemy, true)) {
+                enemiesToRemove.add(defeatedEnemy);
+            }
 
-            if (enemies.size == 0) {
+            if (enemies.size - enemiesToRemove.size <= 0) {
                 state = BattleState.VICTORY;
             }
         }
@@ -308,6 +310,13 @@ public class BattleSystem implements Disposable {
     }
 
     public void advanceTurn() {
+        if (enemiesToRemove.size > 0) {
+            for (Enemy enemy : enemiesToRemove) {
+                enemies.removeValue(enemy, true);
+                removeFromTurnOrder(enemy.getCharacter());
+            }
+            enemiesToRemove.clear();
+        }
         if (state == BattleState.VICTORY || state == BattleState.DEFEAT) {
             return; // Batalha já terminou
         }

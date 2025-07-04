@@ -66,23 +66,7 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
         this.battleSystem = new BattleSystem(player, enemies);
         Gdx.input.setInputProcessor(this);
     }
-    @Override
-    public void onAttackVFX(Character target) {
-        float effectX, effectY;
 
-        // Verifica se o alvo é o jogador para definir a posição correta
-        if (target == player.getCharacter()) {
-            effectX = PLAYER_X;
-            effectY = BASE_Y + (player.getHeight() / 2f);
-        } else {
-            // Se for um inimigo, define a posição na área dos inimigos.
-            // (Esta parte pode ser melhorada para encontrar a posição exata de cada inimigo)
-            effectX = ENEMIES_X;
-            effectY = BASE_Y + 50;
-        }
-
-        activeEffects.add(new VisualEffect(vfx.slashEffect, effectX, effectY));
-    }
 
     @Override
     public void render(float delta) {
@@ -209,6 +193,8 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                 if (attackingCharacter == enemyChar) {
                     renderX = enemyChar.getOriginalBattleX();
                 }
+                enemyChar.setOriginalBattleX(renderX);
+                enemyChar.setOriginalBattleY(renderY);
 
                 enemy.render(batch, renderX, (int)renderY, scale); // Passa a escala
             }
@@ -289,21 +275,15 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                 }
 
                 if (spellToCast != null) { // É uma magia
+                    player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
                     battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
 
                     // --- LÓGICA DO EFEITO DA MAGIA ---
-                    float effectX = attackTarget.isLargeEnemy() ? Gdx.graphics.getWidth() / 2.5f : ENEMIES_X;
-                    float effectY = BASE_Y + 50; // Ajuste conforme necessário
-
-                    // Escolhe o efeito com base no nome ou tipo da magia
-                    if (spellToCast.getName().toLowerCase().contains("fire")) {
+                    if (attackTarget != null) {
+                        float effectX = attackTarget.getOriginalBattleX();
+                        float effectY = attackTarget.getOriginalBattleY();
                         activeEffects.add(new VisualEffect(vfx.fireEffect, effectX, effectY));
-                    } else {
-                        // Efeito padrão para outras magias
-                        activeEffects.add(new VisualEffect(vfx.slashEffect, effectX, effectY));
                     }
-
-                    player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
 
                 } else { // É um ataque físico
                     onAttackVFX(attackTarget);
@@ -331,6 +311,14 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onAttackVFX(Character target) {
+        float effectX = target.getOriginalBattleX();
+        float effectY = target.getOriginalBattleY();
+
+        activeEffects.add(new VisualEffect(vfx.slashEffect, effectX, effectY));
     }
 
     private void renderHUD() {

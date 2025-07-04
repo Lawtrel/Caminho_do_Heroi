@@ -99,4 +99,5 @@ public class Magics implements Skill {
     public int getTimeSTTS() {return timeSTTS;}
 
     public String getMagicType() {return magicType;}
+
 }

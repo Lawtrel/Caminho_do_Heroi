@@ -11,19 +11,17 @@ import com.badlogic.gdx.utils.Disposable;
 public class VFX implements Disposable {
 
     public final Animation<TextureRegion> slashEffect;
-    public final Animation<TextureRegion> fireEffect;
+    public final Animation<TextureRegion> fireEffect; // Exemplo de animação de magia
 
     private final Array<Texture> texturesToDispose = new Array<>();
 
     public VFX() {
-        // Cria uma animação de corte simples
         slashEffect = createSlashAnimation();
-        fireEffect = createFireAnimation();
+        fireEffect = createFireAnimation(); // Vamos manter esta como exemplo para magias
     }
 
     private Animation<TextureRegion> createSlashAnimation() {
         Array<TextureRegion> frames = new Array<>();
-
         // Cria 3 frames de um "flash" branco que encolhe
         for (int i = 0; i < 3; i++) {
             int size = 32 - (i * 10);
@@ -31,22 +29,19 @@ public class VFX implements Disposable {
             pixmap.setColor(Color.WHITE);
             pixmap.fill();
             Texture texture = new Texture(pixmap);
-            texturesToDispose.add(texture); // Guarda a textura para ser disposta depois
+            texturesToDispose.add(texture); // Guarda para ser eliminada depois
             frames.add(new TextureRegion(texture));
             pixmap.dispose();
         }
-
-        // A animação dura 0.2 segundos no total
+        // A animação dura 0.21 segundos no total (0.07s por frame)
         return new Animation<>(0.07f, frames, Animation.PlayMode.NORMAL);
     }
-    private Animation<TextureRegion> createFireAnimation() {
-        // Aqui você carregaria uma spritesheet de fogo (ex: 'effects/fire.png')
-        // e criaria a animação, similar ao createSlashAnimation.
-        // Como não tenho o asset, vou retornar uma animação de flash vermelha.
 
+    private Animation<TextureRegion> createFireAnimation() {
         Array<TextureRegion> frames = new Array<>();
         for (int i = 0; i < 4; i++) {
             Pixmap pixmap = new Pixmap(48, 48, Pixmap.Format.RGBA8888);
+            // Simula um efeito de fogo com um círculo vermelho/laranja
             pixmap.setColor(new Color(1, 0.2f * i, 0, 0.8f));
             pixmap.fillCircle(24, 24, 20 - (i * 4));
             Texture texture = new Texture(pixmap);
