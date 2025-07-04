@@ -44,6 +44,7 @@ skins/terra-mother-ui.png
 skins/uiskin.atlas
 skins/uiskin.json
 skins/uiskin.png
+slash.wav
 sprites/boss.png
 sprites/enemy.png
 sprites/hero.png

@@ -17,7 +17,7 @@ d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-80933c91c11f3ca883e30110e7544f82.txt:1159:text/plain:1
+t:assets.txt:assets-eb65ef39dd3c5cf567372b024ba57f73.txt:1169:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1
@@ -64,6 +64,7 @@ b:fonts/Arialn.ttf:fonts/Arialn-481816ebe7b2dc627596ef2fd9507f0b.ttf:60012:appli
 b:fonts/GEO_AI__.TTF:fonts/GEO_AI__-4a55fa1217b0680e2da911d5dffad2f7.TTF:60380:application/unknown:1
 b:fonts/ARIBL0.ttf:fonts/ARIBL0-e29d16fb2d50bff249b5f4412c6868f5.ttf:57448:application/unknown:1
 b:fonts/G_ari_bd.TTF:fonts/G_ari_bd-d4bf65c4a72084ce75985f8ded5f1523.TTF:133220:application/unknown:1
+a:slash.wav:slash-8f764ed4a3d89b8016acf1d024418c84.wav:32840:audio/x-wav:1
 d:sprites:sprites:0:application/unknown:1
 i:sprites/boss.png:sprites/boss-d41d8cd98f00b204e9800998ecf8427e.png:0:image/png:1
 i:sprites/enemy.png:sprites/enemy-1a4d175398e903274332bc2581d29c9e.png:3438:image/png:1
