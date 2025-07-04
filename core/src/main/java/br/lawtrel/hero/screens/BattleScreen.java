@@ -15,10 +15,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import br.lawtrel.hero.battle.VFX;
 import br.lawtrel.hero.battle.VisualEffect;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import br.lawtrel.hero.entities.items.Item;
 import java.util.List;
@@ -278,11 +280,21 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                     player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
                     battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
 
+                    // Animação de fogo à VFX
+                    Animation<TextureRegion> spellAnimation = vfx.getEffect("fire");
+
                     // --- LÓGICA DO EFEITO DA MAGIA ---
-                    if (attackTarget != null) {
-                        float effectX = attackTarget.getOriginalBattleX();
-                        float effectY = attackTarget.getOriginalBattleY();
-                        activeEffects.add(new VisualEffect(vfx.fireEffect, effectX, effectY));
+                    if (attackTarget != null && spellAnimation != null) {
+                        float[] dims = getTargetDimensions(attackTarget); // <-- USA O NOVO MÉTODO
+                        if (dims != null) {
+                            float targetWidth = dims[0];
+                            float targetHeight = dims[1];
+
+                            // Calcula a posição para centralizar o efeito
+                            float effectX = attackTarget.getOriginalBattleX() + (targetWidth / 2f) - (spellAnimation.getKeyFrame(0).getRegionWidth() / 2f);
+                            float effectY = attackTarget.getOriginalBattleY() + (targetHeight / 2f) - (spellAnimation.getKeyFrame(0).getRegionHeight() / 2f);
+                            activeEffects.add(new VisualEffect(spellAnimation, effectX, effectY));
+                        }
                     }
 
                 } else { // É um ataque físico
@@ -315,10 +327,41 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
 
     @Override
     public void onAttackVFX(Character target) {
-        float effectX = target.getOriginalBattleX();
-        float effectY = target.getOriginalBattleY();
+        if (target == null) return;
 
-        activeEffects.add(new VisualEffect(vfx.slashEffect, effectX, effectY));
+        Animation<TextureRegion> slashAnimation = vfx.getEffect("slash_critical");
+        if (slashAnimation == null) return;
+
+        float[] dims = getTargetDimensions(target);
+        if (dims == null) return;
+
+        float targetWidth = dims[0];
+        float targetHeight = dims[1];
+
+        // Calcula a posição para centralizar o efeito no alvo
+        float effectX = target.getOriginalBattleX() + (targetWidth / 2f) - (slashAnimation.getKeyFrame(0).getRegionWidth() / 2f);
+        float effectY = target.getOriginalBattleY() + (targetHeight / 2f) - (slashAnimation.getKeyFrame(0).getRegionHeight() / 2f);
+
+        activeEffects.add(new VisualEffect(slashAnimation, effectX, effectY));
+    }
+
+    private float[] getTargetDimensions(Character target) {
+        if (target == player.getCharacter()) {
+            // Se o alvo for o jogador, obtém as dimensões da classe Player
+            return new float[]{player.getWidth(), player.getHeight()};
+        } else {
+            // Se for um inimigo, procura na lista de inimigos
+            for (Enemy enemy : battleSystem.getEnemies()) {
+                if (enemy.getCharacter() == target) {
+                    if (enemy.getSpriteTexture() == null) return new float[]{0, 0};
+                    float scale = enemy.getCharacter().getRenderScale();
+                    float width = enemy.getSpriteTexture().getWidth() * scale;
+                    float height = enemy.getSpriteTexture().getHeight() * scale;
+                    return new float[]{width, height};
+                }
+            }
+        }
+        return null; // Retorna null se o alvo não for encontrado
     }
 
     private void renderHUD() {

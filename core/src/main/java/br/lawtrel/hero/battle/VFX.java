@@ -1,57 +1,67 @@
 package br.lawtrel.hero.battle;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.ObjectMap;
 
 public class VFX implements Disposable {
 
-    public final Animation<TextureRegion> slashEffect;
-    public final Animation<TextureRegion> fireEffect; // Exemplo de animação de magia
-
-    private final Array<Texture> texturesToDispose = new Array<>();
+    // Um mapa para guardar todas as nossas animações por um nome (chave)
+    private final ObjectMap<String, Animation<TextureRegion>> effects;
+    private final Array<Texture> texturesToDispose;
 
     public VFX() {
-        slashEffect = createSlashAnimation();
-        fireEffect = createFireAnimation(); // Vamos manter esta como exemplo para magias
+        this.effects = new ObjectMap<>();
+        this.texturesToDispose = new Array<>();
+
+        // Carrega as folhas de sprites
+        Texture magicSheet = new Texture(Gdx.files.internal("effects/magic_effects.png"));
+        Texture weaponSheet = new Texture(Gdx.files.internal("effects/weapon_effects.png"));
+        texturesToDispose.add(magicSheet);
+        texturesToDispose.add(weaponSheet);
+
+        // --- Extrai e armazena as animações ---
+
+        // Efeito de Corte (da weapon_effects.png)
+        // Usaremos a 5ª linha, que parece ser um "critical hit"
+        // Coordenadas (x,y), tamanho de cada frame (largura, altura), nº de frames, duração de cada frame
+        effects.put("slash_critical", createAnimationFromSheet(weaponSheet, 0, 384, 96, 96, 6, 0.07f));
+
+        // Magia de Fogo (da magic_effects.png)
+        // Primeira linha, "Fire"
+        effects.put("fire", createAnimationFromSheet(magicSheet, 0, 0, 32, 32, 7, 0.1f));
+
+        // Magia de Gelo (da magic_effects.png)
+        // Segunda linha, "Ice"
+        effects.put("ice", createAnimationFromSheet(magicSheet, 0, 40, 64, 56, 7, 0.1f));
+
+        // Adicione outras magias e efeitos aqui. Exemplo:
+        // effects.put("bolt", createAnimationFromSheet(magicSheet, 0, 152, 48, 48, 7, 0.08f));
     }
 
-    private Animation<TextureRegion> createSlashAnimation() {
+    /**
+     * Obtém uma animação pelo seu nome (chave).
+     * @param key O nome da animação (ex: "fire", "slash_critical")
+     * @return A animação correspondente ou null se não for encontrada.
+     */
+    public Animation<TextureRegion> getEffect(String key) {
+        return effects.get(key);
+    }
+
+    /**
+     * Método auxiliar para criar uma animação a partir de uma secção de um spritesheet.
+     */
+    private Animation<TextureRegion> createAnimationFromSheet(Texture sheet, int x, int y, int frameWidth, int frameHeight, int frameCount, float frameDuration) {
         Array<TextureRegion> frames = new Array<>();
-        // Cria 3 frames de um "flash" branco que encolhe
-        for (int i = 0; i < 3; i++) {
-            int size = 32 - (i * 10);
-            Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
-            pixmap.setColor(Color.WHITE);
-            pixmap.fill();
-            Texture texture = new Texture(pixmap);
-            texturesToDispose.add(texture); // Guarda para ser eliminada depois
-            frames.add(new TextureRegion(texture));
-            pixmap.dispose();
+        for (int i = 0; i < frameCount; i++) {
+            frames.add(new TextureRegion(sheet, x + (i * frameWidth), y, frameWidth, frameHeight));
         }
-        // A animação dura 0.21 segundos no total (0.07s por frame)
-        return new Animation<>(0.07f, frames, Animation.PlayMode.NORMAL);
+        return new Animation<>(frameDuration, frames, Animation.PlayMode.NORMAL);
     }
-
-    private Animation<TextureRegion> createFireAnimation() {
-        Array<TextureRegion> frames = new Array<>();
-        for (int i = 0; i < 4; i++) {
-            Pixmap pixmap = new Pixmap(48, 48, Pixmap.Format.RGBA8888);
-            // Simula um efeito de fogo com um círculo vermelho/laranja
-            pixmap.setColor(new Color(1, 0.2f * i, 0, 0.8f));
-            pixmap.fillCircle(24, 24, 20 - (i * 4));
-            Texture texture = new Texture(pixmap);
-            texturesToDispose.add(texture);
-            frames.add(new TextureRegion(texture));
-            pixmap.dispose();
-        }
-        return new Animation<>(0.1f, frames, Animation.PlayMode.NORMAL);
-    }
-
 
     @Override
     public void dispose() {
