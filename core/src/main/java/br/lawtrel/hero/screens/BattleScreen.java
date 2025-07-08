@@ -6,6 +6,7 @@ import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.Enemy;
 import br.lawtrel.hero.entities.Player;
 import br.lawtrel.hero.entities.Skill;
+import br.lawtrel.hero.magic.Magics;
 import br.lawtrel.hero.utils.BackgroundManager;
 import br.lawtrel.hero.battle.BattleSystem;
 import br.lawtrel.hero.utils.MapManager;
@@ -51,6 +52,7 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
 
     // Distância que o personagem se moverá para atacar
     private static final float ATTACK_MOVE_DISTANCE = 50f;
+    private boolean victoryMusicStarted;
 
     public BattleScreen(Hero game, Player player, Array<Enemy> enemies) {
         this.game = game;
@@ -123,11 +125,6 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
 
         player.update(Gdx.graphics.getDeltaTime(), false, false, false, false);
         player.render(batch, playerRenderX, playerRenderY);
-
-        /*battleSystem.getPlayer().render(batch,
-            PLAYER_X - battleSystem.getPlayer().getBounds().width/2,
-            BASE_Y - battleSystem.getPlayer().getBounds().height/2);*/
-
         // Renderiza os inimigos
         Array<Enemy> enemies = battleSystem.getEnemies();
         int numberOfEnemiesToDisplay = Math.min(enemies.size, 4);
@@ -184,21 +181,16 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                 float renderX = ENEMIES_X + (currentXOffsets[i] * scale) - (scaledWidth / 2f) ;
                 // O Y é a linha do chão (BASE_Y) + o offset de âncora visual do sprite
                 float renderY = BASE_Y + visualAnchorY;
-
-                //Salva a possicao original do inimigo
-                if (enemyChar.getBattleState() == Character.BattleAnimationState.IDLE && enemyChar.getOriginalBattleX() == 0) {
-                    enemyChar.setOriginalBattleX(renderX);
-                    enemyChar.setOriginalBattleY(renderY);
-                }
-
-                // Se o inimigo está atacando, usa a posição da animação
                 if (attackingCharacter == enemyChar) {
                     renderX = enemyChar.getOriginalBattleX();
+                } else {
+                    //Salva a possicao original do inimigo
+                    if (enemyChar.getBattleState() == Character.BattleAnimationState.IDLE) {
+                        enemyChar.setOriginalBattleX(renderX);
+                        enemyChar.setOriginalBattleY(renderY);
+                    }
                 }
-                enemyChar.setOriginalBattleX(renderX);
-                enemyChar.setOriginalBattleY(renderY);
-
-                enemy.render(batch, renderX, (int)renderY, scale); // Passa a escala
+                enemy.render(batch, renderX, (int)renderY, scale);
             }
         }
 
@@ -270,37 +262,29 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                 break;
 
             case ATTACKING:
-                // Espera um pouco para o efeito visual ser visto
-                if (attackingCharacter.getAnimationTimer() > 0.4f) { // 0.4s de pausa
-                    attackingCharacter.setBattleState(Character.BattleAnimationState.MOVING_BACK);
-                    attackingCharacter.setAnimationTimer(0);
+                // Garante que a lógica de ataque só é executada UMA VEZ
+                if (attackingCharacter.getAnimationTimer() < delta) {
+                    // Verifica se o alvo ainda está vivo antes de atacar
+                    if (attackTarget != null && attackTarget.isAlive()) {
+                        if (spellToCast != null) { // É uma magia
+                            game.soundManager.playSound("magic_cast"); // Som de magia
+                            onMagicVFX(attackTarget, spellToCast); // Efeito visual da magia
+                            attackingCharacter.castSpell(spellToCast.getName(), attackTarget); // Aplica o dano/efeito
+                            battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
+                        } else { // É um ataque físico
+                            game.soundManager.playSound("attack_hit"); // Som de ataque
+                            onAttackVFX(attackTarget); // Efeito visual do ataque
+                            attackingCharacter.performAttack(attackTarget); // Aplica o dano
+                            battleSystem.setBattleMessage(attackingCharacter.getName() + " atacou " + attackTarget.getName() + "!");
+                        }
+                        battleSystem.handleEnemyDefeated(attackTarget); // Verifica se o alvo morreu
+                    }
                 }
 
-                if (spellToCast != null) { // É uma magia
-                    player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
-                    battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
-
-                    // Animação de fogo à VFX
-                    Animation<TextureRegion> spellAnimation = vfx.getEffect("fire");
-
-                    // --- LÓGICA DO EFEITO DA MAGIA ---
-                    if (attackTarget != null && spellAnimation != null) {
-                        float[] dims = getTargetDimensions(attackTarget); // <-- USA O NOVO MÉTODO
-                        if (dims != null) {
-                            float targetWidth = dims[0];
-                            float targetHeight = dims[1];
-
-                            // Calcula a posição para centralizar o efeito
-                            float effectX = attackTarget.getOriginalBattleX() + (targetWidth / 2f) - (spellAnimation.getKeyFrame(0).getRegionWidth() / 2f);
-                            float effectY = attackTarget.getOriginalBattleY() + (targetHeight / 2f) - (spellAnimation.getKeyFrame(0).getRegionHeight() / 2f);
-                            activeEffects.add(new VisualEffect(spellAnimation, effectX, effectY));
-                        }
-                    }
-
-                } else { // É um ataque físico
-                    onAttackVFX(attackTarget);
-                    attackingCharacter.performAttack(attackTarget);
-                    battleSystem.setBattleMessage(attackingCharacter.getName() + " atacou " + attackTarget.getName() + "!");
+                // Espera um pouco para o efeito ser visto antes de voltar
+                if (attackingCharacter.getAnimationTimer() > 0.5f) {
+                    attackingCharacter.setBattleState(Character.BattleAnimationState.MOVING_BACK);
+                    attackingCharacter.setAnimationTimer(0);
                 }
                 break;
 
@@ -343,6 +327,44 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
         float effectY = target.getOriginalBattleY() + (targetHeight / 2f) - (slashAnimation.getKeyFrame(0).getRegionHeight() / 2f);
 
         activeEffects.add(new VisualEffect(slashAnimation, effectX, effectY));
+    }
+
+    private void onMagicVFX(Character target, Skill spell) {
+        // Garante que o alvo existe e que a habilidade é uma magia válida
+        if (target == null || spell == null || !(spell instanceof Magics)) {
+            return;
+        }
+
+        Magics magic = (Magics) spell;
+        String vfxKey = magic.getVfxKey();
+
+        // Se a magia não tiver uma chave de efeito definida, usa um efeito padrão
+        if (vfxKey == null) {
+            vfxKey = "slash_critical"; // Efeito genérico para magias sem animação específica
+        }
+
+        // Pede a animação à classe VFX
+        Animation<TextureRegion> spellAnimation = vfx.getEffect(vfxKey);
+        if (spellAnimation == null) {
+            Gdx.app.error("BattleScreen", "VFX para a chave '" + vfxKey + "' nao foi encontrado!");
+            return; // A animação não existe, então não fazemos nada
+        }
+
+        // Obtém as dimensões do alvo para poder centralizar o efeito
+        float[] dims = getTargetDimensions(target);
+        if (dims == null) return;
+
+        float targetWidth = dims[0];
+        float targetHeight = dims[1];
+
+        TextureRegion frame = spellAnimation.getKeyFrame(0);
+
+        // Calcula a posição para centralizar a animação no meio do alvo
+        float effectX = target.getOriginalBattleX() + (targetWidth / 2f) - (frame.getRegionWidth() / 2f);
+        float effectY = target.getOriginalBattleY() + (targetHeight / 2f) - (frame.getRegionHeight() / 2f);
+
+        // Adiciona o efeito visual à lista para ser renderizado
+        activeEffects.add(new VisualEffect(spellAnimation, effectX, effectY));
     }
 
     private float[] getTargetDimensions(Character target) {
@@ -403,10 +425,13 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
     private void handlePlayerTurnInput(int keycode) {
         if (keycode == Input.Keys.DOWN) {
             battleSystem.moveSelectionDown();
+            game.soundManager.playSound("menu_select");
         } else if (keycode == Input.Keys.UP) {
             battleSystem.moveSelectionUp();
+            game.soundManager.playSound("menu_select");
         } else if (keycode == Input.Keys.ENTER) {
             battleSystem.playerSelectAction(battleSystem.getSelectedOption());
+            game.soundManager.playSound("menu_confirm");
         } else if (keycode == Input.Keys.ESCAPE) {
             // Pode adicionar lógica para sair da batalha
         }
@@ -486,6 +511,12 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
     }
 
     private void handleBattleEnd() {
+        if(battleSystem.getState() == BattleSystem.BattleState.VICTORY && !victoryMusicStarted) {
+            game.soundManager.playVictoryMusic();
+            victoryMusicStarted = true;
+        } else if (battleSystem.getState() == BattleSystem.BattleState.DEFEAT) {
+            // game.soundManager.playMusic("audio/music/defeat_theme.mp3", false);
+        }
         renderVictoryOrDefeatSummary();
     }
 
@@ -542,11 +573,19 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
     }
 
 
-    @Override public void show() {Gdx.input.setInputProcessor(this);}
+    @Override public void show() {
+        Gdx.input.setInputProcessor(this);
+        game.soundManager.playBattleMusic();
+        // Reseta a flag da música de vitória sempre que uma nova batalha começa
+        this.victoryMusicStarted = false;
+    }
     @Override public void resize(int width, int height) {batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);}
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() { player.setInBattleView(false);}
+    @Override public void hide() {
+        player.setInBattleView(false);
+        game.soundManager.stopMusic();
+    }
 
     @Override
     public void dispose() {

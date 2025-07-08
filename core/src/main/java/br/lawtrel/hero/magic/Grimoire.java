@@ -16,29 +16,30 @@ public class Grimoire {
     }
 
     private void initializeDefaultSpells() {
-        //Magias de efeito
-        Magics darkness = new MagicBuilder("Escuridão", 5, "Dark")
-            .setMagicSTTS("Blind")
-            .setTimeSTTS(3)
-            .setStatusPotency(0.3f) // 30% chance de errar
+        //Magias de fogo
+        Magics fire = new MagicBuilder("Fireball", 10, "Fire")
+            .setMagicDMG(20)
+            .setVfxKey("fire")
             .build();
 
-        //Magias de ataque
-        Magics damageOrb = new MagicBuilder("Esfera de Dano", 5, "Dark")
-            .setMagicDMG(15)
+        //Magias de Terra
+        Magics eath = new MagicBuilder("Eathquake", 20, "Eath")
+            .setMagicDMG(30)
+            .setVfxKey("eath")
             .build();
 
         //Magias de efeito e ataque
         Magics iceImpact = new MagicBuilder("Ice Berg", 8, "Water")
-            .setMagicDMG(10)
+            .setMagicDMG(15)
             .setMagicSTTS("Cold")
             .setTimeSTTS(3)
             .setStatusPotency(2) // reduz speed em 2
+            .setVfxKey("ice")
             .build();
 
         //adicionar no grimorio
-        addSpell(darkness);
-        addSpell(damageOrb);
+        addSpell(fire);
+        addSpell(eath);
         addSpell(iceImpact);
     }
 

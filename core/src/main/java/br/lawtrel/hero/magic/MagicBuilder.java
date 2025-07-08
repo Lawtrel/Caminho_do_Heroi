@@ -8,6 +8,7 @@ public class MagicBuilder {
     public int timeSTTS;
     public String magicType;
     public float statusPotency;
+    public String vfxKey;
 
     //Metodo para construir a parte obrigatoria das magias
     public MagicBuilder(String magicName, int costMP, String magicType){
@@ -33,6 +34,11 @@ public class MagicBuilder {
     }
     public MagicBuilder setStatusPotency(float statusPotency) {
         this.statusPotency = statusPotency;
+        return this;
+    }
+
+    public MagicBuilder setVfxKey(String key) {
+        this.vfxKey = key;
         return this;
     }
 

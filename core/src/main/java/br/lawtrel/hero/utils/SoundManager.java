@@ -3,22 +3,36 @@ package br.lawtrel.hero.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 
 public class SoundManager implements Disposable {
 
     private final ObjectMap<String, Sound> soundEffects;
+    private final Array<String> victoryMusicPaths;
+    private final Array<String> battleMusicPaths;
     private Music currentMusic;
     private float musicVolume = 0.5f; // Volume da música (0.0 a 1.0)
     private float sfxVolume = 0.8f;   // Volume dos efeitos sonoros (0.0 a 1.0)
 
     public SoundManager() {
         soundEffects = new ObjectMap<>();
+        victoryMusicPaths = new Array<>();
+        battleMusicPaths = new Array<>();
         // Pré-carrega todos os efeitos sonoros aqui
-        loadSound("attack_hit", "audio/sfx/attack_hit.wav");
+        loadSound("attack_hit","audio/sfx/attack_hit.wav");
         loadSound("menu_select", "audio/sfx/menu_select.wav");
-        loadSound("victory_fanfare", "audio/sfx/victory.mp3");
+        loadSound("menu_confirm", "audio/sfx/menu_confirm.wav");
+        loadSound("magic_cast", "audio/sfx/magic_cast.wav");
+
+        victoryMusicPaths.add("audio/music/victory.mp3");
+        victoryMusicPaths.add("audio/music/victory_fanfare.mp3");
+        victoryMusicPaths.add("audio/music/victory_fanfare2.mp3");
+
+        battleMusicPaths.add("audio/music/battle_theme.mp3");
+        battleMusicPaths.add("audio/music/battle.mp3");
+        battleMusicPaths.add("audio/music/battle2.mp3");
         // Adicione outros efeitos sonoros aqui...
     }
 
@@ -70,6 +84,28 @@ public class SoundManager implements Disposable {
 
     public void setSfxVolume(float volume) {
         this.sfxVolume = Math.max(0f, Math.min(1f, volume));
+    }
+
+    public void playVictoryMusic() {
+        if (victoryMusicPaths.size == 0) {
+            Gdx.app.log("SoundManager", "Nenhuma musica de vitoria para tocar.");
+            return;
+        }
+        // Escolhe uma música aleatoriamente da lista
+        String randomVictoryPath = victoryMusicPaths.random();
+        // Toca a música escolhida, sem repetir (looping = false)
+        playMusic(randomVictoryPath, false);
+    }
+
+    public void playBattleMusic() {
+        if (battleMusicPaths.size == 0) {
+            Gdx.app.log("SoundManager", "Nenhuma musica de vitoria para tocar.");
+            return;
+        }
+        // Escolhe uma música aleatoriamente da lista
+        String randomBattlePath = battleMusicPaths.random();
+        // Toca a música escolhida, sem repetir (looping = false)
+        playMusic(randomBattlePath, false);
     }
 
     @Override

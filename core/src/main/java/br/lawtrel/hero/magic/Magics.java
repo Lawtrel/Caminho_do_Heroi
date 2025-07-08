@@ -16,6 +16,7 @@ public class Magics implements Skill {
     private int timeSTTS; //Define quanto tempo dura o status
     private String magicType; //Define o tipo da magia
     private float statusPotency; // Potência específica do status (ex: dano do veneno, valor do buff)
+    private final String vfxKey;
 
     //Construtor da magia
     public Magics(MagicBuilder builder){
@@ -26,6 +27,7 @@ public class Magics implements Skill {
         this.timeSTTS = builder.timeSTTS;
         this.magicType = builder.magicType;
         this.statusPotency = builder.statusPotency;
+        this.vfxKey = builder.vfxKey;
     }
 
     public StatusEffect createAssociatedStatusEffect() {
@@ -99,5 +101,9 @@ public class Magics implements Skill {
     public int getTimeSTTS() {return timeSTTS;}
 
     public String getMagicType() {return magicType;}
+
+    public String getVfxKey() {
+        return vfxKey;
+    }
 
 }

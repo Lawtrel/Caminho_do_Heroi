@@ -86,6 +86,8 @@ public class WorldMapScreen extends ScreenAdapter {
         //camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         //camera.position.set(player.getX(), player.getY(), 0);
         //camera.update();
+
+        game.soundManager.playMusic("audio/music/world_map.mp3", true);
     }
 
     @Override
