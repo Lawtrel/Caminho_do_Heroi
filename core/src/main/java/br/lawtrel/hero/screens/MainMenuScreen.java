@@ -39,6 +39,7 @@ public class MainMenuScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+        game.soundManager.playMusic("audio/music/intro_theme.mp3", true);
         Gdx.input.setInputProcessor(stage);
 
         Table table = new Table();
@@ -111,6 +112,12 @@ public class MainMenuScreen extends ScreenAdapter {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+    }
+
+    @Override
+    public void hide() {
+        // Para a música quando o jogador sai da tela
+        game.soundManager.stopMusic();
     }
 
     @Override

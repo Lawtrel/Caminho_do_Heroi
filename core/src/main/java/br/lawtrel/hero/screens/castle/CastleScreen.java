@@ -49,6 +49,7 @@ public class CastleScreen extends ScreenAdapter{
 
     @Override
     public void show(){
+        game.soundManager.playMusic("audio/music/castle_map.mp3", true);
         viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         //Carrega o mapa
         map = new TmxMapLoader().load(MAP_ID);

@@ -49,6 +49,7 @@ public class VillageScreen extends ScreenAdapter {
     }
     @Override
     public void show() {
+        game.soundManager.playMusic("audio/music/village_map.mp3", true);
         viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
         //Carrega o mapa

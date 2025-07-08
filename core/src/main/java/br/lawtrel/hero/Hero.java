@@ -34,19 +34,19 @@ public class Hero extends Game {
     @Override
     public void create() {
         soundManager = new SoundManager();
-        setScreen(new BattleTestScreen(this));
+        //setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
-        //setScreen(new MainMenuScreen(this));
+        setScreen(new MainMenuScreen(this));
        // mapManager.changeMap(MapManager.MapType.WORLD_MAP);
 
     }
     private void initializePlayer() {
         Character playerCharacter = new CharacterBuilder()
             .setName("Heroi") // Nome do jogador global
-            .setMaxHp(100)
+            .setMaxHp(200)
             .setMaxMP(50)
-            .setAttack(10)
-            .setDefense(8)
+            .setAttack(20)
+            .setDefense(10)
             .setMagicAttack(5)
             .setMagicDefense(5)
             .setSpeed(12)
