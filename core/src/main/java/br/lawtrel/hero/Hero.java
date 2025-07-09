@@ -66,9 +66,9 @@ public class Hero extends Game {
 
         // Adiciona alguns itens iniciais para teste no PauseMenuScreen
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM001")); //Poção Pequena
-        player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM005")); // Eter
+        //player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM005")); // Eter
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM003")); // Espada Curta
-        player.getCharacter().gainExp(100); // Adiciona um pouco de XP inicial
+        player.getCharacter().gainExp(50); // Adiciona um pouco de XP inicial
         player.addMoney(25); // Adiciona um pouco de ouro inicial
 
     }

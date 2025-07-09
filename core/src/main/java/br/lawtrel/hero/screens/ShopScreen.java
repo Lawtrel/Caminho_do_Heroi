@@ -1,13 +1,18 @@
 package br.lawtrel.hero.screens;
 
 import br.lawtrel.hero.Hero;
+import br.lawtrel.hero.entities.NPC;
 import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.entities.items.Item;
+import br.lawtrel.hero.entities.items.ItemFactory;
 import br.lawtrel.hero.utils.MapManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -18,92 +23,282 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class ShopScreen extends ScreenAdapter {
+public class ShopScreen extends ScreenAdapter implements InputProcessor {
+
     private final Hero game;
-    private final MapManager  mapManager ;
-    private TiledMap map;
+    private final MapManager mapManager;
     private final OrthographicCamera camera;
-    private OrthogonalTiledMapRenderer mapRenderer;
     private final SpriteBatch batch;
+    private final Stage stage;
+    private final Skin skin;
+
+    // UI da Loja
+    private final Window shopWindow;
+    private final List<Item> shopItemsList;
+    private final Label infoLabel;
+    private final Label goldLabel;
+
+    private final Array<NPC> npcs;
+    private TiledMap map;
+    private OrthogonalTiledMapRenderer mapRenderer;
     private Player player;
     private Viewport viewport;
-    private final String MAP_ID = "maps/shop.tmx";
+    private boolean isShopOpen = false;
 
-    private final int MAP_WIDTH_PIXELS = 9 * 32;  // Exemplo: 25 tiles de largura * 16 pixels/tile
-    private final int MAP_HEIGHT_PIXELS = 11 * 32; // Exemplo: 20 tiles de altura * 16 pixels/tile
+    private final String MAP_ID = "maps/shop.tmx";
+    private final String MAP_THEME_MUSIC = "audio/music/village_map.mp3";
+    private final String SHOP_THEME_MUSIC = "audio/music/shop_theme.mp3";
+
+    private final int MAP_WIDTH_PIXELS = 9 * 32;
+    private final int MAP_HEIGHT_PIXELS = 11 * 32;
     private static final float WORLD_WIDTH = 400;
     private static final float WORLD_HEIGHT = 240;
-
 
     public ShopScreen(Hero game, MapManager mapManager) {
         this.game = game;
         this.mapManager = mapManager;
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera();
+        this.npcs = new Array<>();
+        this.skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+        this.stage = new Stage(new ScreenViewport());
+
+        // --- Criação da UI da Loja ---
+        shopWindow = new Window("Loja", skin, "dialog");
+        shopItemsList = new List<>(skin);
+        infoLabel = new Label("Bem-vindo!", skin);
+        goldLabel = new Label("Ouro: 0", skin);
+        setupShopWindow();
+    }
+
+    private void setupShopWindow() {
+        infoLabel.setWrap(true);
+        goldLabel.setAlignment(Align.left);
+
+        TextButton buyButton = new TextButton("Comprar (Z)", skin, "nes-style");
+        TextButton exitButton = new TextButton("Sair (X)", skin, "nes-style");
+
+        Table detailsTable = new Table();
+        detailsTable.add(infoLabel).width(250).height(80).align(Align.topLeft).colspan(2).row();
+        detailsTable.add(goldLabel).colspan(2).align(Align.left).padTop(10).row();
+        detailsTable.add(buyButton).pad(10);
+        detailsTable.add(exitButton).pad(10);
+
+        ScrollPane scrollPane = new ScrollPane(shopItemsList, skin);
+        scrollPane.setFadeScrollBars(false);
+
+        shopWindow.add(scrollPane).width(280).expandY().fillY().pad(5);
+        shopWindow.add(detailsTable).expandX().fillX().pad(5);
+        shopWindow.pack();
+        shopWindow.setPosition(
+            (Gdx.graphics.getWidth() - shopWindow.getWidth()) / 2,
+            (Gdx.graphics.getHeight() - shopWindow.getHeight()) / 2
+        );
+        shopWindow.setVisible(false);
+        stage.addActor(shopWindow);
+
+        // --- Listeners ---
+        shopItemsList.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                updateInfo();
+            }
+        });
+
+        buyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                buySelectedItem();
+            }
+        });
+
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                closeShop();
+            }
+        });
     }
 
     @Override
     public void show() {
-        this.viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-        //Carrega o mapa
+        Gdx.input.setInputProcessor(this);
+        game.soundManager.playMusic(MAP_THEME_MUSIC, true);
+
+        viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
         map = new TmxMapLoader().load(MAP_ID);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
+
         this.player = game.getPlayer();
+        if (player == null) {
+            Gdx.app.error("ShopScreen", "Jogador nulo. A voltar para o menu.");
+            game.setScreen(new MainMenuScreen(game));
+            return;
+        }
+        player.setScale(0.5f);
         player.setInBattleView(false);
-        //Ponto de Spawn
-        Vector2 spawnPoint = findSpawnPoint(map,"spawn_from_vila" );
+
+        Vector2 spawnPoint = findSpawnPoint(map, "spawn_from_vila");
         player.setPosition(spawnPoint.x, spawnPoint.y);
+        loadNpcsAndShopInventory();
     }
 
     @Override
-    public void resize(int width, int height) {
-        if (viewport != null) {
-            viewport.update(width, height, true);
-        }
+    public void hide() {
+        game.soundManager.stopMusic();
     }
-
 
     @Override
     public void render(float delta) {
-        // Limpa a tela
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.pauseGame();
-            return;
+        if (!isShopOpen) {
+            // Lógica de movimento do jogador
+            boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
+            boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
+            boolean left = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
+            boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+            player.update(delta, up, down, left, right);
+
+            float oldPlayerX = player.getX();
+            float oldPlayerY = player.getY();
+            checkMapObjectCollisions(oldPlayerX, oldPlayerY);
         }
 
-        float oldPlayerX = player.getX();
-        float oldPlayerY = player.getY();
-
-        //atualizar o hero
-        boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
-        boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        boolean left = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-        player.update(delta, up, down, left, right);
-        checkMapObjectCollisions(oldPlayerX, oldPlayerY);
-
-        //camera
         camera.position.x = MathUtils.clamp(player.getX(), viewport.getWorldWidth() / 2f, MAP_WIDTH_PIXELS - viewport.getWorldWidth() / 2f);
         camera.position.y = MathUtils.clamp(player.getY(), viewport.getWorldHeight() / 2f, MAP_HEIGHT_PIXELS - viewport.getWorldHeight() / 2f);
         camera.update();
         viewport.apply();
 
-        //Renderizar o mapa
         mapRenderer.setView(camera);
         mapRenderer.render();
 
-        //renderizar o hero
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         player.render(batch, player.getX(), player.getY());
+        for (NPC npc : npcs) {
+            npc.render(batch);
+        }
         batch.end();
 
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (isShopOpen) {
+            if (keycode == Input.Keys.X || keycode == Input.Keys.ESCAPE) {
+                closeShop();
+                return true;
+            }
+            if (keycode == Input.Keys.Z) {
+                buySelectedItem();
+                return true;
+            }
+            return stage.keyDown(keycode);
+        }
+
+        if (keycode == Input.Keys.Z) {
+            checkForNpcInteraction();
+            return true;
+        }
+
+        if (keycode == Input.Keys.ESCAPE) {
+            game.pauseGame();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void openShop() {
+        isShopOpen = true;
+        shopWindow.setVisible(true);
+        updateInfo();
+        game.soundManager.playMusic(SHOP_THEME_MUSIC, true);
+    }
+
+    private void closeShop() {
+        isShopOpen = false;
+        shopWindow.setVisible(false);
+        game.soundManager.playMusic(MAP_THEME_MUSIC, true);
+    }
+
+    private void buySelectedItem() {
+        Item selectedItem = shopItemsList.getSelected();
+        if (selectedItem != null) {
+            if (player.getMoney() >= selectedItem.getPrice()) {
+                player.spendMoney(selectedItem.getPrice());
+                player.addItem(ItemFactory.createItem(selectedItem.getId()));
+                game.soundManager.playSound("menu_select");
+                updateInfo();
+            } else {
+                infoLabel.setText("Ouro insuficiente!");
+            }
+        }
+    }
+
+    private void updateInfo() {
+        Item selectedItem = shopItemsList.getSelected();
+        if (selectedItem != null) {
+            infoLabel.setText(selectedItem.getDescription() + "\n\nPreco: " + selectedItem.getPrice() + " Ouro");
+        } else {
+            infoLabel.setText("Bem-vindo! Selecione um item.");
+        }
+        goldLabel.setText("Ouro: " + player.getMoney());
+    }
+
+    private void checkForNpcInteraction() {
+        for (NPC npc : npcs) {
+            if (player.getBounds().overlaps(npc.getBounds())) {
+                if ("shopkeeper".equals(npc.getNpcType())) {
+                    openShop();
+                    break;
+                }
+            }
+        }
+    }
+
+    private void loadNpcsAndShopInventory() {
+        MapLayer npcLayer = map.getLayers().get("NPCs");
+        if (npcLayer == null) return;
+
+        for (MapObject object : npcLayer.getObjects()) {
+            if ("shopkeeper".equals(object.getProperties().get("type", String.class))) {
+                float x = ((RectangleMapObject) object).getRectangle().x;
+                float y = ((RectangleMapObject) object).getRectangle().y;
+                String spritePath = object.getProperties().get("sprite", String.class);
+                NPC npc = new NPC(new Texture(Gdx.files.internal(spritePath)), x, y, "shopkeeper");
+                npcs.add(npc);
+
+                String inventoryStr = object.getProperties().get("shop_inventory", String.class);
+                if (inventoryStr != null) {
+                    Array<Item> shopItems = new Array<>();
+                    String[] itemIds = inventoryStr.split(",");
+                    for (String id : itemIds) {
+                        Item item = ItemFactory.createItem(id.trim());
+                        if (item != null) shopItems.add(item);
+                    }
+                    shopItemsList.setItems(shopItems);
+                    if (shopItems.size > 0) {
+                        shopItemsList.setSelectedIndex(0);
+                    }
+                }
+                break;
+            }
+        }
     }
 
     private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY) {
@@ -129,16 +324,9 @@ public class ShopScreen extends ScreenAdapter {
             if (object instanceof RectangleMapObject) {
                 if (player.getBounds().overlaps(((RectangleMapObject) object).getRectangle())) {
                     String targetMap = object.getProperties().get("target", String.class);
-                    if (targetMap != null) {
-                        switch (targetMap.toLowerCase()) {
-                            case "vila":
-                                mapManager.changeMap(MapManager.MapType.VILLAGE);
-                                return;
-                            case "world":
-                                // Normalmente não se sai de uma loja para o mapa do mundo, mas a opção está aqui.
-                                mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-                                return;
-                        }
+                    if (targetMap != null && "vila".equalsIgnoreCase(targetMap)) {
+                        mapManager.changeMap(MapManager.MapType.VILLAGE);
+                        return;
                     }
                 }
             }
@@ -154,8 +342,13 @@ public class ShopScreen extends ScreenAdapter {
                 }
             }
         }
-        Gdx.app.log("ShopScreen", "Objeto de Spawn '" + spawnName + "' não encontrado. Usando (100, 100).");
         return new Vector2(100, 100);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -163,5 +356,24 @@ public class ShopScreen extends ScreenAdapter {
         batch.dispose();
         map.dispose();
         mapRenderer.dispose();
+        skin.dispose();
+        stage.dispose();
+        for (NPC npc : npcs) {
+            npc.dispose();
+        }
     }
+
+    @Override public boolean keyUp(int keycode) { return stage.keyUp(keycode); }
+    @Override public boolean keyTyped(char character) { return stage.keyTyped(character); }
+    @Override public boolean touchDown(int screenX, int screenY, int pointer, int button) { return stage.touchDown(screenX, screenY, pointer, button); }
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return stage.touchUp(screenX, screenY, pointer, button); }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return stage.touchDragged(screenX, screenY, pointer); }
+    @Override public boolean mouseMoved(int screenX, int screenY) { return stage.mouseMoved(screenX, screenY); }
+    @Override public boolean scrolled(float amountX, float amountY) { return stage.scrolled(amountX, amountY); }
 }

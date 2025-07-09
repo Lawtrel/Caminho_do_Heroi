@@ -7,6 +7,7 @@ public class Item {
     private final String name;
     private final Type type;
     private final String description;
+    private final int price;
 
     private final int attackBonus;
     private final int defenseBonus;
@@ -20,12 +21,13 @@ public class Item {
     // private final StatusEffect statusToApply; // Para itens que aplicam status
     // private final StatusEffect statusToCure;  // Para itens que curam status
 
-    public Item(String id, String name, String description, Type type, int attackBonus, int defenseBonus, int magicAttackBonus,
+    public Item(String id, String name, String description, Type type, int price, int attackBonus, int defenseBonus, int magicAttackBonus,
                 int magicDefenseBonus, int hpBonus, int mpBonus, int hpRecovery, int mpRecovery) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.type = type;
+        this.price = price;
         this.attackBonus = attackBonus;
         this.defenseBonus = defenseBonus;
         this.magicAttackBonus = magicAttackBonus;
@@ -41,6 +43,9 @@ public class Item {
     public String getName() { return name; }
     public String getDescription() { return description; }
     public Type getType() { return type; }
+    public int getPrice() {
+        return price;
+    }
     public int getAttackBonus() { return attackBonus; }
     public int getDefenseBonus() { return defenseBonus; }
     public int getMagicAttackBonus() { return magicAttackBonus; }

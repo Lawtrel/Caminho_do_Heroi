@@ -6,16 +6,12 @@ public class ItemFactory {
     private static final Map<String, Item> itemDefinitions = new HashMap<>();
     static {
         // ID, Nome, Descrição, Tipo, ATK, DEF, M.ATK, M.DEF, HP, MP, HP Rec, MP Rec
-        defineItem(new Item("ITM001", "Pocao Pequena", "Restaura 25 HP.", Item.Type.CONSUMABLE,
+        defineItem(new Item("ITM001", "Pocao Pequena", "Restaura 25 HP.", Item.Type.CONSUMABLE, 20,
             0, 0, 0, 0, 0, 0, 25, 0));
-        defineItem(new Item("ITM002", "Pele de Goblin", "Material simples.", Item.Type.MATERIAL,
+        defineItem(new Item("ITM002", "Pele de Goblin", "Material simples.", Item.Type.MATERIAL, 5,
             0, 0, 0, 0, 0, 0, 0, 0));
-        defineItem(new Item("ITM003", "Espada Curta", "Uma espada curta e básica.", Item.Type.WEAPON,
+        defineItem(new Item("ITM003", "Espada Curta", "Uma espada curta e básica.", Item.Type.WEAPON, 50,
             3, 0, 0, 0, 0, 0, 0, 0));
-        defineItem(new Item("ITM004", "Escudo de Madeira", "Um escudo simples de madeira.", Item.Type.ARMOR, // ARMOR geralmente é para o corpo, SHIELD seria um subtipo ou slot diferente
-            0, 2, 0, 0, 0, 0, 0, 0)); // ARMOR pode ser slot de armadura, ou SHIELD um slot separado
-        defineItem(new Item("ITM005", "Eter Pequeno", "Restaura 10 MP.", Item.Type.CONSUMABLE,
-            0, 0, 0, 0, 0, 0, 0, 10));
         // Adicione mais itens conforme necessário
     }
 

@@ -79,10 +79,10 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
             Gdx.app.error("VillageScreen", "Jogador nulo ao mostrar a tela!");
             return;
         }
-        player.setScale(0.5f);
+        float scale = map.getProperties().get("playerScale", 0.5f, Float.class);
+        player.setScale(scale);
         player.setInBattleView(false);
-        float scale = map.getProperties().get("playerScale", 1.0f, Float.class);
-        player.setScale(scale); // Aplica a escala ao jogador
+
         Vector2 spawnPoint = findSpawnPoint(map);
         player.setPosition(spawnPoint.x, spawnPoint.y);
         loadNpcsFromMap();

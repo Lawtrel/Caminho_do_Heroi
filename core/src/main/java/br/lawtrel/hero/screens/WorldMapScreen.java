@@ -64,21 +64,16 @@ public class WorldMapScreen extends ScreenAdapter {
     @Override
     public void show() {
         batch = new SpriteBatch();
-
         //Carrega o mapa
         map = new TmxMapLoader().load(MAP_ID);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
-
-
         //Ponto de Spawn
         this.player = game.getPlayer();
-        player.setInBattleView(false);
         float scale = map.getProperties().get("playerScale", 1.0f, Float.class);
         player.setScale(scale); // Aplica a escala ao jogador
+        player.setInBattleView(false);
         Vector2 lastPosition = null;
-
         lastPosition = game.getPlayerLastWorldMapPosition(MAP_ID);
-
         if (lastPosition != null) {
             player.setPosition(lastPosition.x, lastPosition.y);
             Gdx.app.log("WorldMapScreen_show", "Jogador restaurado para a posição salva: " + lastPosition.x + "," + lastPosition.y);
