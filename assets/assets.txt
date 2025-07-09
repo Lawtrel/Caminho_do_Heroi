@@ -1,9 +1,9 @@
 d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
 b:maps/shop.tmx:maps/shop-709f939cd5c76971656053666cc514fe.tmx:2385:application/unknown:1
-b:maps/vila.tmx:maps/vila-946cc67ef40aff1de5d41cfe4108f1fc.tmx:9127:application/unknown:1
+b:maps/vila.tmx:maps/vila-61c1db13f7e4683b0cf5432e9983e523.tmx:7032:application/unknown:1
 b:maps/bossFight.tmx:maps/bossFight-7d9e4b454e450017a518f189ff2bb1c2.tmx:2920:application/unknown:1
-b:maps/word.tmx:maps/word-e552ce7fb4261f439bf4707a548d9679.tmx:16812:application/unknown:1
+b:maps/word.tmx:maps/word-3e1f1e6d042b51116cb3e437ff318fc3.tmx:1885:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
 b:maps/cave.tmx:maps/cave-3b6c95da832d10c212fa05595a169332.tmx:3965:application/unknown:1
@@ -17,7 +17,7 @@ d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-3e467d56a370864c33e50e8c43ab6bd5.txt:1595:text/plain:1
+t:assets.txt:assets-2f2ec58f011d27fecb716d16f570e035.txt:1685:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1
@@ -27,7 +27,7 @@ i:enemies/Chaos.png:enemies/Chaos-33da5b68bcddae1241eabec8b28eb908.png:3287:imag
 i:enemies/undead.png:enemies/undead-23a1a8ed62c89f5b597a237b29b6fcae.png:1971:image/png:1
 i:enemies/54613.png:enemies/54613-e3d831f844896d9a558be489849a01da.png:172211:image/png:1
 i:enemies/goblin.png:enemies/goblin-cd8e1d652a4f45a660e71e084151a534.png:872:image/png:1
-i:enemies/wizard.png:enemies/wizard-dc31cba016f7046f04707c1f20fa8b0a.png:1077:image/png:1
+i:enemies/wizard.png:enemies/wizard-92c54fe0d2dbfbe35b75ac8fbf51a8e1.png:1606:image/png:1
 i:enemies/56180.png:enemies/56180-606890f942ff85703f40fe89f8e78bf6.png:319053:image/png:1
 d:tileset:tileset:0:application/unknown:1
 i:tileset/10546.png:tileset/10546-6c60560a40576a8e3d491043fba24fc1.png:16369:image/png:1
@@ -82,6 +82,12 @@ b:fonts/Arialn.ttf:fonts/Arialn-481816ebe7b2dc627596ef2fd9507f0b.ttf:60012:appli
 b:fonts/GEO_AI__.TTF:fonts/GEO_AI__-4a55fa1217b0680e2da911d5dffad2f7.TTF:60380:application/unknown:1
 b:fonts/ARIBL0.ttf:fonts/ARIBL0-e29d16fb2d50bff249b5f4412c6868f5.ttf:57448:application/unknown:1
 b:fonts/G_ari_bd.TTF:fonts/G_ari_bd-d4bf65c4a72084ce75985f8ded5f1523.TTF:133220:application/unknown:1
+d:npcs:npcs:0:application/unknown:1
+i:npcs/srMatias.png:npcs/srMatias-11553ab021295dd607f145e0b262171b.png:1042:image/png:1
+i:npcs/srZinias.png:npcs/srZinias-6c4f2516ce6239104d99191e6d8b0a2b.png:1046:image/png:1
+i:npcs/srJosias.png:npcs/srJosias-5792d6afac9031c10edb52e154b7e05f.png:695:image/png:1
+i:npcs/srTonias.png:npcs/srTonias-28c40fcee0610114e456dc7acad9551b.png:1068:image/png:1
+i:npcs/srLopias.png:npcs/srLopias-172341770b9cf3ea3cce9ff7885eb569.png:689:image/png:1
 d:sprites:sprites:0:application/unknown:1
 i:sprites/boss.png:sprites/boss-d41d8cd98f00b204e9800998ecf8427e.png:0:image/png:1
 i:sprites/villager_npc.png:sprites/villager_npc-1a4d175398e903274332bc2581d29c9e.png:3438:image/png:1
