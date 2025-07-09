@@ -1,0 +1,82 @@
+{
+	"com.badlogic.gdx.graphics.g2d.BitmapFont": {
+		"font": { "file": "font-export.fnt" },
+		"giygas": { "file": "giygas-export.fnt" },
+		"saturn": { "file": "saturn-export.fnt" },
+		"year199x": { "file": "199x-export.fnt" }
+	},
+	"com.badlogic.gdx.graphics.Color": {
+		"black": { "r": 0, "g": 0, "b": 0, "a": 1 },
+		"white": { "r": 1, "g": 1, "b": 1, "a": 1 },
+		"nes-blue-dark": { "r": 0, "g": 0.1, "b": 0.3, "a": 1 },
+		"nes-blue-light": { "r": 0.1, "g": 0.2, "b": 0.4, "a": 1 },
+		"nes-yellow": { "r": 1, "g": 1, "b": 0.3, "a": 1 },
+		"selection-bg": { "r": 1, "g": 1, "b": 0.3, "a": 0.3 }
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable": {
+		"nes-button-up": { "name": "white", "color": "nes-blue-dark" },
+		"nes-button-over": { "name": "white", "color": "nes-blue-light" },
+		"nes-list-selection": { "name": "white", "color": "selection-bg" }
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+		"default": { "font": "font", "fontColor": "white" },
+		"year199x": { "font": "year199x" },
+		"giygas": { "font": "giygas" },
+		"saturn": { "font": "saturn" },
+		"black": { "font": "font", "fontColor": "black" }
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+		"default": {
+			"font": "font",
+			"fontColor": "white"
+		},
+		"nes-style": {
+			"font": "font",
+			"fontColor": "white",
+			"overFontColor": "nes-yellow",
+			"downFontColor": "nes-yellow",
+			"up": "nes-button-up",
+			"over": "nes-button-over",
+			"down": "nes-button-over"
+		},
+		"nes-tab": {
+			"parent": "nes-style",
+			"checkedFontColor": "nes-yellow",
+			"checked": "nes-button-over"
+		}
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
+		"default": {
+			"font": "font",
+			"fontColorUnselected": "white",
+			"fontColorSelected": "nes-yellow",
+			"selection": "nes-list-selection"
+		}
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+		"default": {
+			"vScroll": "nes-button-up",
+			"vScrollKnob": "nes-button-over"
+		}
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle": {
+		"default": {
+			"background": "nes-button-up",
+			"titleFont": "font"
+		},
+		"dialog": {
+			"background": "nes-button-up",
+			"titleFont": "font",
+			"titleFontColor": "white"
+		}
+	},
+	"com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
+		"default": {
+			"font": "font",
+			"fontColor": "white",
+			"cursor": "nes-button-over",
+			"selection": "nes-list-selection",
+			"background": "nes-button-up"
+		}
+	}
+}

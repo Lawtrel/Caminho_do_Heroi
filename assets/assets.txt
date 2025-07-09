@@ -1,7 +1,7 @@
 d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
 b:maps/shop.tmx:maps/shop-2df7a3e86f661ca807a981ccfcf7151f.tmx:2033:application/unknown:1
-b:maps/vila.tmx:maps/vila-ff5ef59b1f1c2a5b82166839dcf5f9eb.tmx:8535:application/unknown:1
+b:maps/vila.tmx:maps/vila-168165533f273868e1c13c17d06b5977.tmx:8851:application/unknown:1
 b:maps/bossFight.tmx:maps/bossFight-7d9e4b454e450017a518f189ff2bb1c2.tmx:2920:application/unknown:1
 b:maps/word.tmx:maps/word-f0538cacce034a945ee8afdf16d32239.tmx:16731:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
@@ -17,7 +17,7 @@ d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-eb65ef39dd3c5cf567372b024ba57f73.txt:1169:text/plain:1
+t:assets.txt:assets-3e467d56a370864c33e50e8c43ab6bd5.txt:1595:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1
@@ -41,7 +41,7 @@ i:bg/bg_01.png:bg/bg_01-02029af8372914563ede0b74ce552946.png:4199:image/png:1
 i:bg/bg_00.png:bg/bg_00-d3d790da1a285a95eeddea2bdc2a8c4d.png:10107:image/png:1
 d:skins:skins:0:application/unknown:1
 t:skins/saturn-export.fnt:skins/saturn-export-37feeb880558dceab06619f1bb2b7292.fnt:9918:application/unknown:1
-t:skins/uiskin.json:skins/uiskin-3ee42bcae8a11000b4e968d204f3284f.json:2353:application/json:1
+t:skins/uiskin.json:skins/uiskin-6ba473608e031a646c1eab3a25d7b4f3.json:2456:application/json:1
 t:skins/licence-header.txt:skins/licence-header-7fd8584de665b7fdd59b94e33452c4b3.txt:757:text/plain:1
 b:skins/monkey.g3db:skins/monkey-222e7bb9f7a59c53197ab0c8f19deedd.g3db:53452:application/unknown:1
 t:skins/font-export.fnt:skins/font-export-c7c5e1128f931902255b9bca2908d2d2.fnt:9724:application/unknown:1
@@ -56,6 +56,24 @@ i:skins/terra-mother-ui.png:skins/terra-mother-ui-6474fbeb4b9c8458cce5a610ee9933
 b:skins/defaultTemplate.pfx:skins/defaultTemplate-998ed2bd50dc51914ca21cf268dde62e.pfx:2409:application/unknown:1
 t:skins/giygas-export.fnt:skins/giygas-export-5a232bb6b52a7ae71044e575a02bde6b.fnt:9838:application/unknown:1
 i:skins/default.png:skins/default-2a791ed19cce1d97a9082ae4e368f584.png:26179:image/png:1
+d:audio:audio:0:application/unknown:1
+d:audio/music:audio/music:0:application/unknown:1
+a:audio/music/118 Boss Battle 1.mp3:audio/music/118 Boss Battle 1-7e09d3fc2d4cf39aee1f633c75a49de7.mp3:3163430:audio/mpeg:1
+a:audio/music/victory_fanfare2.mp3:audio/music/victory_fanfare2-847af757eac27cbcbb2617a3563652ad.mp3:363033:audio/mpeg:1
+a:audio/music/battle_theme.mp3:audio/music/battle_theme-418936436d76525900b300f483d00991.mp3:1472518:audio/mpeg:1
+a:audio/music/victory.mp3:audio/music/victory-69c1c2de0280b018ec5d11c7c9258152.mp3:160749:audio/mpeg:1
+a:audio/music/battle2.mp3:audio/music/battle2-35371699c70760ef6856784906c38897.mp3:3325341:audio/mpeg:1
+a:audio/music/battle.mp3:audio/music/battle-a240f2472b90c4b02cb721c3d7831ee2.mp3:3843611:audio/mpeg:1
+a:audio/music/victory_fanfare.mp3:audio/music/victory_fanfare-9c0fbefd9a17ef423fe129dc3f4cb715.mp3:1564794:audio/mpeg:1
+a:audio/music/world_map.mp3:audio/music/world_map-4fcd706f13eaa1083666b8c95a8b0121.mp3:7804846:audio/mpeg:1
+a:audio/music/village_map.mp3:audio/music/village_map-ae885e3c3a3f04859d038ae1376b84c0.mp3:2595234:audio/mpeg:1
+a:audio/music/castle_map.mp3:audio/music/castle_map-fc24686b28e9a908b8e8d0f049fa7adc.mp3:1943014:audio/mpeg:1
+a:audio/music/intro_theme.mp3:audio/music/intro_theme-05f02f347da70e6717913f8ce9825a94.mp3:10996391:audio/mpeg:1
+d:audio/sfx:audio/sfx:0:application/unknown:1
+a:audio/sfx/magic_cast.wav:audio/sfx/magic_cast-4ea2f574bc28b9039e91bc997bae9ce7.wav:275628:audio/x-wav:1
+a:audio/sfx/menu_select.wav:audio/sfx/menu_select-7cd0fa402e1e8d800b554cca752cf8b4.wav:13636:audio/x-wav:1
+a:audio/sfx/menu_confirm.wav:audio/sfx/menu_confirm-4a984d848ecdfa91338ae71ef901f9d4.wav:75080:audio/x-wav:1
+a:audio/sfx/attack_hit.wav:audio/sfx/attack_hit-8f764ed4a3d89b8016acf1d024418c84.wav:32840:audio/x-wav:1
 d:fonts:fonts:0:application/unknown:1
 b:fonts/arial.ttf:fonts/arial-fe6b41f2c2d2c7655ec1e44520667a13.ttf:915212:application/unknown:1
 b:fonts/ArialTh.ttf:fonts/ArialTh-5e3fd956903dac783f1eb6d779bef197.ttf:40980:application/unknown:1
@@ -64,9 +82,9 @@ b:fonts/Arialn.ttf:fonts/Arialn-481816ebe7b2dc627596ef2fd9507f0b.ttf:60012:appli
 b:fonts/GEO_AI__.TTF:fonts/GEO_AI__-4a55fa1217b0680e2da911d5dffad2f7.TTF:60380:application/unknown:1
 b:fonts/ARIBL0.ttf:fonts/ARIBL0-e29d16fb2d50bff249b5f4412c6868f5.ttf:57448:application/unknown:1
 b:fonts/G_ari_bd.TTF:fonts/G_ari_bd-d4bf65c4a72084ce75985f8ded5f1523.TTF:133220:application/unknown:1
-a:slash.wav:slash-8f764ed4a3d89b8016acf1d024418c84.wav:32840:audio/x-wav:1
 d:sprites:sprites:0:application/unknown:1
 i:sprites/boss.png:sprites/boss-d41d8cd98f00b204e9800998ecf8427e.png:0:image/png:1
+i:sprites/villager_npc.png:sprites/villager_npc-1a4d175398e903274332bc2581d29c9e.png:3438:image/png:1
 i:sprites/enemy.png:sprites/enemy-1a4d175398e903274332bc2581d29c9e.png:3438:image/png:1
 i:sprites/hero.png:sprites/hero-6e19042396d23bdf6981f796ecae4776.png:3480:image/png:1
 t:com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl:particles.fragment-b90524761fdf09b0a836056d590c30b8.glsl:820:application/unknown:1
