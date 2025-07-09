@@ -83,6 +83,28 @@ public class EnemyFactory {
                     .build();
                 sprite  = new Texture("enemies/undead.png");
                 break;
+
+            case CHAOS:
+                character = new CharacterBuilder()
+                    .setName("Chaos, o Lorde Demonio")
+                    .setMaxHp(2000)
+                    .setMaxMP(500)
+                    .setAttack(80)
+                    .setDefense(50)
+                    .setMagicAttack(75)
+                    .setMagicDefense(40)
+                    .setSpeed(25)
+                    .setExpYield(1000)
+                    .setGoldYield(5000)
+                    .setIsLargeEnemy(true)      // É um inimigo grande
+                    .setRenderScale(2.5f)     // Escala para o fazer parecer maior
+                    .setVisualAnchorYOffset(20f) // Ajusta a posição vertical na batalha
+                    .build();
+                // Adiciona magias poderosas ao chefe
+                character.learnSpell(new MagicBuilder("Meteoro", 40, "Fire").setMagicDMG(150).setVfxKey("fire").build());
+                character.learnSpell(new MagicBuilder("Abismo Gélido", 35, "Ice").setMagicDMG(120).setVfxKey("ice").build());
+                sprite = new Texture("enemies/Chaos.png"); // Sprite da batalha
+                break;
             default:
                 character = new CharacterBuilder()
                     .setName("Goblin")

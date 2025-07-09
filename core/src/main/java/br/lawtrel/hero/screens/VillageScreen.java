@@ -252,7 +252,9 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         }
 
         if (keycode == Input.Keys.ESCAPE && !inDialogue) {
-            game.pauseGame();
+            if (!game.consumeJustPausedFlag()) {
+                game.pauseGame();
+            }
             return true;
         }
 

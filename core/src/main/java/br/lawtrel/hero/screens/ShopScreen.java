@@ -59,14 +59,11 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
     private boolean isShopOpen = false;
 
     private enum ShopMode {BUY, SELL}
-
     private ShopMode currentMode = ShopMode.BUY;
-
 
     private final String MAP_ID = "maps/shop.tmx";
     private final String MAP_THEME_MUSIC = "audio/music/village_map.mp3";
     private final String SHOP_THEME_MUSIC = "audio/music/shop_theme.mp3";
-
     private final int MAP_WIDTH_PIXELS = 9 * 32;
     private final int MAP_HEIGHT_PIXELS = 11 * 32;
     private static final float WORLD_WIDTH = 400;
@@ -307,7 +304,9 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
         }
 
         if (keycode == Input.Keys.ESCAPE) {
-            game.pauseGame();
+            if (!game.consumeJustPausedFlag()) {
+                game.pauseGame();
+            }
             return true;
         }
 

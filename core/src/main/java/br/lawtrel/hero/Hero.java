@@ -25,6 +25,7 @@ public class Hero extends Game {
     private Player player;
     private Screen screenBeforePause;
     private Screen previousScreen;
+    private boolean justResumed = false;
     public SoundManager soundManager;
     private boolean justPaused = false;
 
@@ -89,14 +90,16 @@ public class Hero extends Game {
     }
 
     public void pauseGame() {
-        this.previousScreen = getScreen(); // Guarda a tela atual (ex: VillageScreen)
+        if (getScreen() instanceof PauseMenuScreen) return;
+        this.screenBeforePause = getScreen(); // Guarda a tela atual (ex: VillageScreen)
         setScreen(new PauseMenuScreen(this)); // Mostra o menu de pausa
     }
 
     public void resumeGame() {
-        if (previousScreen != null) {
-            setScreen(previousScreen); // Volta para a tela que foi guardada
-            previousScreen = null; // Limpa a referência
+        if (this.screenBeforePause != null) {
+            this.justResumed = true;
+            setScreen(this.screenBeforePause); // Volta para a tela que foi guardada
+            this.screenBeforePause = null; // Limpa a referência
         } else {
             // Se, por alguma razão, não houver tela anterior, volta para o mapa do mundo como segurança
             mapManager.changeMap(MapManager.MapType.WORLD_MAP);
