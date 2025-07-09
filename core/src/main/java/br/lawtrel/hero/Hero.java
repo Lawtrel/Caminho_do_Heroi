@@ -9,6 +9,7 @@ import br.lawtrel.hero.screens.BattleTestScreen;
 import br.lawtrel.hero.ui.menu.PauseMenuScreen;
 import br.lawtrel.hero.utils.MapManager;
 import br.lawtrel.hero.screens.MainMenuScreen;
+import br.lawtrel.hero.utils.SoundManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -23,6 +24,7 @@ public class Hero extends Game {
     public MapManager mapManager;
     private Player player;
     private Screen screenBeforePause;
+    public SoundManager soundManager;
     private boolean justPaused = false;
 
     // Armazena a posição do jogador antes da batalha
@@ -31,6 +33,7 @@ public class Hero extends Game {
 
     @Override
     public void create() {
+        soundManager = new SoundManager();
         setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
         //setScreen(new MainMenuScreen(this));
@@ -277,6 +280,13 @@ public class Hero extends Game {
         this.playerLastWorldMapPosition = null;
         this.lastWorldMapId = null;
         Gdx.app.log("Hero", "Posição salva do jogador limpa.");
+    }
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (soundManager != null) {
+            soundManager.dispose();
+        }
     }
 
 
