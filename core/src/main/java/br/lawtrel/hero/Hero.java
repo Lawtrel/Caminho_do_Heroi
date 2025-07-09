@@ -24,6 +24,7 @@ public class Hero extends Game {
     public MapManager mapManager;
     private Player player;
     private Screen screenBeforePause;
+    private Screen previousScreen;
     public SoundManager soundManager;
     private boolean justPaused = false;
 
@@ -34,23 +35,23 @@ public class Hero extends Game {
     @Override
     public void create() {
         soundManager = new SoundManager();
-        setScreen(new BattleTestScreen(this));
+        //setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
-        //setScreen(new MainMenuScreen(this));
+        setScreen(new MainMenuScreen(this));
        // mapManager.changeMap(MapManager.MapType.WORLD_MAP);
 
     }
     private void initializePlayer() {
         Character playerCharacter = new CharacterBuilder()
-            .setName("Heroi") // Nome do jogador global
-            .setMaxHp(100)
+            .setName("Vent") // Nome do jogador global
+            .setMaxHp(300)
             .setMaxMP(50)
-            .setAttack(10)
-            .setDefense(8)
-            .setMagicAttack(5)
-            .setMagicDefense(5)
-            .setSpeed(12)
-            .setLuck(5)
+            .setAttack(25)
+            .setDefense(10)
+            .setMagicAttack(25)
+            .setMagicDefense(15)
+            .setSpeed(15)
+            .setLuck(10)
             .setExpYield(0)
             .setGoldYield(0)
             .setStrategy(new PhysicalAttackStrategy())
@@ -67,7 +68,7 @@ public class Hero extends Game {
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM001")); //Poção Pequena
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM005")); // Eter
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM003")); // Espada Curta
-        player.getCharacter().gainExp(50); // Adiciona um pouco de XP inicial
+        player.getCharacter().gainExp(100); // Adiciona um pouco de XP inicial
         player.addMoney(25); // Adiciona um pouco de ouro inicial
 
     }
@@ -88,31 +89,17 @@ public class Hero extends Game {
     }
 
     public void pauseGame() {
-        Screen currentActiveScreen = getScreen();
-        if (currentActiveScreen != null && !(currentActiveScreen instanceof PauseMenuScreen)) {
-            this.screenBeforePause = currentActiveScreen;
-            super.setScreen(new PauseMenuScreen(this)); // Use super.setScreen aqui
-            this.justPaused = true; // <<----- SETA O FLAG
-            Gdx.app.log("Hero", "Jogo pausado. Tela anterior: " + (screenBeforePause != null ? screenBeforePause.getClass().getSimpleName() : "null"));
-        } else if (currentActiveScreen != null) {
-            Gdx.app.log("Hero", "O jogo já está pausado.");
-        } else {
-            Gdx.app.log("Hero", "Nenhuma tela ativa para pausar.");
-        }
+        this.previousScreen = getScreen(); // Guarda a tela atual (ex: VillageScreen)
+        setScreen(new PauseMenuScreen(this)); // Mostra o menu de pausa
     }
 
     public void resumeGame() {
-        if (this.screenBeforePause != null) {
-            Gdx.app.log("Hero", "Resumindo para: " + screenBeforePause.getClass().getSimpleName());
-            super.setScreen(this.screenBeforePause); // Use super.setScreen aqui
-            this.screenBeforePause = null;
+        if (previousScreen != null) {
+            setScreen(previousScreen); // Volta para a tela que foi guardada
+            previousScreen = null; // Limpa a referência
         } else {
-            Gdx.app.log("Hero", "Nenhuma tela para resumir. Voltando para o Mapa Mundial como fallback.");
-            if (mapManager != null) {
-                mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-            } else {
-                Gdx.app.error("Hero", "MapManager é nulo, não é possível voltar ao mapa mundial como fallback.");
-            }
+            // Se, por alguma razão, não houver tela anterior, volta para o mapa do mundo como segurança
+            mapManager.changeMap(MapManager.MapType.WORLD_MAP);
         }
     }
     public boolean consumeJustPausedFlag() {

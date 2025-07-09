@@ -69,9 +69,12 @@ public class WorldMapScreen extends ScreenAdapter {
         map = new TmxMapLoader().load(MAP_ID);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
 
+
         //Ponto de Spawn
         this.player = game.getPlayer();
         player.setInBattleView(false);
+        float scale = map.getProperties().get("playerScale", 1.0f, Float.class);
+        player.setScale(scale); // Aplica a escala ao jogador
         Vector2 lastPosition = null;
 
         lastPosition = game.getPlayerLastWorldMapPosition(MAP_ID);

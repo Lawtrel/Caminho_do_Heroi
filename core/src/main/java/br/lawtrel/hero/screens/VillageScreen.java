@@ -58,7 +58,7 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera();
         this.npcs = new Array<>();
-        this.skin = new Skin(Gdx.files.internal("assets/skins/uiskin.json"));
+        this.skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
         this.stage = new Stage(new ScreenViewport());
         this.dialogueBox = new DialogueBox(skin);
         this.stage.addActor(dialogueBox);
@@ -72,6 +72,7 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         //Carrega o mapa
         map = new TmxMapLoader().load(MAP_ID);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
+
         //Ponto de Spawn
         this.player = game.getPlayer();
         if (player == null) {
@@ -80,6 +81,8 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         }
         player.setScale(0.5f);
         player.setInBattleView(false);
+        float scale = map.getProperties().get("playerScale", 1.0f, Float.class);
+        player.setScale(scale); // Aplica a escala ao jogador
         Vector2 spawnPoint = findSpawnPoint(map);
         player.setPosition(spawnPoint.x, spawnPoint.y);
         loadNpcsFromMap();
@@ -163,15 +166,12 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         player.render(batch, player.getX(), player.getY() );
-        batch.end();
-
         for (NPC npc : npcs) {
             npc.render(batch);
         }
-
+        batch.end();
         stage.act(delta);
         stage.draw();
-
     }
 
     private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY){
