@@ -1,7 +1,7 @@
 d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
-b:maps/shop.tmx:maps/shop-709f939cd5c76971656053666cc514fe.tmx:2385:application/unknown:1
-b:maps/vila.tmx:maps/vila-61c1db13f7e4683b0cf5432e9983e523.tmx:7032:application/unknown:1
+b:maps/shop.tmx:maps/shop-7150cd925c1b9278a24ed86f63eb507c.tmx:2392:application/unknown:1
+b:maps/vila.tmx:maps/vila-47f1e82067489708a499e743909492cc.tmx:9264:application/unknown:1
 b:maps/bossFight.tmx:maps/bossFight-7d9e4b454e450017a518f189ff2bb1c2.tmx:2920:application/unknown:1
 b:maps/word.tmx:maps/word-3e1f1e6d042b51116cb3e437ff318fc3.tmx:1885:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
@@ -17,7 +17,7 @@ d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-2f2ec58f011d27fecb716d16f570e035.txt:1685:text/plain:1
+t:assets.txt:assets-1633f427d6f0e220da1f4e2e950c07e5.txt:1829:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1
@@ -59,18 +59,23 @@ i:skins/default.png:skins/default-2a791ed19cce1d97a9082ae4e368f584.png:26179:ima
 d:audio:audio:0:application/unknown:1
 d:audio/music:audio/music:0:application/unknown:1
 a:audio/music/118 Boss Battle 1.mp3:audio/music/118 Boss Battle 1-7e09d3fc2d4cf39aee1f633c75a49de7.mp3:3163430:audio/mpeg:1
+a:audio/music/shop_theme.mp3:audio/music/shop_theme-5059c225ce77b24372c1c2fe49e43a88.mp3:2665409:audio/mpeg:1
 a:audio/music/victory_fanfare2.mp3:audio/music/victory_fanfare2-847af757eac27cbcbb2617a3563652ad.mp3:363033:audio/mpeg:1
 a:audio/music/battle_theme.mp3:audio/music/battle_theme-418936436d76525900b300f483d00991.mp3:1472518:audio/mpeg:1
 a:audio/music/victory.mp3:audio/music/victory-69c1c2de0280b018ec5d11c7c9258152.mp3:160749:audio/mpeg:1
+a:audio/music/victory_fanfare3.mp3:audio/music/victory_fanfare3-4e26cb10332aec07067b661639b98c95.mp3:2373509:audio/mpeg:1
 a:audio/music/battle2.mp3:audio/music/battle2-35371699c70760ef6856784906c38897.mp3:3325341:audio/mpeg:1
+a:audio/music/menu_screen.mp3:audio/music/menu_screen-f45cab0d4e4e84e342c053dfb6354ecb.mp3:2685021:audio/mpeg:1
 a:audio/music/battle.mp3:audio/music/battle-a240f2472b90c4b02cb721c3d7831ee2.mp3:3843611:audio/mpeg:1
 a:audio/music/victory_fanfare.mp3:audio/music/victory_fanfare-9c0fbefd9a17ef423fe129dc3f4cb715.mp3:1564794:audio/mpeg:1
 a:audio/music/world_map.mp3:audio/music/world_map-4fcd706f13eaa1083666b8c95a8b0121.mp3:7804846:audio/mpeg:1
 a:audio/music/village_map.mp3:audio/music/village_map-ae885e3c3a3f04859d038ae1376b84c0.mp3:2595234:audio/mpeg:1
 a:audio/music/castle_map.mp3:audio/music/castle_map-fc24686b28e9a908b8e8d0f049fa7adc.mp3:1943014:audio/mpeg:1
+a:audio/music/dead_theme.mp3:audio/music/dead_theme-650705d213a32037d989272d486e7699.mp3:2414080:audio/mpeg:1
 a:audio/music/intro_theme.mp3:audio/music/intro_theme-05f02f347da70e6717913f8ce9825a94.mp3:10996391:audio/mpeg:1
 d:audio/sfx:audio/sfx:0:application/unknown:1
 a:audio/sfx/magic_cast.wav:audio/sfx/magic_cast-4ea2f574bc28b9039e91bc997bae9ce7.wav:275628:audio/x-wav:1
+a:audio/sfx/purchase_sound.wav:audio/sfx/purchase_sound-4f12be13d8b46ee1a0c4027a2da06c6d.wav:655612:audio/x-wav:1
 a:audio/sfx/menu_select.wav:audio/sfx/menu_select-7cd0fa402e1e8d800b554cca752cf8b4.wav:13636:audio/x-wav:1
 a:audio/sfx/menu_confirm.wav:audio/sfx/menu_confirm-4a984d848ecdfa91338ae71ef901f9d4.wav:75080:audio/x-wav:1
 a:audio/sfx/attack_hit.wav:audio/sfx/attack_hit-8f764ed4a3d89b8016acf1d024418c84.wav:32840:audio/x-wav:1
