@@ -6,6 +6,7 @@ import br.lawtrel.hero.screens.*;
 
 public class MapManager {
     private Hero game;
+    private MapType currentMapType;
 
     public MapManager(Hero game) {
          this.game = game;
@@ -24,6 +25,7 @@ public class MapManager {
 
     // função para fazer a troca dos mapas
     public void changeMap(MapType type) {
+        this.currentMapType = type;
         switch (type) {
             //aqui voce chama os mapas
             case WORLD_MAP:
@@ -50,4 +52,27 @@ public class MapManager {
 
         }
     }
+    public String getCurrentMapId() {
+        if (currentMapType == null) return "maps/word.tmx"; // Um mapa padrão
+
+        switch (currentMapType) {
+            case WORLD_MAP:
+                return "maps/word.tmx";
+            case VILLAGE:
+                return "maps/vila.tmx";
+            case SHOP:
+                return "maps/shop.tmx";
+            case CAVE:
+                return "maps/cave.tmx";
+            case CASTLE:
+                return "maps/castle.tmx";
+            case CASTLE_IN:
+                return "maps/castleIn.tmx";
+            case BOSSFIGHT:
+                return "maps/bossFight.tmx";
+            default:
+                return "maps/word.tmx";
+        }
+    }
+
 }

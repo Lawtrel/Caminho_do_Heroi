@@ -119,6 +119,13 @@ public class Hero extends Game {
         PlayerState state = new PlayerState();
         Character character = player.getCharacter();
 
+        // Salva a posição exata do jogador
+        state.playerX = player.getX();
+        state.playerY = player.getY();
+        if (mapManager != null) {
+            state.lastMapId = mapManager.getCurrentMapId();
+        }
+
         // Popula o estado com os dados do personagem
         state.name = character.getName();
         state.level = character.getLevel();
