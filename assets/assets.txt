@@ -1,12 +1,12 @@
 d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
-b:maps/shop.tmx:maps/shop-2df7a3e86f661ca807a981ccfcf7151f.tmx:2033:application/unknown:1
-b:maps/vila.tmx:maps/vila-f47a9bb61ac48a38493d471ff31f7039.tmx:8945:application/unknown:1
+b:maps/shop.tmx:maps/shop-709f939cd5c76971656053666cc514fe.tmx:2385:application/unknown:1
+b:maps/vila.tmx:maps/vila-946cc67ef40aff1de5d41cfe4108f1fc.tmx:9127:application/unknown:1
 b:maps/bossFight.tmx:maps/bossFight-7d9e4b454e450017a518f189ff2bb1c2.tmx:2920:application/unknown:1
 b:maps/word.tmx:maps/word-e552ce7fb4261f439bf4707a548d9679.tmx:16812:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
-b:maps/cave.tmx:maps/cave-660b86452c7b5eecf412f50e16de9a91.tmx:3957:application/unknown:1
+b:maps/cave.tmx:maps/cave-3b6c95da832d10c212fa05595a169332.tmx:3965:application/unknown:1
 d:effects:effects:0:application/unknown:1
 i:effects/weapon_effects.png:effects/weapon_effects-ac9d4080eb0b9ca139daeaf05c6ed9ef.png:87488:image/png:1
 i:effects/attack_effects.png:effects/attack_effects-d5b5a675a5f15a27e35e1a36e6eaf4eb.png:95193:image/png:1

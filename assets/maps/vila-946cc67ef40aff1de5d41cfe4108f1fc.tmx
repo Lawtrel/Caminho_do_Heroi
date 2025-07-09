@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="177">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="182">
  <properties>
   <property name="playerScale" type="float" value="0.5"/>
  </properties>
@@ -43,7 +43,7 @@
 </data>
  </layer>
  <objectgroup id="6" name="NPCs">
-  <object id="174" x="270.667" y="184.667" width="13.3333" height="20">
+  <object id="174" name="npc" x="259.675" y="179.739" width="16" height="16">
    <properties>
     <property name="sprite" value="assets/sprites/villager_npc.png"/>
     <property name="type" value="villager"/>
@@ -118,6 +118,11 @@
   <object id="172" name="saida" x="285.369" y="383.633" width="16" height="15">
    <properties>
     <property name="target" value="world"/>
+   </properties>
+  </object>
+  <object id="181" name="shop" x="127.035" y="177.788" width="13.1005" height="15.375">
+   <properties>
+    <property name="target" value="shop"/>
    </properties>
   </object>
  </objectgroup>
