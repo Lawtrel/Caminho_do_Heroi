@@ -31,10 +31,10 @@ public class Hero extends Game {
 
     @Override
     public void create() {
-        setScreen(new BattleTestScreen(this));
+        //setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
-        //setScreen(new MainMenuScreen(this));
-       // mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+        setScreen(new MainMenuScreen(this));
+        //mapManager.changeMap(MapManager.MapType.WORLD_MAP);
 
     }
     private void initializePlayer() {
