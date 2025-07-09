@@ -257,6 +257,9 @@ public class Player{
         }
         return false;
     }
+    public boolean removeItem(Item item) {
+        return inventory.remove(item);
+    }
 
 
     public float getX() { return x; }
@@ -271,6 +274,7 @@ public class Player{
     public Character getCharacter() {
         return character;
     }
+
 
     public void dispose() {
     }

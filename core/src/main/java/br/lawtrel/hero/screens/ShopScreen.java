@@ -32,6 +32,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.util.List;
 
 public class ShopScreen extends ScreenAdapter implements InputProcessor {
 
@@ -44,9 +45,11 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
 
     // UI da Loja
     private final Window shopWindow;
-    private final List<Item> shopItemsList;
+    private final com.badlogic.gdx.scenes.scene2d.ui.List<Item> buyList;
+    private final com.badlogic.gdx.scenes.scene2d.ui.List<Item> sellList;
     private final Label infoLabel;
     private final Label goldLabel;
+    private final TextButton actionButton;
 
     private final Array<NPC> npcs;
     private TiledMap map;
@@ -54,6 +57,11 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
     private Player player;
     private Viewport viewport;
     private boolean isShopOpen = false;
+
+    private enum ShopMode {BUY, SELL}
+
+    private ShopMode currentMode = ShopMode.BUY;
+
 
     private final String MAP_ID = "maps/shop.tmx";
     private final String MAP_THEME_MUSIC = "audio/music/village_map.mp3";
@@ -75,9 +83,11 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
 
         // --- Criação da UI da Loja ---
         shopWindow = new Window("Loja", skin, "dialog");
-        shopItemsList = new List<>(skin);
+        buyList = new com.badlogic.gdx.scenes.scene2d.ui.List<>(skin);
+        sellList = new com.badlogic.gdx.scenes.scene2d.ui.List<>(skin);
         infoLabel = new Label("Bem-vindo!", skin);
         goldLabel = new Label("Ouro: 0", skin);
+        actionButton = new TextButton("Comprar (Z)", skin, "nes-style"); // Inicialização corrigida
         setupShopWindow();
     }
 
@@ -85,19 +95,36 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
         infoLabel.setWrap(true);
         goldLabel.setAlignment(Align.left);
 
-        TextButton buyButton = new TextButton("Comprar (Z)", skin, "nes-style");
+        TextButton buyTabButton = new TextButton("Comprar", skin, "nes-tab");
+        TextButton sellTabButton = new TextButton("Vender", skin, "nes-tab");
         TextButton exitButton = new TextButton("Sair (X)", skin, "nes-style");
+
+        ButtonGroup<TextButton> tabs = new ButtonGroup<>(buyTabButton, sellTabButton);
+        tabs.setMaxCheckCount(1);
+        tabs.setMinCheckCount(1);
+        buyTabButton.setChecked(true);
 
         Table detailsTable = new Table();
         detailsTable.add(infoLabel).width(250).height(80).align(Align.topLeft).colspan(2).row();
         detailsTable.add(goldLabel).colspan(2).align(Align.left).padTop(10).row();
-        detailsTable.add(buyButton).pad(10);
+        detailsTable.add(actionButton).pad(10);
         detailsTable.add(exitButton).pad(10);
 
-        ScrollPane scrollPane = new ScrollPane(shopItemsList, skin);
-        scrollPane.setFadeScrollBars(false);
+        ScrollPane buyScrollPane = new ScrollPane(buyList, skin);
+        ScrollPane sellScrollPane = new ScrollPane(sellList, skin);
+        buyScrollPane.setFadeScrollBars(false);
+        sellScrollPane.setFadeScrollBars(false);
+        sellScrollPane.setVisible(false); // Começa escondido
 
-        shopWindow.add(scrollPane).width(280).expandY().fillY().pad(5);
+        Table listContainer = new Table();
+        listContainer.stack(buyScrollPane, sellScrollPane);
+
+        Table mainTable = new Table();
+        mainTable.add(buyTabButton).pad(5);
+        mainTable.add(sellTabButton).pad(5).row();
+        mainTable.add(listContainer).colspan(2).width(280).expandY().fillY().pad(5);
+
+        shopWindow.add(mainTable);
         shopWindow.add(detailsTable).expandX().fillX().pad(5);
         shopWindow.pack();
         shopWindow.setPosition(
@@ -108,23 +135,52 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
         stage.addActor(shopWindow);
 
         // --- Listeners ---
-        shopItemsList.addListener(new ChangeListener() {
+        buyTabButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                if (((TextButton) actor).isChecked()) {
+                    game.soundManager.playSound("menu_select");
+                    setMode(ShopMode.BUY);
+                    buyScrollPane.setVisible(true);
+                    sellScrollPane.setVisible(false);
+                }
+            }
+        });
+        sellTabButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (((TextButton) actor).isChecked()) {
+                    game.soundManager.playSound("menu_select");
+                    setMode(ShopMode.SELL);
+                    sellScrollPane.setVisible(true);
+                    buyScrollPane.setVisible(false);
+                }
+            }
+        });
+
+        buyList.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent e, Actor a) {
+                game.soundManager.playSound("menu_select");
                 updateInfo();
             }
         });
-
-        buyButton.addListener(new ChangeListener() {
+        sellList.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                buySelectedItem();
+            public void changed(ChangeEvent e, Actor a) {
+                game.soundManager.playSound("menu_select");
+                updateInfo();
             }
         });
-
+        actionButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent e, Actor a) {
+                executeAction();
+            }
+        });
         exitButton.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent e, Actor a) {
                 closeShop();
             }
         });
@@ -151,6 +207,41 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
         Vector2 spawnPoint = findSpawnPoint(map, "spawn_from_vila");
         player.setPosition(spawnPoint.x, spawnPoint.y);
         loadNpcsAndShopInventory();
+    }
+
+    private void setMode(ShopMode mode) {
+        this.currentMode = mode;
+        if (mode == ShopMode.BUY) {
+            actionButton.setText("Comprar (Z)");
+            sellList.getSelection().clear(); // Limpa a seleção da outra lista
+        } else {
+            actionButton.setText("Vender (Z)");
+            buyList.getSelection().clear();
+            // Atualiza a lista de venda com o inventário atual do jogador
+            sellList.setItems(new Array<>(player.getInventory().toArray(new Item[0])));
+
+        }
+        updateInfo();
+    }
+
+    private void executeAction() {
+        if (currentMode == ShopMode.BUY) {
+            buySelectedItem();
+        } else {
+            sellSelectedItem();
+        }
+    }
+
+    private void sellSelectedItem() {
+        Item selectedItem = sellList.getSelected();
+        if (selectedItem != null) {
+            int sellPrice = Math.max(1, selectedItem.getPrice() / 2); // Vende por metade do preço
+            player.addMoney(sellPrice);
+            player.removeItem(selectedItem);
+            game.soundManager.playSound("purchase_sound");
+            sellList.setItems(new Array<>(player.getInventory().toArray(new Item[0])));
+            updateInfo();
+        }
     }
 
     @Override
@@ -226,6 +317,7 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
     private void openShop() {
         isShopOpen = true;
         shopWindow.setVisible(true);
+        setMode(ShopMode.BUY);
         updateInfo();
         game.soundManager.playMusic(SHOP_THEME_MUSIC, true);
     }
@@ -237,25 +329,29 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
     }
 
     private void buySelectedItem() {
-        Item selectedItem = shopItemsList.getSelected();
+        Item selectedItem = buyList.getSelected();
         if (selectedItem != null) {
             if (player.getMoney() >= selectedItem.getPrice()) {
                 player.spendMoney(selectedItem.getPrice());
                 player.addItem(ItemFactory.createItem(selectedItem.getId()));
-                game.soundManager.playSound("menu_select");
+                game.soundManager.playSound("purchase_sound");
                 updateInfo();
             } else {
                 infoLabel.setText("Ouro insuficiente!");
             }
         }
     }
-
     private void updateInfo() {
-        Item selectedItem = shopItemsList.getSelected();
+        Item selectedItem = (currentMode == ShopMode.BUY) ? buyList.getSelected() : sellList.getSelected();
         if (selectedItem != null) {
-            infoLabel.setText(selectedItem.getDescription() + "\n\nPreco: " + selectedItem.getPrice() + " Ouro");
+            if (currentMode == ShopMode.BUY) {
+                infoLabel.setText(selectedItem.getDescription() + "\n\nPreco: " + selectedItem.getPrice() + " Ouro");
+            } else {
+                int sellPrice = Math.max(1, selectedItem.getPrice() / 2);
+                infoLabel.setText(selectedItem.getDescription() + "\n\nVender por: " + sellPrice + " Ouro");
+            }
         } else {
-            infoLabel.setText("Bem-vindo! Selecione um item.");
+            infoLabel.setText((currentMode == ShopMode.BUY) ? "Selecione um item para comprar." : "Selecione um item para vender.");
         }
         goldLabel.setText("Ouro: " + player.getMoney());
     }
@@ -291,9 +387,9 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
                         Item item = ItemFactory.createItem(id.trim());
                         if (item != null) shopItems.add(item);
                     }
-                    shopItemsList.setItems(shopItems);
+                    buyList.setItems(shopItems);
                     if (shopItems.size > 0) {
-                        shopItemsList.setSelectedIndex(0);
+                        buyList.setSelectedIndex(0);
                     }
                 }
                 break;

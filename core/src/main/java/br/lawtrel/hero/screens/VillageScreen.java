@@ -47,10 +47,10 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
 
     // Adicione estas constantes com as dimensões REAIS do seu mapa vila.tmx
     private final int MAP_WIDTH_PIXELS = 38 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
-    private final int MAP_HEIGHT_PIXELS = 26 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
+    private final int MAP_HEIGHT_PIXELS = 38 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
 
-    private static final float WORLD_WIDTH = 380;
-    private static final float WORLD_HEIGHT = 260;
+    private static final float WORLD_WIDTH = 640;
+    private static final float WORLD_HEIGHT = 480;
 
     public VillageScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -109,14 +109,17 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
                 // Lê as propriedades personalizadas que definimos no Tiled
                 String type = object.getProperties().get("type", String.class);
                 String spritePath = object.getProperties().get("sprite", String.class);
+                String dialogueStr = object.getProperties().get("dialogue", "", String.class);
 
                 if (type != null && spritePath != null) {
                     try {
                         Texture npcTexture = new Texture(Gdx.files.internal(spritePath));
                         NPC npc = new NPC(npcTexture, x, y, type);
-
-                        // Futuramente, aqui definiremos o diálogo
-                        // npc.setDialogue(new String[]{"Olá, aventureiro!", "O tempo está bom hoje."});
+                        //separa otexto do dialogo e adiciona ao npc
+                        if (!dialogueStr.isEmpty()) {
+                            String[] lines = dialogueStr.split("\\|");
+                            npc.setDialogue(lines);
+                        }
 
                         npcs.add(npc);
                     } catch (Exception e) {
@@ -139,10 +142,6 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //Salva a posição anterior do jogador antes de atualizar
-        float oldPLayerX = player.getX();
-        float oldPlayerY = player.getY();
-
         if (!inDialogue) {
             //atualizar o hero
             boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -150,9 +149,12 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
             boolean left = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
             boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
             player.update(delta, up, down, left, right);
+
+            //Salva a posição anterior do jogador antes de atualizar
+            float oldPLayerX = player.getX();
+            float oldPlayerY = player.getY();
             checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
         }
-
         //Camera
         camera.position.x = MathUtils.clamp(player.getX(), viewport.getWorldWidth() / 2f, MAP_WIDTH_PIXELS - viewport.getWorldWidth() / 2f);
         camera.position.y = MathUtils.clamp(player.getY(), viewport.getWorldHeight() / 2f, MAP_HEIGHT_PIXELS - viewport.getWorldHeight() / 2f);
@@ -175,7 +177,6 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         stage.draw();
     }
 
-    //Analisa as colisões existentes no jogo
     private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY){
         handleSolidObjectCollisions(map.getLayers().get("Colisoes"), oldPlayerX, oldPlayerY);
         handleSolidObjectCollisions(map.getLayers().get("Arvores"), oldPlayerX, oldPlayerY);
@@ -238,13 +239,6 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        // Primeiro, dá ao stage a oportunidade de usar o input.
-        // Se um actor do stage (como um campo de texto) usar o input, ele retorna true.
-        if (stage.keyDown(keycode)) {
-            return true;
-        }
-
-        // Se o stage não usou o input, processamos a nossa lógica
         if (keycode == Input.Keys.Z) {
             if (inDialogue) {
                 dialogueBox.advanceDialogue();
@@ -275,6 +269,7 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
 
             if (player.getBounds().overlaps(interactionBounds)) {
                 inDialogue = true;
+
                 dialogueBox.startDialogue(npc.getDialogueLines());
                 break;
             }
@@ -292,7 +287,11 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         stage.dispose();
         skin.dispose();
     }
-
+    @Override
+    public void hide() {
+        // Para a música quando o jogador sai da tela da vila
+        game.soundManager.stopMusic();
+    }
     @Override
     public boolean keyUp(int keycode) { return stage.keyUp(keycode); }
     @Override

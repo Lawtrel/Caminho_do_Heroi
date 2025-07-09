@@ -10,8 +10,12 @@ public class ItemFactory {
             0, 0, 0, 0, 0, 0, 25, 0));
         defineItem(new Item("ITM002", "Pele de Goblin", "Material simples.", Item.Type.MATERIAL, 5,
             0, 0, 0, 0, 0, 0, 0, 0));
-        defineItem(new Item("ITM003", "Espada Curta", "Uma espada curta e básica.", Item.Type.WEAPON, 50,
+        defineItem(new Item("ITM003", "Espada Curta", "Uma espada curta e basica.", Item.Type.WEAPON, 50,
             3, 0, 0, 0, 0, 0, 0, 0));
+        defineItem(new Item("ITM004", "Ether", "Restura 10 MP", Item.Type.CONSUMABLE, 25,
+            0, 0, 0, 0, 0, 0, 0, 10));
+        defineItem(new Item("ITM099", "Ribbon", "Equipe para aumentar todos status", Item.Type.ACCESSORY, 100,
+            100, 100, 100, 100, 100, 100,0, 0));
         // Adicione mais itens conforme necessário
     }
 

@@ -25,10 +25,12 @@ public class SoundManager implements Disposable {
         loadSound("menu_select", "audio/sfx/menu_select.wav");
         loadSound("menu_confirm", "audio/sfx/menu_confirm.wav");
         loadSound("magic_cast", "audio/sfx/magic_cast.wav");
+        loadSound("purchase_sound", "audio/sfx/purchase_sound.wav");
 
         victoryMusicPaths.add("audio/music/victory.mp3");
         victoryMusicPaths.add("audio/music/victory_fanfare.mp3");
         victoryMusicPaths.add("audio/music/victory_fanfare2.mp3");
+        victoryMusicPaths.add("audio/music/victory_fanfare3.mp3");
 
         battleMusicPaths.add("audio/music/battle_theme.mp3");
         battleMusicPaths.add("audio/music/battle.mp3");

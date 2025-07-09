@@ -59,7 +59,7 @@ public class EnemyFactory {
                     .setStrategy(new MagicalAttackStrategy())
                     .setExpYield(20)
                     .setGoldYield(15)
-                    .addDrop("ITM005", 0.30f) // 30% chance de dropar "Éter Pequeno"
+                    .addDrop("ITM004", 0.30f) // 30% chance de dropar "Éter Pequeno"
                     .setIsLargeEnemy(false)
                     .setRenderScale(1.0f)
                     .setVisualAnchorYOffset(0f)
@@ -70,8 +70,8 @@ public class EnemyFactory {
             case UNDEAD:
                 character = new CharacterBuilder()
                     .setName("Dragão Vermelho")
-                    .setMaxHp(500).setMaxMP(100)
-                    .setAttack(50).setDefense(30)
+                    .setMaxHp(100).setMaxMP(100)
+                    .setAttack(25).setDefense(20)
                     .setSpeed(12)
                     .setStrategy(new PhysicalAttackStrategy())
                     .setExpYield(200)
