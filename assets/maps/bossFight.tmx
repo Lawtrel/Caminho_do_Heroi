@@ -11,6 +11,7 @@
  <objectgroup id="5" name="NPCs">
   <object id="23" name="final_boss" x="359.154" y="195.052">
    <properties>
+    <property name="dialogue" value="Chaos: Tolo mortal! Você ousa me desafiar?|Chaos: Eu lhe mostrarei o verdadeiro significado do desespero!"/>
     <property name="sprite" value="sprites/boss.png"/>
     <property name="type" value="final_boss"/>
    </properties>

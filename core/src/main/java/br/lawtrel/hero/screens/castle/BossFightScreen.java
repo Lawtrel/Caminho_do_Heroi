@@ -101,6 +101,13 @@ public class BossFightScreen extends ScreenAdapter implements InputProcessor {
                 Rectangle rect = ((RectangleMapObject) object).getRectangle();
                 String spritePath = object.getProperties().get("sprite", String.class);
                 NPC bossNpc = new NPC(new Texture(Gdx.files.internal(spritePath)), rect.x, rect.y, "final_boss");
+
+                String dialogueStr = object.getProperties().get("dialogue", "", String.class);
+                if (!dialogueStr.isEmpty()) {
+                    String[] lines = dialogueStr.split("\\|");
+                    bossNpc.setDialogue(lines);
+                }
+
                 npcs.add(bossNpc);
                 return;
             }
@@ -158,6 +165,9 @@ public class BossFightScreen extends ScreenAdapter implements InputProcessor {
             npc.render(batch);
         }
         batch.end();
+        stage.act(delta);
+        stage.draw();
+
     }
     private void checkBossTrigger() {
         if (battleStarted) return;
@@ -168,21 +178,24 @@ public class BossFightScreen extends ScreenAdapter implements InputProcessor {
             if ("boss_trigger".equals(object.getName()) && object instanceof RectangleMapObject) {
                 Rectangle triggerRect = ((RectangleMapObject) object).getRectangle();
                 if (player.getBounds().overlaps(triggerRect)) {
-                    startBossBattle();
+                    startBossDialogue();
                     break;
                 }
             }
         }
     }
     private void startBossDialogue() {
-        if (battleStarted) return;
+        if (battleStarted || npcs.size == 0) return;
         battleStarted = true;
-
         inDialogue = true;
-        Array<String> bossDialogue = new Array<>();
-        bossDialogue.add("Chaos: Tolo mortal! Você ousa me desafiar?");
-        bossDialogue.add("Chaos: Eu lhe mostrarei o verdadeiro significado do desespero!");
-        dialogueBox.startDialogue(bossDialogue);
+
+        Array<String> bossDialogue = npcs.get(0).getDialogueLines();
+        if (bossDialogue.size > 0) {
+            dialogueBox.startDialogue(bossDialogue);
+        } else {
+            inDialogue = false;
+            startBossBattle();
+        }
     }
 
     private void startBossBattle() {
@@ -193,7 +206,7 @@ public class BossFightScreen extends ScreenAdapter implements InputProcessor {
         enemies.add(bossEnemy);
 
         game.setPlayerLastWorldMapPosition(player.getX(), player.getY(), MAP_ID);
-
+        player.setCurrentArea("castelo");
         game.setScreen(new BattleScreen(game, player, enemies));
     }
 
