@@ -53,6 +53,7 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
     // Distância que o personagem se moverá para atacar
     private static final float ATTACK_MOVE_DISTANCE = 50f;
     private boolean victoryMusicStarted;
+    private boolean endMusicStarted = false;
 
     public BattleScreen(Hero game, Player player, Array<Enemy> enemies) {
         this.game = game;
@@ -495,27 +496,32 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
             Gdx.app.log("BattleScreen", "Fim da batalha");
             battleSystem.resetBattleRewards(); // acabou batalha entao reseta as recompensas
 
-            if (game != null) { // 'game' é a sua instância de Hero.java
-                // Voltar para o mapa do mundo
-                if (game.mapManager != null) {
-                    game.mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-                } else {
-                    Gdx.app.error("BattleScreen", "MapManager é nulo. Não é possível voltar ao mapa.");
-                    Gdx.app.exit(); // Exemplo se for um teste isolado e quiser fechar.
+            if (game != null) {
+                if (battleSystem.getState() == BattleSystem.BattleState.VICTORY) {
+                    if (game.mapManager != null) {
+                        game.continueGame(); // Volta para o mapa onde esta
+                    } else {
+                        Gdx.app.error("BattleScreen", "MapManager é nulo. Não é possível voltar ao mapa.");
+                        game.setScreen(new MainMenuScreen(game)); // Exemplo se for um teste isolado e quiser fechar.
+                    }
+                } else { // Caso derrota
+                    game.setScreen(new MainMenuScreen(game)); //volta para tela inicial
                 }
-            } else {
+            }else {
                 Gdx.app.error("BattleScreen", "Instância 'game' (Hero) é nula. Não é possível mudar de tela.");
             }
-
         }
     }
 
     private void handleBattleEnd() {
-        if(battleSystem.getState() == BattleSystem.BattleState.VICTORY && !victoryMusicStarted) {
-            game.soundManager.playVictoryMusic();
-            victoryMusicStarted = true;
-        } else if (battleSystem.getState() == BattleSystem.BattleState.DEFEAT) {
-            // game.soundManager.playMusic("audio/music/defeat_theme.mp3", false);
+        if (!endMusicStarted) {
+            if (battleSystem.getState() == BattleSystem.BattleState.VICTORY && !victoryMusicStarted) {
+                game.soundManager.playVictoryMusic();
+                victoryMusicStarted = true;
+            } else if (battleSystem.getState() == BattleSystem.BattleState.DEFEAT) {
+                game.soundManager.playMusic("audio/music/dead_theme.mp3", false);
+            }
+            endMusicStarted = true;
         }
         renderVictoryOrDefeatSummary();
     }
@@ -566,8 +572,9 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
         } else { // DEFEAT
             font.draw(batch, "DERROTA...", centerX - font.getXHeight() * 4, startY);
             startY -= lineSpacing * 1.5f;
+            font.draw(batch, "Game Over", centerX - font.getXHeight() * 3, startY);
         }
-
+        startY -= lineSpacing * 1.5f;
         font.draw(batch, "Pressione ENTER para continuar...", centerX - 150, startY);
         batch.end();
     }

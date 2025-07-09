@@ -14,8 +14,12 @@ public class ItemFactory {
             3, 0, 0, 0, 0, 0, 0, 0));
         defineItem(new Item("ITM004", "Ether", "Restura 10 MP", Item.Type.CONSUMABLE, 25,
             0, 0, 0, 0, 0, 0, 0, 10));
-        defineItem(new Item("ITM099", "Ribbon", "Equipe para aumentar todos status", Item.Type.ACCESSORY, 100,
+        defineItem(new Item("ITM098", "Ribbon", "Equipe para aumentar todos status", Item.Type.ACCESSORY, 100,
             100, 100, 100, 100, 100, 100,0, 0));
+        defineItem(new Item("ITM099", "Espada Sagrada", "Espada que bane o mal", Item.Type.WEAPON, 500,
+            777, 0, 0, 0, 0, 0, 0 , 0));
+        defineItem(new Item("ITM100", "Armadura Sagrada", "Arnadura usado por um Heroi que baniu o mal", Item.Type.ARMOR, 500,
+            0 , 777, 0, 777,0, 0, 0, 0));
         // Adicione mais itens conforme necessário
     }
 
