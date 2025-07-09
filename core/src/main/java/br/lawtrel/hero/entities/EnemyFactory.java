@@ -18,15 +18,14 @@ public class EnemyFactory {
             case GOBLIN:
                 character = new CharacterBuilder()
                     .setName("Goblin")
-                    .setMaxHp(30).setMaxMP(0)
-                    .setAttack(8).setDefense(4)
-                    .setSpeed(8)
+                    .setMaxHp(40).setMaxMP(0)
+                    .setAttack(10).setDefense(5)
+                    .setSpeed(9)
                     .setStrategy(new PhysicalAttackStrategy())
-                    //.setStrategy(new MagicalAttackStrategy())
-                    .setExpYield(10)
-                    .setGoldYield(5)
-                    .addDrop("ITM001", 0.50f) // 50% chance dropar porção pequena
-                    .addDrop("ITM002", 0.50f) // 25% chance dropar pele goblim
+                    .setExpYield(8)
+                    .setGoldYield(10)
+                    .addDrop("ITM001", 0.30f) // 30% chance dropar porção pequena
+                    .addDrop("ITM002", 0.50f) // 50% chance dropar pele goblim
                     .setIsLargeEnemy(false) // Goblin não é grande
                     .setRenderScale(1.0f)   // Escala normal
                     .setVisualAnchorYOffset(0f) // Assume que o pé do goblin está na base da imagem
@@ -36,13 +35,13 @@ public class EnemyFactory {
             case SKELETON:
                 character = new CharacterBuilder()
                     .setName("Esqueleto")
-                    .setMaxHp(45).setMaxMP(20)
-                    .setAttack(12).setDefense(6)
-                    .setSpeed(6)
+                    .setMaxHp(65).setMaxMP(0)
+                    .setAttack(14).setDefense(8)
+                    .setSpeed(7)
                     .setStrategy(new PhysicalAttackStrategy())
-                    .setExpYield(15)
-                    .setGoldYield(8)
-                    .addDrop("ITM003", 0.10f) // 10% chance de dropar "Espada Curta"
+                    .setExpYield(12)
+                    .setGoldYield(15)
+                    .addDrop("ITM003", 0.05f) // 10% chance de dropar "Espada Curta"
                     .setIsLargeEnemy(false)
                     .setRenderScale(1.0f)
                     .setVisualAnchorYOffset(0f)
@@ -52,30 +51,30 @@ public class EnemyFactory {
             case WIZARD:
                 character = new CharacterBuilder()
                     .setName("Mago Negro")
-                    .setMaxHp(60).setMaxMP(50)
-                    .setAttack(5).setDefense(8)
-                    .setMagicAttack(15)
-                    .setSpeed(7)
+                    .setMaxHp(56).setMaxMP(40)
+                    .setAttack(6).setDefense(7)
+                    .setMagicAttack(18)
+                    .setSpeed(10)
                     .setStrategy(new MagicalAttackStrategy())
-                    .setExpYield(20)
-                    .setGoldYield(15)
-                    .addDrop("ITM004", 0.30f) // 30% chance de dropar "Éter Pequeno"
+                    .setExpYield(18)
+                    .setGoldYield(25)
+                    .addDrop("ITM004", 0.20f) // 30% chance de dropar "Éter Pequeno"
                     .setIsLargeEnemy(false)
                     .setRenderScale(1.0f)
                     .setVisualAnchorYOffset(0f)
                     .build();
                 sprite = new Texture("enemies/wizard.png");
-                spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(15).build());
+                spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(25).setVfxKey("fire").build());
                 break;
             case UNDEAD:
                 character = new CharacterBuilder()
                     .setName("Dragão Vermelho")
-                    .setMaxHp(100).setMaxMP(100)
-                    .setAttack(25).setDefense(20)
-                    .setSpeed(12)
+                    .setMaxHp(450).setMaxMP(100)
+                    .setAttack(35).setDefense(25)
+                    .setSpeed(15)
                     .setStrategy(new PhysicalAttackStrategy())
-                    .setExpYield(200)
-                    .setGoldYield(100)
+                    .setExpYield(150)
+                    .setGoldYield(200)
                     //.addDrop("ITM_DRAGON_SCALE", 1.0f)
                     .setIsLargeEnemy(true)
                     .setRenderScale(3f)
@@ -87,32 +86,32 @@ public class EnemyFactory {
             case CHAOS:
                 character = new CharacterBuilder()
                     .setName("Chaos, o Lorde Demonio")
-                    .setMaxHp(2000)
+                    .setMaxHp(1200)
                     .setMaxMP(500)
-                    .setAttack(80)
-                    .setDefense(50)
-                    .setMagicAttack(75)
-                    .setMagicDefense(40)
-                    .setSpeed(25)
+                    .setAttack(40)
+                    .setDefense(30)
+                    .setMagicAttack(45)
+                    .setMagicDefense(25)
+                    .setSpeed(20)
                     .setExpYield(1000)
                     .setGoldYield(5000)
                     .setIsLargeEnemy(true)      // É um inimigo grande
-                    .setRenderScale(2.5f)     // Escala para o fazer parecer maior
-                    .setVisualAnchorYOffset(20f) // Ajusta a posição vertical na batalha
+                    .setRenderScale(1f)     // Escala para o fazer parecer maior
+                    .setVisualAnchorYOffset(-20f) // Ajusta a posição vertical na batalha
                     .build();
                 // Adiciona magias poderosas ao chefe
-                character.learnSpell(new MagicBuilder("Meteoro", 40, "Fire").setMagicDMG(150).setVfxKey("fire").build());
-                character.learnSpell(new MagicBuilder("Abismo Gélido", 35, "Ice").setMagicDMG(120).setVfxKey("ice").build());
+                character.learnSpell(new MagicBuilder("Meteoro", 40, "Fire").setMagicDMG(80).setVfxKey("fire").build());
+                character.learnSpell(new MagicBuilder("Abismo Gélido", 35, "Ice").setMagicDMG(65).setVfxKey("ice").build());
                 sprite = new Texture("enemies/Chaos.png"); // Sprite da batalha
                 break;
             default:
                 character = new CharacterBuilder()
                     .setName("Goblin")
-                    .setMaxHp(30).setMaxMP(0)
-                    .setAttack(8).setDefense(4)
-                    .setExpYield(10)
-                    .setGoldYield(5)
-                    .addDrop("ITM001", 0.50f) // 50% chance dropar porção pequena
+                    .setMaxHp(40).setMaxMP(0)
+                    .setAttack(10).setDefense(5)
+                    .setExpYield(8)
+                    .setGoldYield(10)
+                    .addDrop("ITM001", 0.30f) // 50% chance dropar porção pequena
                     .build();
                 sprite = new Texture("enemies/goblin.png");
                 break;

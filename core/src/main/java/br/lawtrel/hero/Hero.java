@@ -43,14 +43,14 @@ public class Hero extends Game {
     private void initializePlayer() {
         Character playerCharacter = new CharacterBuilder()
             .setName("Vent") // Nome do jogador global
-            .setMaxHp(300)
-            .setMaxMP(50)
-            .setAttack(25)
-            .setDefense(10)
-            .setMagicAttack(25)
-            .setMagicDefense(15)
-            .setSpeed(15)
-            .setLuck(10)
+            .setMaxHp(120)
+            .setMaxMP(40)
+            .setAttack(15)
+            .setDefense(8)
+            .setMagicAttack(10)
+            .setMagicDefense(6)
+            .setSpeed(12)
+            .setLuck(7)
             .setExpYield(0)
             .setGoldYield(0)
             .setStrategy(new PhysicalAttackStrategy())
@@ -67,8 +67,8 @@ public class Hero extends Game {
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM001")); //Poção Pequena
         //player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM005")); // Eter
         player.addItem(br.lawtrel.hero.entities.items.ItemFactory.createItem("ITM003")); // Espada Curta
-        player.getCharacter().gainExp(100); // Adiciona um pouco de XP inicial
-        player.addMoney(25); // Adiciona um pouco de ouro inicial
+        player.getCharacter().gainExp(0); // Adiciona um pouco de XP inicial
+        player.addMoney(50); // Adiciona um pouco de ouro inicial
 
     }
     public void setPlayer(Player player) {
