@@ -48,9 +48,17 @@ public class WorldMapScreen extends ScreenAdapter {
     private static final float BATTLE_CHECK_INTERVAL = 5f; // Verifica a cada 5 segundos
     private static final float BATTLE_CHANCE = 0.8f; // 80% de chance
 
-    public  WorldMapScreen(Hero game, MapManager mapManager) {
+    public WorldMapScreen(Hero game, MapManager mapManager) {
         this.game = game;
         this.mapManager  = mapManager ;
+    }
+
+    public Array<EnemyFactory.EnemyType> worldEnemy(){ //Seleciona os tipos de mosntros que desejo no mundo
+        Array<EnemyFactory.EnemyType> enemyWorldArray = new Array<>();
+        enemyWorldArray.add(EnemyFactory.EnemyType.GOBLIN);
+        enemyWorldArray.add(EnemyFactory.EnemyType.WIZARD);
+        enemyWorldArray.add(EnemyFactory.EnemyType.SKELETON);
+        return enemyWorldArray;
     }
 
     @Override
@@ -209,12 +217,13 @@ public class WorldMapScreen extends ScreenAdapter {
         int enemyCount = 1 + (int)(Math.random() * 3); // 1-3 inimigos
 
         for (int i = 0; i < enemyCount; i++) {
-            EnemyFactory.EnemyType randomType = EnemyFactory.EnemyType.values()[
+            Array<EnemyFactory.EnemyType> worldEnemy = worldEnemy();
+            /*EnemyFactory.EnemyType randomType = EnemyFactory.EnemyType.values()[
                 (int)(Math.random() * EnemyFactory.EnemyType.values().length)
-                ];
+                ];*/
 
             // Cria o inimigo alinhado na mesma altura (Y) que o jogador
-            Enemy enemy = EnemyFactory.createEnemy(randomType, 0, 0);
+            Enemy enemy = EnemyFactory.createEnemy(worldEnemy.random(), 0, 0);
 
             if (enemy.getCharacter() != null) {
                 enemies.add(enemy);

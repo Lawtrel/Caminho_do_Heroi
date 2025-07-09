@@ -9,7 +9,6 @@ import br.lawtrel.hero.screens.BattleTestScreen;
 import br.lawtrel.hero.ui.menu.PauseMenuScreen;
 import br.lawtrel.hero.utils.MapManager;
 import br.lawtrel.hero.screens.MainMenuScreen;
-import br.lawtrel.hero.utils.SoundManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -22,7 +21,6 @@ import com.badlogic.gdx.utils.Array;
 
 public class Hero extends Game {
     public MapManager mapManager;
-    public SoundManager soundManager;
     private Player player;
     private Screen screenBeforePause;
     private boolean justPaused = false;
@@ -33,20 +31,19 @@ public class Hero extends Game {
 
     @Override
     public void create() {
-        soundManager = new SoundManager();
-        //setScreen(new BattleTestScreen(this));
+        setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
-        setScreen(new MainMenuScreen(this));
+        //setScreen(new MainMenuScreen(this));
        // mapManager.changeMap(MapManager.MapType.WORLD_MAP);
 
     }
     private void initializePlayer() {
         Character playerCharacter = new CharacterBuilder()
             .setName("Heroi") // Nome do jogador global
-            .setMaxHp(200)
+            .setMaxHp(100)
             .setMaxMP(50)
-            .setAttack(20)
-            .setDefense(10)
+            .setAttack(10)
+            .setDefense(8)
             .setMagicAttack(5)
             .setMagicDefense(5)
             .setSpeed(12)
@@ -280,14 +277,6 @@ public class Hero extends Game {
         this.playerLastWorldMapPosition = null;
         this.lastWorldMapId = null;
         Gdx.app.log("Hero", "Posição salva do jogador limpa.");
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (soundManager != null) {
-            soundManager.dispose();
-        }
     }
 
 
