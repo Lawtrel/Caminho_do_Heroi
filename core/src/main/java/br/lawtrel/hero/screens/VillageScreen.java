@@ -47,10 +47,10 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
 
     // Adicione estas constantes com as dimensões REAIS do seu mapa vila.tmx
     private final int MAP_WIDTH_PIXELS = 38 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
-    private final int MAP_HEIGHT_PIXELS = 38 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
+    private final int MAP_HEIGHT_PIXELS = 26 * 16 ; // Exemplo: 100 tiles * 16 pixels/tile
 
-    private static final float WORLD_WIDTH = 640;
-    private static final float WORLD_HEIGHT = 480;
+    private static final float WORLD_WIDTH = 380;
+    private static final float WORLD_HEIGHT = 260;
 
     public VillageScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -139,6 +139,10 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        //Salva a posição anterior do jogador antes de atualizar
+        float oldPLayerX = player.getX();
+        float oldPlayerY = player.getY();
+
         if (!inDialogue) {
             //atualizar o hero
             boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -146,12 +150,9 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
             boolean left = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
             boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
             player.update(delta, up, down, left, right);
+            checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
         }
 
-        //Salva a posição anterior do jogador antes de atualizar
-        float oldPLayerX = player.getX();
-        float oldPlayerY = player.getY();
-        checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
         //Camera
         camera.position.x = MathUtils.clamp(player.getX(), viewport.getWorldWidth() / 2f, MAP_WIDTH_PIXELS - viewport.getWorldWidth() / 2f);
         camera.position.y = MathUtils.clamp(player.getY(), viewport.getWorldHeight() / 2f, MAP_HEIGHT_PIXELS - viewport.getWorldHeight() / 2f);
@@ -174,6 +175,7 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         stage.draw();
     }
 
+    //Analisa as colisões existentes no jogo
     private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY){
         handleSolidObjectCollisions(map.getLayers().get("Colisoes"), oldPlayerX, oldPlayerY);
         handleSolidObjectCollisions(map.getLayers().get("Arvores"), oldPlayerX, oldPlayerY);

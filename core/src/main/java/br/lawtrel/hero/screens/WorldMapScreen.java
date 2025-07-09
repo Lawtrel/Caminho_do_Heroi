@@ -35,14 +35,14 @@ public class WorldMapScreen extends ScreenAdapter {
     private Viewport viewport;
 
     private final int TILE_SIZE = 16; // Tamanho das texturas
-    private final int MAP_WIDTH_TILES = 100;
-    private final int MAP_HEIGHT_TILES = 100;
+    private final int MAP_WIDTH_TILES = 55;
+    private final int MAP_HEIGHT_TILES = 55;
     private final int MAP_WIDTH = MAP_WIDTH_TILES * TILE_SIZE;
     private final int MAP_HEIGHT = MAP_HEIGHT_TILES * TILE_SIZE;
     private final String MAP_ID = "maps/word.tmx";
 
-    private static final float WORLD_WIDTH = 800;
-    private static final float WORLD_HEIGHT = 480;
+    private static final float WORLD_WIDTH = 550;
+    private static final float WORLD_HEIGHT = 550;
 
     private float battleTimer  = 0;
     private static final float BATTLE_CHECK_INTERVAL = 5f; // Verifica a cada 5 segundos
