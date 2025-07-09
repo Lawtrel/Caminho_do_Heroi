@@ -7,6 +7,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,6 +24,7 @@ public class PauseMenuScreen extends ScreenAdapter {
     private Stage stage;
     private Skin skin;
     private Table mainTable;
+    private ShapeRenderer shapeRenderer;
 
     // Seções do menu
     private StatusSection statusSection;
@@ -45,13 +47,14 @@ public class PauseMenuScreen extends ScreenAdapter {
     private static final Color NES_YELLOW_ACCENT = new Color(1f, 1f, 0.3f, 1f);
 
     public PauseMenuScreen(Hero game) {
+
         this.game = game;
+        create();
     }
 
-    @Override
-    public void show() {
+    public void create() {
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
+        shapeRenderer = new ShapeRenderer();
 
         try {
             skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
@@ -70,7 +73,6 @@ public class PauseMenuScreen extends ScreenAdapter {
             game.resumeGame();
             return;
         }
-
         // Criar as Seções passando o skin carregado do arquivo
         statusSection = new StatusSection(game, skin);
         itemsSection = new ItemsSection(game, skin);
@@ -96,8 +98,7 @@ public class PauseMenuScreen extends ScreenAdapter {
         feedbackLabel.setAlignment(Align.center);
         feedbackLabel.setVisible(false);
         feedbackLabel.setColor(NES_YELLOW_ACCENT);
-
-        // Listeners (nenhuma mudança aqui)
+        // Listeners
         statusTab.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
@@ -157,6 +158,9 @@ public class PauseMenuScreen extends ScreenAdapter {
 
         switchTab(currentTab);
     }
+    public Stage getStage() {
+        return  stage;
+    }
 
     private void showFeedback(String message) {
         if (feedbackLabel != null) {
@@ -176,7 +180,8 @@ public class PauseMenuScreen extends ScreenAdapter {
 
     private void switchTab(int tabIndex) {
         currentTab = tabIndex;
-        Table contentTable = (Table) mainTable.getCells().get(1).getActor();
+        //Table contentTable = (Table) mainTable.getCells().get(1).getActor();
+        Table contentTable = mainTable.findActor("content-panel");
         contentTable.clearChildren();
         contentTable.setBackground(skin.getDrawable("nes-button-up")); // Re-aplica o fundo
 
@@ -196,24 +201,8 @@ public class PauseMenuScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        if (game.consumeJustPausedFlag()) {
-        } else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.resumeGame();
-            return;
-        }
-
-        try {
-            if (stage != null) {
-                stage.act(delta);
-                stage.draw();
-            }
-        } catch (Exception e) {
-            Gdx.app.error("PauseMenuScreen", "Erro no render do Stage", e);
-            game.resumeGame();
-        }
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override

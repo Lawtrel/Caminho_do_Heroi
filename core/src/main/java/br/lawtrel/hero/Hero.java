@@ -12,6 +12,7 @@ import br.lawtrel.hero.screens.MainMenuScreen;
 import br.lawtrel.hero.utils.SoundManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
 import br.lawtrel.hero.entities.items.Item;
@@ -23,11 +24,10 @@ import com.badlogic.gdx.utils.Array;
 public class Hero extends Game {
     public MapManager mapManager;
     private Player player;
-    private Screen screenBeforePause;
-    private Screen previousScreen;
-    private boolean justResumed = false;
+    private PauseMenuScreen pauseMenuScreen;
+    private boolean isPaused = false;
+    private InputProcessor screenInputProcessor;
     public SoundManager soundManager;
-    private boolean justPaused = false;
 
     // Armazena a posição do jogador antes da batalha
     private Vector2 playerLastWorldMapPosition = null;
@@ -39,8 +39,6 @@ public class Hero extends Game {
         //setScreen(new BattleTestScreen(this));
         mapManager = new MapManager(this);
         setScreen(new MainMenuScreen(this));
-       // mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-
     }
     private void initializePlayer() {
         Character playerCharacter = new CharacterBuilder()
@@ -90,26 +88,30 @@ public class Hero extends Game {
     }
 
     public void pauseGame() {
-        if (getScreen() instanceof PauseMenuScreen) return;
-        this.screenBeforePause = getScreen(); // Guarda a tela atual (ex: VillageScreen)
-        setScreen(new PauseMenuScreen(this)); // Mostra o menu de pausa
+        if (isPaused) return;
+        isPaused = true;
+        if (pauseMenuScreen == null) {
+            pauseMenuScreen = new PauseMenuScreen(this);
+        }
+        screenInputProcessor = Gdx.input.getInputProcessor();
+        Gdx.input.setInputProcessor(pauseMenuScreen.getStage());
     }
 
     public void resumeGame() {
-        if (this.screenBeforePause != null) {
-            this.justResumed = true;
-            setScreen(this.screenBeforePause); // Volta para a tela que foi guardada
-            this.screenBeforePause = null; // Limpa a referência
-        } else {
-            // Se, por alguma razão, não houver tela anterior, volta para o mapa do mundo como segurança
-            mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+        if (!isPaused) return;
+        isPaused = false;
+        Gdx.input.setInputProcessor(screenInputProcessor);
+    }
+
+    @Override
+    public void render() {
+        super.render(); // Renderiza a tela atual
+
+        if (isPaused) {
+            pauseMenuScreen.render(Gdx.graphics.getDeltaTime());
         }
     }
     public boolean consumeJustPausedFlag() {
-        if (justPaused) {
-            justPaused = false; // Consome o flag
-            return true;
-        }
         return false;
     }
 
@@ -143,10 +145,7 @@ public class Hero extends Game {
         state.magicDefense = character.getMagicDefense();
         state.speed = character.getSpeed();
         state.luck = character.getLuck();
-
-        // Popula com dados do jogador (dinheiro, itens)
         state.money = player.getMoney();
-
         // Salva os IDs dos itens do inventário
         state.inventoryItemIds = new Array<>();
         for (Item item : player.getInventory()) {
@@ -158,19 +157,13 @@ public class Hero extends Game {
         if (player.getEquippedArmor() != null) state.equippedArmorId = player.getEquippedArmor().getId();
         if (player.getEquippedAccessory() != null) state.equippedAccessoryId = player.getEquippedAccessory().getId();
 
-        // Salva a posição (assumindo que o salvamento ocorre no mapa mundial)
-        // Idealmente, você saberia em qual mapa o jogador está.
-        state.lastMapId = "word.tmx"; // ID do seu mapa principal
-        state.playerX = player.getX();
-        state.playerY = player.getY();
-
         SaveManager.saveGame(state);
     }
 
     public void startNewGame() {
         Gdx.app.log("Hero", "Inicializando um novo jogo....");
         initializePlayer();
-        continueGame();
+        mapManager.changeMap(MapManager.MapType.WORLD_MAP);
     }
 
     public boolean loadGame() {
@@ -237,12 +230,15 @@ public class Hero extends Game {
     public void continueGame() {
         if (player == null) {
             Gdx.app.error("Hero", "Tentou continuar para o jogo, mas o jogador é nulo.");
-            // Volta para o menu principal como segurança
             setScreen(new MainMenuScreen(this));
             return;
         }
-        Gdx.app.log("Hero", "Transicionando para o mapa mundial...");
-        mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+        if (lastWorldMapId != null) {
+            mapManager.changeMap(mapManager.getMapTypeFromId(lastWorldMapId));
+        } else {
+            Gdx.app.log("Hero", "Transicionando para o mapa mundial...");
+            mapManager.changeMap(MapManager.MapType.WORLD_MAP);
+        }
     }
 
 

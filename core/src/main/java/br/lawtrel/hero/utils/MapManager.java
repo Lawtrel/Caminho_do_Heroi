@@ -74,5 +74,18 @@ public class MapManager {
                 return "maps/word.tmx";
         }
     }
+    public MapType getMapTypeFromId(String mapId) {
+        if (mapId == null) return MapType.WORLD_MAP;
+        switch (mapId) {
+            case "maps/word.tmx": return MapType.WORLD_MAP;
+            case "maps/vila.tmx": return MapType.VILLAGE;
+            case "maps/shop.tmx": return MapType.SHOP;
+            case "maps/cave.tmx": return MapType.CAVE;
+            case "maps/castle.tmx": return MapType.CASTLE;
+            case "maps/castleIn.tmx": return MapType.CASTLE_IN;
+            case "maps/bossFight.tmx": return MapType.BOSSFIGHT;
+            default: return MapType.WORLD_MAP;
+        }
+    }
 
 }
