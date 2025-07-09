@@ -21,7 +21,7 @@
  <objectgroup id="6" name="NPCs">
   <object id="18" name="npc" x="61.3195" y="47.6204" width="12.1769" height="32.6167">
    <properties>
-    <property name="shop_inventory" value="ITM001,ITM099"/>
+    <property name="shop_inventory" value="ITM001,ITM004,ITM098,ITM099,ITM100"/>
     <property name="sprite" value="assets/npcs/srTonias.png"/>
     <property name="type" value="shopkeeper"/>
    </properties>
