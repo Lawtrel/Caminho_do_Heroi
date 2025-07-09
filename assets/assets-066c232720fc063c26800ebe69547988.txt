@@ -50,9 +50,7 @@ maps/vila.tmx
 maps/word.tmx
 npcs/srJosias.png
 npcs/srLopias.png
-npcs/srMatias.png
 npcs/srTonias.png
-npcs/srZinias.png
 skins/199x-export.fnt
 skins/default.fnt
 skins/default.png

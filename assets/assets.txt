@@ -1,9 +1,9 @@
 d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
-b:maps/shop.tmx:maps/shop-7150cd925c1b9278a24ed86f63eb507c.tmx:2392:application/unknown:1
-b:maps/vila.tmx:maps/vila-47f1e82067489708a499e743909492cc.tmx:9264:application/unknown:1
+b:maps/shop.tmx:maps/shop-b9219b6c078e399aae5440e240bc658e.tmx:2385:application/unknown:1
+b:maps/vila.tmx:maps/vila-6bc919eb7715be3a3a0123b1f0c1734f.tmx:11731:application/unknown:1
 b:maps/bossFight.tmx:maps/bossFight-804455216e8ab3e0510da1dc6fe04018.tmx:3396:application/unknown:1
-b:maps/word.tmx:maps/word-3e1f1e6d042b51116cb3e437ff318fc3.tmx:1885:application/unknown:1
+b:maps/word.tmx:maps/word-4ffb7712da96382dd7a71ef119fa1d3e.tmx:5562:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
 b:maps/cave.tmx:maps/cave-3b6c95da832d10c212fa05595a169332.tmx:3965:application/unknown:1
@@ -17,7 +17,7 @@ d:com/badlogic/gdx:com/badlogic/gdx:0:application/unknown:1
 d:com/badlogic/gdx/utils:com/badlogic/gdx/utils:0:application/unknown:1
 t:com/badlogic/gdx/utils/lsans-15.fnt:com/badlogic/gdx/utils/lsans-15-5143ae9583bc43b1084f98062e054ae8.fnt:17711:application/unknown:1
 i:com/badlogic/gdx/utils/lsans-15.png:com/badlogic/gdx/utils/lsans-15-8e00ff5b9dd15a3c18c1eb75f68c695a.png:10270:image/png:1
-t:assets.txt:assets-1633f427d6f0e220da1f4e2e950c07e5.txt:1829:text/plain:1
+t:assets.txt:assets-066c232720fc063c26800ebe69547988.txt:1793:text/plain:1
 d:ui:ui:0:application/unknown:1
 i:ui/nes_window.png:ui/nes_window-eb9ae6d5a580a92b23de4d1a11ccbc03.png:6069:image/png:1
 d:enemies:enemies:0:application/unknown:1
@@ -88,8 +88,6 @@ b:fonts/GEO_AI__.TTF:fonts/GEO_AI__-4a55fa1217b0680e2da911d5dffad2f7.TTF:60380:a
 b:fonts/ARIBL0.ttf:fonts/ARIBL0-e29d16fb2d50bff249b5f4412c6868f5.ttf:57448:application/unknown:1
 b:fonts/G_ari_bd.TTF:fonts/G_ari_bd-d4bf65c4a72084ce75985f8ded5f1523.TTF:133220:application/unknown:1
 d:npcs:npcs:0:application/unknown:1
-i:npcs/srMatias.png:npcs/srMatias-11553ab021295dd607f145e0b262171b.png:1042:image/png:1
-i:npcs/srZinias.png:npcs/srZinias-6c4f2516ce6239104d99191e6d8b0a2b.png:1046:image/png:1
 i:npcs/srJosias.png:npcs/srJosias-5792d6afac9031c10edb52e154b7e05f.png:695:image/png:1
 i:npcs/srTonias.png:npcs/srTonias-28c40fcee0610114e456dc7acad9551b.png:1068:image/png:1
 i:npcs/srLopias.png:npcs/srLopias-172341770b9cf3ea3cce9ff7885eb569.png:689:image/png:1

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="55" height="55" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="77">
+ <properties>
+  <property name="playerScale" type="float" value="1"/>
+ </properties>
+ <tileset firstgid="1" name="Roguelike" tilewidth="16" tileheight="16" spacing="1" tilecount="1767" columns="57">
+  <image source="../tileset/roguelikeSheet_transparent.png" width="968" height="526"/>
+ </tileset>
+ <tileset firstgid="1768" name="10546" tilewidth="16" tileheight="16" tilecount="256" columns="16">
+  <image source="../tileset/10546.png" width="256" height="256"/>
+ </tileset>
+ <tileset firstgid="2024" name="10564" tilewidth="16" tileheight="16" tilecount="1519" columns="49">
+  <image source="../tileset/10564.png" width="784" height="496"/>
+ </tileset>
+ <layer id="8" name="blocks" width="55" height="55">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAACu2Yu27UQBSGp0h216ZIAg23hjeAAgg0OGFBEKCDCKjZpYNcHoAFiUR5A0qS0EK4SNwqngCJBFoSLhIkW9AiKv5hd7STYcY7Y3v22NEWn8aKxzv/52PPsbJQYY23bRYqjKk08fc7GBvgLrhnGO+Dudb8/36DCpOT8FrB+BQ8A8/BC8P4ErwCr3Pmp3PaLDG2juMN8AV8Bd/Ad8P4A/wEm2CLjyU3bO+HyCbjet1QwNgwGAG7wR7wKTTP34vz+8B+cAAcDMwe1TJjZ8DZsvs9iMP2fkTINgbGwWmN1xvN/ZvAvAvgIrgU43YZTlfAZA/cdHWeRrYZMKvx4sxX2Dvd78vXmTLcgFMN1DN2U/10XmpGtV7zMX42br4RWU3nl5BtGTwKzM+h7vrHmP8ErBC6dWMN2T7y5zEwv1+y262wxWfMXwcbKd187TecAeQcBKXw37O3zWsU650AJ6V1uRcfhzAOg5Ew3fq+9hvOUWQ7Bo6DUSXnOax3HkyUO/XinAIRGAPjKd187jd1ZLsJpkPWmAK3w07trmK9a+C6tC7Os6nWfDYDZlO6+eYB8i3BaRE8DPX7qQDn2WJrPlvOuZdgDU6r4EMXN5xnmMfnk2fukw989gNqfPYDanz2gz59kvIbbMUQFPR5/QOaMXCv9wXtqzy/6AMqvC80e5hldbBDVm6iD6hMErpl4Zgnt6z98uZm8kvi2HejweRn68mzi+8uzmHpuE7sFldDm1qG5fj+tisnfTuNo+xD7ZHU0VC7qChuNjWUyeMzmKVj0bx8gr01wl4aYS+NqLNkjdoLd5KnrtfvFE/Teys7HoFfEf+HZuN2CG7iuEh+3fbdtts216L42fYW9V2kzp2lm+qnq11V2oNq7eeY8j11cVMdeeaqUs+4WvfaNYmbLrfrNb1wTOomZ01zX2rSHpy1bxq3LDF9P6TxpXZy8XV1pM7v6uniR53Zpx913jh+Deix/Xagzu/iJLvZ1I7aw9VLuNn4Ubu4OOn88ubm6pH0vfsLGmXHAUQvAAA=
+  </data>
+ </layer>
+ <objectgroup id="11" name="Colisoes">
+  <object id="19" x="0" y="561" width="39" height="16"/>
+  <object id="21" x="37" y="575" width="56" height="19"/>
+  <object id="22" x="93" y="594" width="48" height="13"/>
+  <object id="23" x="144" y="608" width="45" height="13"/>
+  <object id="24" x="187" y="625" width="13" height="14"/>
+  <object id="25" x="203" y="641" width="20" height="36"/>
+  <object id="26" x="225" y="677" width="10" height="28"/>
+  <object id="27" x="236" y="690" width="10" height="22"/>
+  <object id="28" x="247" y="702" width="22" height="1"/>
+  <object id="31" x="269" y="689" width="33" height="9"/>
+  <object id="32" x="304" y="673" width="19" height="16"/>
+  <object id="33" x="323" y="673" width="91" height="12"/>
+  <object id="34" x="414" y="685" width="56" height="13"/>
+  <object id="35" x="471" y="699" width="12" height="26"/>
+  <object id="36" x="484" y="709" width="25" height="15"/>
+  <object id="37" x="509" y="724" width="58" height="13"/>
+  <object id="38" x="569" y="729" width="22" height="10"/>
+  <object id="39" x="591" y="739" width="57" height="12"/>
+  <object id="40" x="648" y="751" width="35" height="16"/>
+  <object id="41" x="647" y="738" width="18" height="11"/>
+  <object id="42" x="681" y="751" width="15" height="36"/>
+  <object id="43" x="698" y="768" width="21" height="28"/>
+  <object id="44" x="656" y="241" width="45" height="47"/>
+  <object id="45" x="609" y="129" width="46" height="45"/>
+  <object id="46" x="464" y="49" width="50" height="45"/>
+  <object id="47" x="141" y="63" width="18" height="92"/>
+  <object id="48" x="158" y="55" width="16" height="83"/>
+  <object id="49" x="175" y="44" width="15" height="80"/>
+  <object id="50" x="195" y="42" width="8" height="69"/>
+  <object id="51" x="206" y="39" width="14" height="68"/>
+  <object id="52" x="224" y="42" width="9" height="53"/>
+  <object id="53" x="232" y="35" width="19" height="57"/>
+  <object id="54" x="140" y="150" width="31" height="68"/>
+  <object id="55" x="297" y="173" width="37" height="38"/>
+  <object id="56" x="313" y="72" width="17" height="95"/>
+  <object id="57" x="283" y="23" width="33" height="45"/>
+  <object id="58" x="247" y="40" width="44" height="7"/>
+  <object id="59" x="98" y="56" width="13" height="117"/>
+  <object id="60" x="353" y="56" width="12" height="132"/>
+  <object id="61" x="333" y="185" width="17" height="18"/>
+  <object id="62" x="105" y="176" width="33" height="28"/>
+  <object id="63" x="1" y="2" width="96" height="102"/>
+  <object id="64" x="315" y="0" width="235" height="33"/>
+  <object id="65" x="547" y="37" width="175" height="13"/>
+  <object id="66" x="717" y="26" width="165" height="18"/>
+  <object id="67" x="815" y="48" width="64" height="62"/>
+  <object id="69" x="719" y="797" width="18" height="53"/>
+  <object id="70" x="739" y="826" width="25" height="55"/>
+ </objectgroup>
+ <objectgroup id="7" name="Portas">
+  <object id="15" name="vila" x="203" y="142.5" width="56.75" height="50.25" visible="0"/>
+  <object id="16" name="vila" x="207.5" y="143.5" width="52.5" height="50">
+   <properties>
+    <property name="target" value="vila"/>
+   </properties>
+  </object>
+  <object id="18" name="caverna" x="672.992" y="352.261" width="109.81" height="113.071">
+   <properties>
+    <property name="target" value="caverna"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="9" name="spawn" offsetx="0" offsety="1.08723">
+  <object id="17" name="spawn" x="250" y="291.069">
+   <point/>
+  </object>
+ </objectgroup>
+</map>
