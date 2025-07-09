@@ -26,9 +26,9 @@
 		"black": { "font": "font", "fontColor": "black" }
 	},
 	"com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
-		"default": { 
-			"font": "font", 
-			"fontColor": "white" 
+		"default": {
+			"font": "font",
+			"fontColor": "white"
 		},
 		"nes-style": {
 			"font": "font",
@@ -63,6 +63,11 @@
 		"default": {
 			"background": "nes-button-up",
 			"titleFont": "font"
+		},
+		"dialog": {
+			"background": "nes-button-up",
+			"titleFont": "font",
+			"titleFontColor": "white"
 		}
 	},
 	"com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {

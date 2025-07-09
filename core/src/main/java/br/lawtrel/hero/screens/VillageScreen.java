@@ -1,13 +1,16 @@
 package br.lawtrel.hero.screens;
-
 import br.lawtrel.hero.Hero;
+import br.lawtrel.hero.entities.NPC;
 import br.lawtrel.hero.entities.Player;
+import br.lawtrel.hero.ui.DialogueBox;
 import br.lawtrel.hero.utils.MapManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -18,10 +21,14 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class VillageScreen extends ScreenAdapter {
+public class VillageScreen extends ScreenAdapter implements InputProcessor {
 
     private final Hero game;
     private final MapManager  mapManager ;
@@ -31,6 +38,11 @@ public class VillageScreen extends ScreenAdapter {
     private OrthogonalTiledMapRenderer mapRenderer;
     private final SpriteBatch batch;
     private Player player;
+    private final Array<NPC> npcs;
+    private final Stage stage;
+    private final Skin skin;
+    private final DialogueBox dialogueBox;
+    private boolean inDialogue = false;
     private final String MAP_ID = "maps/vila.tmx";
 
     // Adicione estas constantes com as dimensões REAIS do seu mapa vila.tmx
@@ -45,30 +57,71 @@ public class VillageScreen extends ScreenAdapter {
         this.mapManager = mapManager;
         this.batch = new SpriteBatch();
         this.camera = new OrthographicCamera();
+        this.npcs = new Array<>();
+        this.skin = new Skin(Gdx.files.internal("assets/skins/uiskin.json"));
+        this.stage = new Stage(new ScreenViewport());
+        this.dialogueBox = new DialogueBox(skin);
+        this.stage.addActor(dialogueBox);
 
     }
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(this);
         game.soundManager.playMusic("audio/music/village_map.mp3", true);
         viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
-
         //Carrega o mapa
         map = new TmxMapLoader().load(MAP_ID);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);
-
         //Ponto de Spawn
         this.player = game.getPlayer();
         if (player == null) {
             Gdx.app.error("VillageScreen", "Jogador nulo ao mostrar a tela!");
             return;
         }
-
         player.setScale(0.5f);
         player.setInBattleView(false);
-
-        // <<< CORREÇÃO: Procura o spawn point com o nome correto do seu arquivo TMX >>>
         Vector2 spawnPoint = findSpawnPoint(map);
         player.setPosition(spawnPoint.x, spawnPoint.y);
+        loadNpcsFromMap();
+    }
+    private void loadNpcsFromMap() {
+        // Limpa a lista de NPCs antigos, caso exista
+        for (NPC npc : npcs) {
+            npc.dispose();
+        }
+        npcs.clear();
+
+        MapLayer npcLayer = map.getLayers().get("NPCs");
+        if (npcLayer == null) {
+            Gdx.app.log("VillageScreen", "Camada 'NPCs' nao encontrada no mapa.");
+            return;
+        }
+
+        for (MapObject object : npcLayer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                RectangleMapObject rectObject = (RectangleMapObject) object;
+                float x = rectObject.getRectangle().x;
+                float y = rectObject.getRectangle().y;
+
+                // Lê as propriedades personalizadas que definimos no Tiled
+                String type = object.getProperties().get("type", String.class);
+                String spritePath = object.getProperties().get("sprite", String.class);
+
+                if (type != null && spritePath != null) {
+                    try {
+                        Texture npcTexture = new Texture(Gdx.files.internal(spritePath));
+                        NPC npc = new NPC(npcTexture, x, y, type);
+
+                        // Futuramente, aqui definiremos o diálogo
+                        // npc.setDialogue(new String[]{"Olá, aventureiro!", "O tempo está bom hoje."});
+
+                        npcs.add(npc);
+                    } catch (Exception e) {
+                        Gdx.app.error("VillageScreen", "Nao foi possivel carregar a textura do NPC: " + spritePath, e);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -83,49 +136,24 @@ public class VillageScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Verifica se o jogo deve ser pausado
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            if (game != null) { // Boa prática verificar se 'game' não é nulo
-                game.pauseGame(); // Chama o método de Hero.java para abrir o PauseMenuScreen
-            }
-            return; // Retorna imediatamente para não processar o resto do frame da WorldMapScreen,
-            // pois a tela está mudando para o PauseMenuScreen.
+        if (!inDialogue) {
+            //atualizar o hero
+            boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
+            boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
+            boolean left = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
+            boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
+            player.update(delta, up, down, left, right);
         }
 
         //Salva a posição anterior do jogador antes de atualizar
         float oldPLayerX = player.getX();
         float oldPlayerY = player.getY();
-
-        //atualizar o hero
-        boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
-        boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        boolean left = Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
-        boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-
-        player.update(delta, up, down, left, right);
         checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
-
-        //Colisao com bordas do mapa
-        //float clampedX = MathUtils.clamp(player.getX(), 0, MAP_WIDTH_PIXELS - player.getBounds().width);
-        //float clampedY = MathUtils.clamp(player.getY(), 0, MAP_HEIGHT_PIXELS - player.getBounds().height);
-        //player.setPosition(clampedX, clampedY);
-
-        /*
-        //atualiza a camera para seguir hero
-        float camX = MathUtils.clamp(player.getX(), camera.viewportWidth / 2, 100 - camera.viewportWidth / 2);
-        float camY = MathUtils.clamp(player.getY(), camera.viewportHeight / 2, 100 - camera.viewportHeight / 2);
-        camera.position.set(camX, camY, 0);
-        camera.update();
-        */
-
-
         //Camera
         camera.position.x = MathUtils.clamp(player.getX(), viewport.getWorldWidth() / 2f, MAP_WIDTH_PIXELS - viewport.getWorldWidth() / 2f);
         camera.position.y = MathUtils.clamp(player.getY(), viewport.getWorldHeight() / 2f, MAP_HEIGHT_PIXELS - viewport.getWorldHeight() / 2f);
         camera.update();
         viewport.apply();
-
-
         //Renderizar o mapa
         mapRenderer.setView(camera);
         mapRenderer.render();
@@ -136,6 +164,13 @@ public class VillageScreen extends ScreenAdapter {
         batch.begin();
         player.render(batch, player.getX(), player.getY() );
         batch.end();
+
+        for (NPC npc : npcs) {
+            npc.render(batch);
+        }
+
+        stage.act(delta);
+        stage.draw();
 
     }
 
@@ -197,49 +232,84 @@ public class VillageScreen extends ScreenAdapter {
         return new Vector2(100, 100); // valor padrão caso não encontre
     }
 
-    /*
-    private void checkDoorCollision() {
-        MapLayer mapLayer = map.getLayers().get("Colisoes");
 
-        if (mapLayer == null){
-            Gdx.app.log("VillageScreen", "Camada 'Colisoes' não encontrada");
-            return;
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // Primeiro, dá ao stage a oportunidade de usar o input.
+        // Se um actor do stage (como um campo de texto) usar o input, ele retorna true.
+        if (stage.keyDown(keycode)) {
+            return true;
         }
 
-        Rectangle playerBounds = player.getBounds();
-
-        for(MapObject object : mapLayer.getObjects()){
-            if (object instanceof RectangleMapObject){
-                Rectangle mapReact = ((RectangleMapObject) object).getRectangle();
-
-                if(playerBounds.overlaps(mapReact)){
-                    String targetMap = object.getProperties().get("target", String.class);
-                    String targetSpaw = object.getProperties().get("target_spaw", String.class);
-
-
-                   if (targetMap != null){
-                       //Salvar posição do jogador antes de trocar de mapa
-                       game.setPlayerLastWorldMapPosition(
-                           Float.parseFloat(targetSpaw.split(",")[0]),
-                           Float.parseFloat(targetSpaw.split(",")[1]),
-                           targetMap.toLowerCase().equals("world") ? "maps/word.tmx" : "maps/" + targetMap.toLowerCase() + ".tmx"
-                       );
-
-                       switch(targetMap.toLowerCase()){
-                           case "world":
-                               mapManager.changeMap(MapManager.MapType.WORLD_MAP);
-                               return;
-                       }
-                   }
+        // Se o stage não usou o input, processamos a nossa lógica
+        if (keycode == Input.Keys.Z) {
+            if (inDialogue) {
+                dialogueBox.advanceDialogue();
+                if (!dialogueBox.isVisible()) {
+                    inDialogue = false;
                 }
+            } else {
+                checkForNpcInteraction();
+            }
+            return true;
+        }
+
+        if (keycode == Input.Keys.ESCAPE && !inDialogue) {
+            game.pauseGame();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void checkForNpcInteraction() {
+        for (NPC npc : npcs) {
+            Rectangle interactionBounds = new Rectangle(npc.getBounds());
+            interactionBounds.x -= 8;
+            interactionBounds.y -= 8;
+            interactionBounds.width += 16;
+            interactionBounds.height += 16;
+
+            if (player.getBounds().overlaps(interactionBounds)) {
+                inDialogue = true;
+                dialogueBox.startDialogue(npc.getDialogueLines());
+                break;
             }
         }
-    }*/
+    }
 
     @Override
     public void dispose() {
         batch.dispose();
         map.dispose();
         mapRenderer.dispose();
+        for (NPC npc : npcs) {
+            npc.dispose();
+        }
+        stage.dispose();
+        skin.dispose();
     }
+
+    @Override
+    public boolean keyUp(int keycode) { return stage.keyUp(keycode); }
+    @Override
+    public boolean keyTyped(char character) { return stage.keyTyped(character); }
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) { return stage.touchDown(screenX, screenY, pointer, button); }
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) { return stage.touchUp(screenX, screenY, pointer, button); }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) { return stage.touchDragged(screenX, screenY, pointer); }
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) { return stage.mouseMoved(screenX, screenY); }
+    @Override
+    public boolean scrolled(float amountX, float amountY) { return stage.scrolled(amountX, amountY); }
+
 }
