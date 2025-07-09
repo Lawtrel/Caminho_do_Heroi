@@ -2,7 +2,7 @@ d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
 b:maps/shop.tmx:maps/shop-7150cd925c1b9278a24ed86f63eb507c.tmx:2392:application/unknown:1
 b:maps/vila.tmx:maps/vila-47f1e82067489708a499e743909492cc.tmx:9264:application/unknown:1
-b:maps/bossFight.tmx:maps/bossFight-7d9e4b454e450017a518f189ff2bb1c2.tmx:2920:application/unknown:1
+b:maps/bossFight.tmx:maps/bossFight-804455216e8ab3e0510da1dc6fe04018.tmx:3396:application/unknown:1
 b:maps/word.tmx:maps/word-3e1f1e6d042b51116cb3e437ff318fc3.tmx:1885:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
