@@ -2,7 +2,7 @@ d:assets:assets:0:application/unknown:1
 d:maps:maps:0:application/unknown:1
 b:maps/shop.tmx:maps/shop-b9219b6c078e399aae5440e240bc658e.tmx:2385:application/unknown:1
 b:maps/vila.tmx:maps/vila-6bc919eb7715be3a3a0123b1f0c1734f.tmx:11731:application/unknown:1
-b:maps/bossFight.tmx:maps/bossFight-804455216e8ab3e0510da1dc6fe04018.tmx:3396:application/unknown:1
+b:maps/bossFight.tmx:maps/bossFight-179c87bc4769cb0a7615952ba8cdf0c7.tmx:3329:application/unknown:1
 b:maps/word.tmx:maps/word-4ffb7712da96382dd7a71ef119fa1d3e.tmx:5562:application/unknown:1
 b:maps/castleIn.tmx:maps/castleIn-5a241c9111a82b2827b83bfda00aaa6d.tmx:3988:application/unknown:1
 b:maps/castle.tmx:maps/castle-9472041edea1287994bcb33d1d2bd222.tmx:3513:application/unknown:1
@@ -92,7 +92,7 @@ i:npcs/srJosias.png:npcs/srJosias-5792d6afac9031c10edb52e154b7e05f.png:695:image
 i:npcs/srTonias.png:npcs/srTonias-28c40fcee0610114e456dc7acad9551b.png:1068:image/png:1
 i:npcs/srLopias.png:npcs/srLopias-172341770b9cf3ea3cce9ff7885eb569.png:689:image/png:1
 d:sprites:sprites:0:application/unknown:1
-i:sprites/boss.png:sprites/boss-d41d8cd98f00b204e9800998ecf8427e.png:0:image/png:1
+i:sprites/boss.png:sprites/boss-33da5b68bcddae1241eabec8b28eb908.png:3287:image/png:1
 i:sprites/villager_npc.png:sprites/villager_npc-1a4d175398e903274332bc2581d29c9e.png:3438:image/png:1
 i:sprites/enemy.png:sprites/enemy-1a4d175398e903274332bc2581d29c9e.png:3438:image/png:1
 i:sprites/hero.png:sprites/hero-6e19042396d23bdf6981f796ecae4776.png:3480:image/png:1
