@@ -9,6 +9,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 
@@ -110,6 +111,9 @@ public class WorldMapScreen extends ScreenAdapter {
             // pois a tela está mudando para o PauseMenuScreen.
         }
 
+        //Salva a posição anterior do jogador antes de atualizar
+        float oldPlayerX = player.getX();
+        float oldPlayerY = player.getY();
 
         //atualizar o hero
         boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -118,6 +122,7 @@ public class WorldMapScreen extends ScreenAdapter {
         boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 
         player.update(delta, up, down, left, right);
+        checkMapObjectCollisions(oldPlayerX, oldPlayerY);//Função que checa as colisões
 
         //Colisao com bordas do mapa
         float clampedX = MathUtils.clamp(player.getX(), 0, MAP_WIDTH - player.getBounds().width);
@@ -137,7 +142,7 @@ public class WorldMapScreen extends ScreenAdapter {
         //Renderizar o mapa
         mapRenderer.setView(camera);
         mapRenderer.render();
-        checkDoorCollision();
+        //checkDoorCollision();
 
         //Renderizar o Hero
         batch.setProjectionMatrix(camera.combined);
@@ -156,34 +161,27 @@ public class WorldMapScreen extends ScreenAdapter {
         }
     }
 
-    //função que faz a colisão
-    private void checkDoorCollision() {
-        MapLayer door = map.getLayers().get("Portas");
+    private void checkMapObjectCollisions(float oldPlayerX, float oldPlayerY){//Checa as colisões existentes
+        handleSolidObjectCollisions(map.getLayers().get("Colisoes"), oldPlayerX, oldPlayerY);
+        handleTransitionCollisions(map.getLayers().get("Portas"));
+    }
 
-        if (door == null) return;
-
-        float playerCenterX  = player.getX() + player.getBounds().width / 2;
-        float playerCenterY  = player.getY() + player.getBounds().height / 2;
-
-        for (MapObject object : door.getObjects()) {
+    //Metodo generico para lidar com colisões que resultam em transições
+    private void handleTransitionCollisions(MapLayer layer){
+        if (layer == null) return;
+        for (MapObject object : layer.getObjects()) {
             if (object instanceof RectangleMapObject) {
-                Rectangle doorRect = ((RectangleMapObject) object).getRectangle();
+                if (player.getBounds().overlaps(((RectangleMapObject) object).getRectangle())) {
+                    String targetMap = object.getProperties().get("target", String.class);
+                    if (targetMap != null) {
 
-                if (player.getBounds().overlaps(doorRect)) {
-                    if (doorRect.contains(playerCenterX, playerCenterY)) {
-                        String target = object.getProperties().get("target", String.class);
-                        String targetSpawn = object.getProperties().get("target_spawn", String.class); // Ponto de spawn no novo mapa
+                        // <<< CORREÇÃO: Salva a posição atual do jogador antes de mudar >>>
+                        game.setPlayerLastWorldMapPosition(player.getX(), player.getY(), MAP_ID);
 
-                        if (target != null) {
-                            switch (target.toLowerCase()) {
+                        if (targetMap != null) {
+                            switch (targetMap.toLowerCase().toLowerCase()) {
                                 case "vila":
                                     mapManager.changeMap(MapManager.MapType.VILLAGE);
-                                    return;
-                                case "shop":
-                                    mapManager.changeMap(MapManager.MapType.SHOP);
-                                    return;
-                                case "world":
-                                    mapManager.changeMap(MapManager.MapType.WORLD_MAP);
                                     return;
                                 case "caverna":
                                     mapManager.changeMap(MapManager.MapType.CAVE);
@@ -196,6 +194,18 @@ public class WorldMapScreen extends ScreenAdapter {
         }
     }
 
+    //metodo que checa as colisões que impedem o personagem de se mover
+    private void handleSolidObjectCollisions(MapLayer layer, float oldPlayerX, float oldPlayerY){
+        if (layer == null) return;
+        for (MapObject object : layer.getObjects()) {
+            if (object instanceof RectangleMapObject) {
+                if (player.getBounds().overlaps(((RectangleMapObject) object).getRectangle())) {
+                    player.setPosition(oldPlayerX, oldPlayerY);
+                    return;
+                }
+            }
+        }
+    }
 
     private Vector2 findSpawnPoint(TiledMap map) {
         MapLayer objectLayer = map.getLayers().get("spawn"); //nome da camada

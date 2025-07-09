@@ -66,8 +66,8 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
     private final String SHOP_THEME_MUSIC = "audio/music/shop_theme.mp3";
     private final int MAP_WIDTH_PIXELS = 9 * 32;
     private final int MAP_HEIGHT_PIXELS = 11 * 32;
-    private static final float WORLD_WIDTH = 400;
-    private static final float WORLD_HEIGHT = 240;
+    private static final float WORLD_WIDTH = 90;
+    private static final float WORLD_HEIGHT = 110;
 
     public ShopScreen(Hero game, MapManager mapManager) {
         this.game = game;
@@ -251,6 +251,10 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        //Salva a posição anterior do jogador antes de atualizar
+        float oldPlayerX = player.getX();
+        float oldPlayerY = player.getY();
+
         if (!isShopOpen) {
             // Lógica de movimento do jogador
             boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
@@ -259,8 +263,6 @@ public class ShopScreen extends ScreenAdapter implements InputProcessor {
             boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
             player.update(delta, up, down, left, right);
 
-            float oldPlayerX = player.getX();
-            float oldPlayerY = player.getY();
             checkMapObjectCollisions(oldPlayerX, oldPlayerY);
         }
 

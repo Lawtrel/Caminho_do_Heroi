@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="182">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="left-up" width="38" height="26" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="191">
  <properties>
   <property name="playerScale" type="float" value="0.5"/>
  </properties>
@@ -46,11 +46,46 @@
   <object id="174" name="npc" x="259.675" y="179.739" width="16" height="16">
    <properties>
     <property name="dialogue" value="Olá, aventureiro!|Este e um dia tranquilo na nossa vila.|Tenha cuidado com os monstros la fora."/>
-    <property name="sprite" value="assets/sprites/villager_npc.png"/>
+    <property name="sprite" value="assets/npcs/srJosias.png"/>
     <property name="type" value="villager"/>
    </properties>
   </object>
   <object id="175" x="218" y="163.333"/>
+  <object id="182" name="npc" x="193" y="98" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Olá, aventureiro!|Este e um dia tranquilo na nossa vila.|Tenha cuidado com os monstros la fora."/>
+    <property name="sprite" value="assets/npcs/srLopias.png"/>
+    <property name="type" value="villager"/>
+   </properties>
+  </object>
+  <object id="183" name="npc" x="336.5" y="272" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Você deveria ir em uma das nossas lojas, nossos irmãos Tonias que cuidam delas"/>
+    <property name="sprite" value="assets/npcs/srLopias.png"/>
+    <property name="type" value="villager"/>
+   </properties>
+  </object>
+  <object id="184" name="npc" x="352" y="160.5" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Olá, aventureiro!|Este e um dia tranquilo na nossa vila.|Tenha cuidado com os monstros la fora."/>
+    <property name="sprite" value="assets/npcs/srJosias.png"/>
+    <property name="type" value="villager"/>
+   </properties>
+  </object>
+  <object id="185" name="npc" x="448.5" y="96.5" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Olá, aventureiro!|Este e um dia tranquilo na nossa vila.|Tenha cuidado com os monstros la fora."/>
+    <property name="sprite" value="assets/npcs/srLopias.png"/>
+    <property name="type" value="villager"/>
+   </properties>
+  </object>
+  <object id="186" name="npc" x="144.5" y="222.5" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Talvez seja impressão minha... mas todas as lojas vendem as mesma coisa?"/>
+    <property name="sprite" value="assets/npcs/srJosias.png"/>
+    <property name="type" value="villager"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Colisoes">
   <object id="2" x="268.545" y="368.909" width="15.6364" height="31.6364"/>
@@ -122,6 +157,26 @@
    </properties>
   </object>
   <object id="181" name="shop" x="127.035" y="177.788" width="13.1005" height="15.375">
+   <properties>
+    <property name="target" value="shop"/>
+   </properties>
+  </object>
+  <object id="187" name="shop" x="143.347" y="82.1899" width="13.1005" height="15.375">
+   <properties>
+    <property name="target" value="shop"/>
+   </properties>
+  </object>
+  <object id="188" name="shop" x="75.3468" y="77.1899" width="13.1005" height="15.375">
+   <properties>
+    <property name="target" value="shop"/>
+   </properties>
+  </object>
+  <object id="189" name="shop" x="462.847" y="176.69" width="13.1005" height="15.375">
+   <properties>
+    <property name="target" value="shop"/>
+   </properties>
+  </object>
+  <object id="190" name="shop" x="414.847" y="83.1899" width="13.1005" height="15.375">
    <properties>
     <property name="target" value="shop"/>
    </properties>

@@ -102,19 +102,6 @@ public class CaveScreen extends ScreenAdapter {
         player.update(delta, up, down, left, right);
         checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
 
-        //Colisao com bordas do mapa
-        //float clampedX = MathUtils.clamp(player.getX(), 0, MAP_WIDTH_PIXELS - player.getBounds().width);
-        //float clampedY = MathUtils.clamp(player.getY(), 0, MAP_HEIGHT_PIXELS - player.getBounds().height);
-        //player.setPosition(clampedX, clampedY);
-
-        /*
-        //atualiza a camera para seguir hero
-        float camX = MathUtils.clamp(player.getX(), camera.viewportWidth / 2, 100 - camera.viewportWidth / 2);
-        float camY = MathUtils.clamp(player.getY(), camera.viewportHeight / 2, 100 - camera.viewportHeight / 2);
-        camera.position.set(camX, camY, 0);
-        camera.update();
-        */
-
 
         //Camera
         camera.position.x = MathUtils.clamp(player.getX(), viewport.getWorldWidth() / 2f, MAP_WIDTH_PIXELS - viewport.getWorldWidth() / 2f);
