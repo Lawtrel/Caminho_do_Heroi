@@ -42,9 +42,13 @@ jobs:
         with:
           # URL para upload, fornecida pelo evento que disparou o workflow
           upload_url: ${{ github.event.release.upload_url }}
-          # Caminho para o arquivo JAR que foi gerado no passo anterior
-          asset_path: ./lwjgl3/build/libs/caminho-do-heroi-${{ GITHUB.ref_name }}.jar
+          
+          # CORREÇÃO APLICADA AQUI:
+          # Caminho para o arquivo JAR que foi gerado no passo anterior, usando um coringa (*)
+          asset_path: ./lwjgl3/build/libs/caminho-do-heroi-*.jar
+          
           # Nome que o arquivo terá na página de releases
-          asset_name: caminho-do-heroi-${{ GITHUB.ref_name }}.jar
+          asset_name: caminho-do-heroi-${{ github.ref_name }}.jar
+          
           # Tipo do arquivo
           asset_content_type: application/java-archive
