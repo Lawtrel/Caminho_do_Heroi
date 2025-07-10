@@ -69,7 +69,7 @@ public class BattleManager {
     }
 
     private void initializeBattleSystem() {
-        this.battleSystem = new BattleSystem(player, enemies);
+        this.battleSystem = new BattleSystem(player, enemies, null);
         this.currentState = BattleState.BATTLE_STARTED;
     }
 

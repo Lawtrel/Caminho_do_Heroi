@@ -5,6 +5,7 @@ import br.lawtrel.hero.entities.Character;
 import br.lawtrel.hero.entities.items.Item;
 import br.lawtrel.hero.entities.items.ItemFactory;
 import br.lawtrel.hero.entities.items.drops.DropTableEntry;
+import br.lawtrel.hero.screens.BattleScreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Queue;
+import com.badlogic.gdx.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +62,13 @@ public class BattleSystem implements Disposable {
     private BattleState state;
     private String battleMessage;
     private int selectedOption = 0;
+    private final BattleEventCallback eventCallback;
     private final String[] menuOptions = {"ATACAR", "MAGIA", "ITENS", "FUGIR"};
 
-    public BattleSystem(Player player, Array<Enemy> enemies) {
+    public BattleSystem(Player player, Array<Enemy> enemies, BattleEventCallback callback) {
         this.player = player;
         this.enemies = enemies;
+        this.eventCallback  = callback;
         this.turnOrder = new Queue<>();
         this.skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
         this.hud = new BattleHUD(this, this.skin);
@@ -235,7 +239,8 @@ public class BattleSystem implements Disposable {
             enemy.getCharacter().castSpell(spell.getName(), player.getCharacter());
             battleMessage = enemy.getName() + " usou " + spell.getName() + " em " + player.getCharacter().getName();
         } else {
-            enemy.performAttack(player.getCharacter());
+            int damage = enemy.getCharacter().getAttack() - player.getCharacter().getDefense();
+            applyDamage(player.getCharacter(), damage);
             battleMessage = enemy.getName() + " atacou " + player.getCharacter().getName();
         }
     }
@@ -482,6 +487,18 @@ public class BattleSystem implements Disposable {
 
     public void setSelectedMagic(Skill spell) {
         this.magicMenu.setSelectedMagic(spell);
+    }
+    private void applyDamage(Character target, int damage) {
+        int damageTaken = target.receiveDamage(damage); // Pega o dano real
+        if (eventCallback != null) {
+            eventCallback.showFloatingText(String.valueOf(damageTaken), target, Color.RED);
+        }
+    }
+    private void applyHealing(Character target, int amount) {
+        int healthRestored = target.heal(amount); // Pega a cura real
+        if (eventCallback != null) {
+            eventCallback.showFloatingText(String.valueOf(healthRestored), target, Color.GREEN);
+        }
     }
     @Override
     public void dispose() {

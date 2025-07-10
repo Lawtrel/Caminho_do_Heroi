@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import br.lawtrel.hero.battle.VFX;
 import br.lawtrel.hero.battle.VisualEffect;
+import br.lawtrel.hero.battle.FloatingText;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import br.lawtrel.hero.entities.items.Item;
@@ -34,6 +36,7 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
     protected final Player player;
     private final VFX vfx;
     private final Array<VisualEffect> activeEffects;
+    private final Array<FloatingText> floatingTexts;
 
     // Posições de renderização
     private static final int PLAYER_X = Gdx.graphics.getWidth() * 3/4;
@@ -68,16 +71,28 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
         this.batch = new SpriteBatch();
         this.vfx = new VFX();
         this.activeEffects = new Array<>();
-        this.battleSystem = new BattleSystem(player, enemies);
+        this.floatingTexts = new Array<>();
+        this.battleSystem = new BattleSystem(player, enemies, this);
         Gdx.input.setInputProcessor(this);
     }
 
+    public void showFloatingText(String text, Character target, Color color) {
+        float[] dims = getTargetDimensions(target);
+        if (dims == null) return;
+        float targetWidth = dims[0];
+
+        // Posição inicial do texto no centro do personagem
+        float x = target.getOriginalBattleX() + (targetWidth / 2f);
+        float y = target.getOriginalBattleY() + target.getRenderScale() * 32; // Um pouco acima do personagem
+        floatingTexts.add(new FloatingText(text, x, y, color));
+    }
 
     @Override
     public void render(float delta) {
         clearScreen();
         renderBackground();
         renderBattleEntities();
+        renderFloatingTexts();
         battleSystem.update(delta);
         renderHUD();
 
@@ -98,6 +113,20 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
         Texture bgTexture = bgManager.getCurrentBackground();
         if (bgTexture != null) {
             batch.draw(bgTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        }
+        batch.end();
+    }
+    private void renderFloatingTexts() {
+        batch.begin();
+        BitmapFont font = battleSystem.getHud().getFont();
+        for (int i = floatingTexts.size - 1; i >= 0; i--) {
+            FloatingText ft = floatingTexts.get(i);
+            ft.update(Gdx.graphics.getDeltaTime());
+            if (ft.isFinished()) {
+                floatingTexts.removeIndex(i);
+            } else {
+                ft.render(batch, font);
+            }
         }
         batch.end();
     }

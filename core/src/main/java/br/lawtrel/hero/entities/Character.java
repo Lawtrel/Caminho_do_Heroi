@@ -257,9 +257,11 @@ public class Character implements Disposable {
     }
 
     //Metodo para receber dano
-    public void receiveDamage(int dmg) {
-        hp -= Math.max(0, dmg);
+    public int receiveDamage(int dmg) {
+        int effectiveDamage = Math.max(0, dmg);
+        hp -= effectiveDamage;
         if (hp < 0) hp = 0;
+        return effectiveDamage;
     }
 
     //Metodo que  utiliza os pontos de magia
@@ -275,9 +277,11 @@ public class Character implements Disposable {
         return hp > 0;
     }
 
-    public void heal(int amount) {
-        if (amount < 0) return;
+    public int heal(int amount) {
+        if (amount < 0) return 0;
+        int oldHp = this.hp;
         this.hp = Math.min(this.maxHp, this.hp + amount);
+        return this.hp - oldHp;
     }
     public void restoreMp(int amount) {
         if (amount < 0 ) return;
