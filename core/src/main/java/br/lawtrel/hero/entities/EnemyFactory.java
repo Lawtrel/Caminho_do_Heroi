@@ -65,6 +65,13 @@ public class EnemyFactory {
                     .build();
                 sprite = new Texture("enemies/wizard.png");
                 spells.add(new MagicBuilder("FireBall", 10, "Fire").setMagicDMG(25).setVfxKey("fire").build());
+                character.learnSpell(new MagicBuilder("Raio Congelante", 12, "Ice")
+                    .setMagicDMG(20)
+                    .setMagicSTTS("SLOW")       // Define o status a ser aplicado
+                    .setTimeSTTS(3)             // Duração de 3 turnos
+                    .setStatusPotency(4)        // Reduz a velocidade em 4
+                    .setVfxKey("ice")           // Efeito visual de gelo
+                    .build());
                 break;
             case UNDEAD:
                 character = new CharacterBuilder()

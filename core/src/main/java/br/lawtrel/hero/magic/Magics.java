@@ -7,6 +7,7 @@ import br.lawtrel.hero.entities.Skill;
 import br.lawtrel.hero.entities.StatusEffect;
 import br.lawtrel.hero.entities.effects.AttackBuff;
 import br.lawtrel.hero.entities.effects.PoisonEffect;
+import br.lawtrel.hero.entities.effects.SlowEffect;
 
 public class Magics implements Skill {
     private String magicName; //Define nome da magia
@@ -41,6 +42,8 @@ public class Magics implements Skill {
                 return new PoisonEffect(this.timeSTTS, potencyAsInt); // Duração e dano por turno
             case "ATTACK_UP":
                 return new AttackBuff(this.timeSTTS, potencyAsInt); // Duração e quanto aumenta o ataque
+            case "SLOW":
+                return new SlowEffect(this.timeSTTS, potencyAsInt);
             case "BLIND":
                 // return new BlindEffect(this.timeSTTS, this.statusPotency); // Duração e chance de errar (statusPotency seria float)
                 System.out.println("TODO: Implementar BlindEffect com potência: " + this.statusPotency);
