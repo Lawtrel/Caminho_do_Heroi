@@ -278,40 +278,22 @@ public class BattleScreen implements Screen, InputProcessor, BattleEventCallback
                     attackingCharacter.setAnimationTimer(0); // Reseta para a próxima fase
 
                     // --- EXECUTA A AÇÃO NO PICO DA ANIMAÇÃO ---
-                    if (spellToCast != null) { // É uma magia
-                        //player.getCharacter().castSpell(spellToCast.getName(), attackTarget);
-                        battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
-                        // TODO: Adicionar efeito visual da magia aqui
-                    } else { // É um ataque físico
-                        onAttackVFX(attackTarget); // Efeito de corte
-                        attackingCharacter.performAttack(attackTarget);
-                        battleSystem.setBattleMessage(attackingCharacter.getName() + " atacou " + attackTarget.getName() + "!");
+                    if (attackTarget != null && attackTarget.isAlive()) {
+                        if (spellToCast != null) { // É uma magia
+                            game.soundManager.playSound("magic_cast");
+                            onMagicVFX(attackTarget, spellToCast);
+                            attackingCharacter.useSkill(spellToCast, attackTarget); // **CHAMADA DIRETA E CORRETA**
+                        } else { // É um ataque físico
+                            game.soundManager.playSound("attack_hit");
+                            onAttackVFX(attackTarget);
+                            attackingCharacter.performAttack(attackTarget);
+                        }
+                        battleSystem.handleEnemyDefeated(attackTarget);
                     }
-                    battleSystem.handleEnemyDefeated(attackTarget); // Verifica se o alvo morreu
                 }
                 break;
 
             case ATTACKING:
-                // Garante que a lógica de ataque só é executada UMA VEZ
-                if (attackingCharacter.getAnimationTimer() < delta) {
-                    // Verifica se o alvo ainda está vivo antes de atacar
-                    if (attackTarget != null && attackTarget.isAlive()) {
-                        if (spellToCast != null) { // É uma magia
-                            game.soundManager.playSound("magic_cast"); // Som de magia
-                            onMagicVFX(attackTarget, spellToCast); // Efeito visual da magia
-                            attackingCharacter.castSpell(spellToCast.getName(), attackTarget); // Aplica o dano/efeito
-                            battleSystem.setBattleMessage(attackingCharacter.getName() + " usou " + spellToCast.getName() + "!");
-                        } else { // É um ataque físico
-                            game.soundManager.playSound("attack_hit"); // Som de ataque
-                            onAttackVFX(attackTarget); // Efeito visual do ataque
-                            attackingCharacter.performAttack(attackTarget); // Aplica o dano
-                            battleSystem.setBattleMessage(attackingCharacter.getName() + " atacou " + attackTarget.getName() + "!");
-                        }
-                        battleSystem.handleEnemyDefeated(attackTarget); // Verifica se o alvo morreu
-                    }
-                }
-
-                // Espera um pouco para o efeito ser visto antes de voltar
                 if (attackingCharacter.getAnimationTimer() > 0.5f) {
                     attackingCharacter.setBattleState(Character.BattleAnimationState.MOVING_BACK);
                     attackingCharacter.setAnimationTimer(0);

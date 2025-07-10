@@ -218,25 +218,29 @@ public class Character implements Disposable {
 
     // Metodo para usar uma habilidade/magia
     public void useSkill(Skill skill, Character target) {
-        //if (skill == null || target == null) return;
-        if (skill.getType() == Skill.SkillType.BASIC_ATTACK) {
-            skill.use(this, target);
-        } else if (this.mp >= skill.getMpCost()) {
-            skill.use(this, target);
-            this.mp -= skill.getMpCost();
-
-        }
-
-        if (!learnedSkills.contains(skill)) {
-            System.out.println("Habilidade não aprendida: " + skill.getName());
+        if (skill == null || target == null) {
             return;
         }
 
-        if (mp >= skill.getMpCost()) {
-            skill.use(this, target);
+        // 1. Verifica se a habilidade é conhecida pelo personagem
+        boolean isKnownSkill = (skill.getType() == Skill.SkillType.BASIC_ATTACK) ||
+            (skill.getType() == Skill.SkillType.MAGIC && this.grimoire.hasSpell(skill.getName())) ||
+            this.learnedSkills.contains(skill);
+
+        if (!isKnownSkill) {
+            System.out.println(this.name + " não conhece a habilidade: " + skill.getName());
+            return;
+        }
+
+        // 2. Verifica se há MP suficiente para usar a habilidade
+        if (this.mp >= skill.getMpCost()) {
+            // 3. Deduz o custo de MP
             useMagicPoints(skill.getMpCost());
+
+            // 4. Executa a habilidade (que por sua vez chama a Strategy apropriada)
+            skill.use(this, target);
         } else {
-            System.out.println("MP insuficiente para usar " + skill.getName());
+            System.out.println(this.name + " não tem MP suficiente para usar " + skill.getName());
         }
     }
 

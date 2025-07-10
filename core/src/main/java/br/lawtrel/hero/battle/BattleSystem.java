@@ -236,11 +236,10 @@ public class BattleSystem implements Disposable {
 
         if (shouldCastSpell) {
             Skill spell = enemy.getSpells().random();
-            enemy.getCharacter().castSpell(spell.getName(), player.getCharacter());
+            enemy.getCharacter().useSkill(spell, player.getCharacter());
             battleMessage = enemy.getName() + " usou " + spell.getName() + " em " + player.getCharacter().getName();
         } else {
-            int damage = enemy.getCharacter().getAttack() - player.getCharacter().getDefense();
-            applyDamage(player.getCharacter(), damage);
+            enemy.performAttack(player.getCharacter());
             battleMessage = enemy.getName() + " atacou " + player.getCharacter().getName();
         }
     }

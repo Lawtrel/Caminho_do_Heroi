@@ -7,6 +7,7 @@ import br.lawtrel.hero.entities.effects.PoisonEffect;
 import br.lawtrel.hero.entities.effects.AttackBuff;
 
 public class MagicStrategy implements BattleMagicStrategy {
+    private BattleSystem battleSystem;
     @Override
     public void executeMagic(Character actor, Character target, Magics magics){
         // Verifica se o ator tem MP suficiente
@@ -15,7 +16,8 @@ public class MagicStrategy implements BattleMagicStrategy {
         // 1. Aplica Dano (se houver)
         if (magics.getMagicDMG() > 0) {
             int damage = calculateBaseMagicDamage(actor, target, magics);
-            target.receiveDamage(damage); // O texto flutuante será criado pela BattleScreen
+            target.receiveDamage(damage); // Aplica o dano diretamente
+            // O ideal seria ter um jeito de chamar battleSystem.applyDamage(target, damage);
             System.out.println("Causou " + damage + " de dano em " + target.getName() + ".");
         } else if (magics.getMagicDMG() < 0) { // Convenção para cura
             int healingAmount = Math.abs(magics.getMagicDMG());
