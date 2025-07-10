@@ -51,6 +51,7 @@ public class Character implements Disposable {
     // Modificadores temporários de stats (para buffs/debuffs)
     private int temporaryAttackModifier = 0;
     private int temporaryDefenseModifier  = 0;
+    private int temporarySpeedModifier = 0;
 
     // Progressão
     private int exp;
@@ -355,7 +356,7 @@ public class Character implements Disposable {
     public int getDefense() { return defense + defenseModifier; }
     public int getMagicAttack() { return magicAttack + magicAttackModifier; }
     public int getMagicDefense() { return magicDefense + magicDefenseModifier; }
-    public int getSpeed() { return speed + speedModifier; }
+    public int getSpeed() { return speed + speedModifier + temporarySpeedModifier; }
     public int getLuck() { return luck + luckModifier; }
 
 
@@ -425,6 +426,13 @@ public class Character implements Disposable {
 
     public float getVisualAnchorYOffset() {
         return visualAnchorYOffset;
+    }
+
+    public void addTemporarySpeedModifier(int amount) {
+        this.temporarySpeedModifier += amount;
+    }
+    public void removeTemporarySpeedModifier(int amount) {
+        this.temporarySpeedModifier -= amount;
     }
 
     // --- Enums internos ---
