@@ -143,6 +143,9 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (!inDialogue) {
+            //Salva a posição anterior do jogador antes de atualizar
+            float oldPLayerX = player.getX();
+            float oldPlayerY = player.getY();
             //atualizar o hero
             boolean up = Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
             boolean down = Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
@@ -150,9 +153,6 @@ public class VillageScreen extends ScreenAdapter implements InputProcessor {
             boolean right = Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
             player.update(delta, up, down, left, right);
 
-            //Salva a posição anterior do jogador antes de atualizar
-            float oldPLayerX = player.getX();
-            float oldPlayerY = player.getY();
             checkMapObjectCollisions(oldPLayerX, oldPlayerY); //função nova para lidar com as colisões
         }
         //Camera
