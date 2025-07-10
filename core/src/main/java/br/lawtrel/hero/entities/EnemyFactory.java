@@ -124,6 +124,7 @@ public class EnemyFactory {
                 break;
         }
         Enemy enemy = new Enemy(character, sprite);
+        enemy.setSpells(spells);
         enemy.setPosition(x,y);
         return  enemy;
     }
