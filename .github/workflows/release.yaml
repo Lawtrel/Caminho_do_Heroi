@@ -1,45 +1,50 @@
-# Nome que aparecerá na aba "Actions" do seu repositório no GitHub
-name: Deploy
+# Nome do workflow que aparecerá na aba "Actions" do seu repositório
+name: Build e Release do Jogo
 
-# Define quando esta ação deve ser executada
+# Define o gatilho: este workflow roda sempre que uma nova "Release" for criada
 on:
-  push:
-    branches: [ "main", "master" ] # Executa sempre que houver um 'push'
+  release:
+    types: [created]
 
 # Define os "trabalhos" a serem executados
 jobs:
-  build-and-deploy: # Renomeado o job para clareza
+  build:
+    # O tipo de máquina que vai rodar o workflow. 'ubuntu-latest' é o padrão e recomendado.
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
-
+    
+    # Define os passos do trabalho
     steps:
-      # 1. Baixa o seu código do repositório
-      - name: Checkout do Repositorio
+      # 1. Baixa o código do seu repositório para a máquina virtual
+      - name: Checkout do código
         uses: actions/checkout@v4
 
-      # 2. Configura o ambiente Java com a versão 17
-      - name: Configurar Java JDK 17
+      # 2. Configura o ambiente Java (JDK) na versão 17, como especificado no seu projeto
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. Dá permissão de execução ao script do Gradle
-      - name: Tornar gradlew executavel
+      # 3. Dá permissão de execução para o Gradle Wrapper (necessário em ambientes Linux)
+      - name: Tornar Gradle Wrapper executável
         run: chmod +x ./gradlew
 
-      # 4. Compila a versão Web (gera a pasta 'dist')
-      - name: Build Web (Dist)
-        run: ./gradlew html:dist
+      # 4. Executa a tarefa do Gradle para construir o "fat JAR"
+      # O comando "lwjgl3:jar" executa a tarefa "jar" que configuramos no módulo lwjgl3
+      - name: Buildar com Gradle
+        run: ./gradlew lwjgl3:jar
 
-      # <<< 5. NOVO PASSO: Publica o conteúdo da pasta de build na branch 'gh-pages' >>>
-      - name: Deploy no GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # 5. Faz o upload do JAR compilado como um "asset" para a Release do GitHub
+      - name: Upload do JAR para a Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # A pasta que contém o site a ser publicado
-          publish_dir: ./html/build/dist
-          # O nome da branch para onde os arquivos serão enviados
-          publish_branch: gh-pages
+          # URL para upload, fornecida pelo evento que disparou o workflow
+          upload_url: ${{ github.event.release.upload_url }}
+          # Caminho para o arquivo JAR que foi gerado no passo anterior
+          asset_path: ./lwjgl3/build/libs/caminho-do-heroi-${{ GITHUB.ref_name }}.jar
+          # Nome que o arquivo terá na página de releases
+          asset_name: caminho-do-heroi-${{ GITHUB.ref_name }}.jar
+          # Tipo do arquivo
+          asset_content_type: application/java-archive
