@@ -220,7 +220,7 @@ public class Player{
             inventory.add(previouslyEquippedItem);
         }
         //Avisa o Character para recalcular os bônus de status!
-            character.updateStatsFromEquipment();
+        character.updateStatsFromEquipment();
         Gdx.app.log("Player", "Equipou: " + item.getName());
     }
 

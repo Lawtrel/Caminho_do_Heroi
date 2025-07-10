@@ -475,6 +475,9 @@ public class BattleSystem implements Disposable {
 
     public void setState(BattleState state) {
         this.state = state;
+        if (state == BattleState.PLAYER_TARGET_SELECT) {
+            targetSelector.resetToFirstAlive(enemies);
+        }
     }
 
     public void setSelectedMagic(Skill spell) {

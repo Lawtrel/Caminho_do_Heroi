@@ -64,7 +64,7 @@ public class Character implements Disposable {
     //Status e efeitos
     private List<StatusEffect> activeStatusEffects = new ArrayList<>();
 
-// ... adicione outros conforme necessário (magicAttack, speed, etc.)
+    // ... adicione outros conforme necessário (magicAttack, speed, etc.)
     private ElementalAffinity elementalAffinity;
 
     //Equipamento e habilidades

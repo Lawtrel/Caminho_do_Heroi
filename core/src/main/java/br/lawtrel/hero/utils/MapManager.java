@@ -9,7 +9,7 @@ public class MapManager {
     private MapType currentMapType;
 
     public MapManager(Hero game) {
-         this.game = game;
+        this.game = game;
     }
 
     //Tipos de Mapas

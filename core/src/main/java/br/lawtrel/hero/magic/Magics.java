@@ -63,7 +63,7 @@ public class Magics implements Skill {
     @Override
     public void use(Character user, Character target) {
         BattleMagicStrategy strategy = new MagicStrategy();
-         strategy.executeMagic(user, target, this);
+        strategy.executeMagic(user, target, this);
     }
 
     @Override
