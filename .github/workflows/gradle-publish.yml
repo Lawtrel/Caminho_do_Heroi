@@ -1,0 +1,50 @@
+# Nome do workflow que aparecerá na aba "Actions" do seu repositório
+name: Build e Release do Jogo
+
+# Define o gatilho: este workflow roda sempre que uma nova "Release" for criada
+on:
+  release:
+    types: [created]
+
+# Define os "trabalhos" a serem executados
+jobs:
+  build:
+    # O tipo de máquina que vai rodar o workflow. 'ubuntu-latest' é o padrão e recomendado.
+    runs-on: ubuntu-latest
+    
+    # Define os passos do trabalho
+    steps:
+      # 1. Baixa o código do seu repositório para a máquina virtual
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Java (JDK) na versão 17, como especificado no seu projeto
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Dá permissão de execução para o Gradle Wrapper (necessário em ambientes Linux)
+      - name: Tornar Gradle Wrapper executável
+        run: chmod +x ./gradlew
+
+      # 4. Executa a tarefa do Gradle para construir o "fat JAR"
+      # O comando "lwjgl3:jar" executa a tarefa "jar" que configuramos no módulo lwjgl3
+      - name: Buildar com Gradle
+        run: ./gradlew lwjgl3:jar
+
+      # 5. Faz o upload do JAR compilado como um "asset" para a Release do GitHub
+      - name: Upload do JAR para a Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # URL para upload, fornecida pelo evento que disparou o workflow
+          upload_url: ${{ github.event.release.upload_url }}
+          # Caminho para o arquivo JAR que foi gerado no passo anterior
+          asset_path: ./lwjgl3/build/libs/caminho-do-heroi-${{ GITHUB.ref_name }}.jar
+          # Nome que o arquivo terá na página de releases
+          asset_name: caminho-do-heroi-${{ GITHUB.ref_name }}.jar
+          # Tipo do arquivo
+          asset_content_type: application/java-archive
